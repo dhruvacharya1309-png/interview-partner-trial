@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AI Interview Partner</title>
+  <style>
+    :root {
+      --bg-cream: #FBF9F4;
+      --card-cream: #F4EFE6;
+      --border-sand: #E8DFD1;
+      --deep-teal: #005F60;
+      --teal-hover: #004748;
+      --slate-dark: #2B3531;
+      --slate-muted: #62706B;
+      --warm-amber: #C86D28;
+      --badge-bg: #EAE3D2;
+      --accent-red: #A63A2B;
+      --card-white: #FFFFFF;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-cream);
+      color: var(--slate-dark);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    #app-container {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    h1, h2, h3, .serif-text {
+      font-family: Georgia, Cambria, "Times New Roman", serif;
+      font-weight: 700;
+      color: var(--slate-dark);
+    }
+
+    .card {
+      background-color: var(--card-white);
+      border: 1px solid var(--border-sand);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(43, 53, 49, 0.04);
+    }
+
+    .provenance-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--badge-bg);
+      color: var(--slate-dark);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-sand);
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 52px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-primary { background-color: var(--deep-teal); color: #FFF; }
+    .btn-primary:hover { background-color: var(--teal-hover); }
+    .btn-secondary {
+      background-color: var(--card-cream);
+      color: var(--slate-dark);
+      border: 1px solid var(--border-sand);
+      margin-top: 8px;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    label { font-size: 0.85rem; font-weight: 600; color: var(--slate-muted); text-transform: uppercase; margin-bottom: 6px; display: block; }
+    select {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--border-sand);
+      border-radius: 8px;
+      padding: 0 12px;
+      font-size: 1rem;
+      background: #FFF;
+      color: var(--slate-dark);
+      margin-bottom: 16px;
+    }
+
+    .question-box {
+      min-height: 110px;
+      font-size: 1.25rem;
+      line-height: 1.5;
+      margin: 12px 0 16px;
+      color: var(--slate-dark);
+    }
+    
+    .thinking-container {
+      background-color: var(--card-cream);
+      border: 1px solid var(--border-sand);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+    }
+    .thinking-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #E8DFD1;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .thinking-bar-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--deep-teal);
+      transition: width 1s linear;
+    }
+
+    .transcript-box {
+      background-color: var(--bg-cream);
+      border: 1px dashed var(--border-sand);
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 80px;
+      font-size: 0.95rem;
+      color: var(--slate-dark);
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    .mic-meter-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--slate-muted);
+    }
+    .meter-bar-outer {
+      flex: 1;
+      height: 10px;
+      background: #E0D7C8;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .meter-bar-inner {
+      height: 100%;
+      width: 0%;
+      background: var(--deep-teal);
+      transition: width 0.05s ease;
+    }
+
+    .tab-switch {
+      display: flex;
+      border: 1px solid var(--border-sand);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: var(--card-cream);
+      border: none;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--deep-teal);
+      color: #FFF;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.85rem; }
+    th, td { border: 1px solid var(--border-sand); padding: 8px 10px; text-align: left; }
+    th { background-color: var(--card-cream); }
+
+    .tag-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .tag-strong { background: #D5E8D4; color: #274E13; }
+    .tag-developing { background: #FFF2CC; color: #B45F06; }
+    .tag-needswork { background: #F8CECC; color: #B85450; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div id="app-container">
+
+  <!-- SETUP SCREEN -->
+  <div id="screen-setup" class="card">
+    <h1 style="font-size: 1.6rem; margin-bottom: 6px;">AI Interview Partner</h1>
+    <p style="color: var(--slate-muted); font-size: 0.95rem; margin-bottom: 20px;">
+      Spoken Practice with Verified Campus Placement Prompts
+    </p>
+
+    <label for="select-field">1. Select Field</label>
+    <select id="select-field">
+      <option value="Finance">Finance</option>
+      <option value="Marketing">Marketing</option>
+      <option value="HR">Human Resources</option>
+      <option value="Logistics">Global Logistics & Operations</option>
+    </select>
+
+    <label for="select-level">2. Experience Tier</label>
+    <select id="select-level">
+      <option value="Fresher">Campus Placement / Fresher (0–1 Years)</option>
+      <option value="Experienced">Experienced Professional (2+ Years)</option>
+    </select>
+
+    <label for="select-qcount">3. Session Length</label>
+    <select id="select-qcount">
+      <option value="3" selected>3 Questions (Rapid Diagnostic)</option>
+      <option value="5">5 Questions (Standard Practice)</option>
+      <option value="10">10 Questions (Full Mock Drive)</option>
+    </select>
+
+    <div style="background-color: var(--card-cream); border: 1px solid var(--border-sand); border-radius: 8px; padding: 14px; margin-bottom: 20px; font-size: 0.82rem; line-height: 1.4;">
+      <strong>🔒 Privacy Notice:</strong><br>
+      • Speech transcription runs entirely on your device.<br>
+      • No audio recordings are stored or transmitted.
+    </div>
+
+    <button class="btn btn-primary" id="btn-start-interview">Enable Mic & Enter Interview Room</button>
+  </div>
+
+  <!-- INTERVIEW SCREEN -->
+  <div id="screen-interview" class="card hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <span id="interview-progress-label" style="font-size: 0.85rem; font-weight: 700; color: var(--slate-muted);">Question 1 of 3</span>
+      <span id="wpm-live-label" style="font-size: 0.85rem; font-weight: 600; color: var(--deep-teal);">0 WPM</span>
+    </div>
+
+    <div id="provenance-badge-container" class="provenance-badge">
+      <span>Placement Standard</span>
+    </div>
+
+    <div id="spoken-question-text" class="question-box serif-text">
+      Loading interview question...
+    </div>
+
+    <div id="thinking-box" class="thinking-container">
+      <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600;">
+        <span>Thinking Window</span>
+        <span id="thinking-countdown-text">10s remaining</span>
+      </div>
+      <div class="thinking-bar-bg">
+        <div id="thinking-bar-fill" class="thinking-bar-fill"></div>
+      </div>
+    </div>
+
+    <label>What I'm Hearing from You:</label>
+    <div id="live-transcript" class="transcript-box">
+      <span style="color: var(--slate-muted); font-style: italic;">Interviewer is preparing to speak...</span>
+    </div>
+
+    <div class="mic-meter-container">
+      <span>Mic Level:</span>
+      <div class="meter-bar-outer">
+        <div id="mic-level-fill" class="meter-bar-inner"></div>
+      </div>
+      <span id="mic-status-text">Active</span>
+    </div>
+
+    <button class="btn btn-primary" id="btn-finish-answer">Finish Answer</button>
+    <button class="btn btn-secondary" id="btn-idk-skip">I Don't Know / Move Next</button>
+  </div>
+
+  <!-- REPORT SCREEN -->
+  <div id="screen-report" class="card hidden">
+    <h2 style="font-size: 1.5rem; margin-bottom: 4px;">Practice Diagnostic Report</h2>
+    <p style="color: var(--slate-muted); font-size: 0.85rem; margin-bottom: 16px;">
+      Assessment Generated from Spoken Telemetry
+    </p>
+
+    <div class="tab-switch">
+      <button class="tab-btn active" id="tab-btn-candidate">Candidate Blueprint</button>
+      <button class="tab-btn" id="tab-btn-evaluator">Evaluator Briefing</button>
+    </div>
+
+    <div id="view-candidate-blueprint">
+      <div style="background-color: var(--card-cream); border: 1px solid var(--border-sand); border-radius: 8px; padding: 14px; margin-bottom: 16px;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--slate-muted); text-transform: uppercase;">Executive Readout</span>
+        <p id="report-exec-summary" style="margin-top: 6px; line-height: 1.45; font-size: 0.95rem;">
+          Evaluating your session...
+        </p>
+      </div>
+
+      <h3 style="font-size: 1.1rem; margin-bottom: 8px;">The "Before & After" Rewrite Lab</h3>
+      <div style="border: 1px solid var(--border-sand); border-radius: 8px; padding: 14px; margin-bottom: 16px; background: #FFF;">
+        <p style="font-size: 0.8rem; font-weight: 700; color: var(--warm-amber); margin-bottom: 4px;">YOUR SPOKEN ANSWER (EXTRACT):</p>
+        <p id="rewrite-before" style="font-size: 0.9rem; font-style: italic; margin-bottom: 12px; color: var(--slate-dark);">"..."</p>
+        <p style="font-size: 0.8rem; font-weight: 700; color: var(--deep-teal); margin-bottom: 4px;">RECOMMENDED EXECUTIVE REWRITE:</p>
+        <p id="rewrite-after" style="font-size: 0.92rem; font-weight: 500; line-height: 1.4; color: var(--slate-dark);">"..."</p>
+      </div>
+
+      <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Acoustic Delivery Telemetry</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Round</th>
+            <th>Pace</th>
+            <th>Fillers</th>
+            <th>Pauses (&ge;2s)</th>
+            <th>Rating</th>
+          </tr>
+        </thead>
+        <tbody id="telemetry-table-body"></tbody>
+      </table>
+    </div>
+
+    <div id="view-evaluator-briefing" class="hidden">
+      <div style="border: 1px solid var(--border-sand); border-radius: 8px; padding: 14px; margin-bottom: 16px; background: var(--card-cream);">
+        <p style="font-size: 0.8rem; font-weight: 700; color: var(--slate-muted);">READINESS ASSESSMENT</p>
+        <h3 style="font-size: 1.25rem; color: var(--deep-teal); margin: 4px 0 8px;">Interview Ready with Polish</h3>
+        <p style="font-size: 0.9rem; line-height: 1.4;">
+          Candidate displays clear technical grasp but relies on filler terms when explaining operational trade-offs.
+        </p>
+      </div>
+
+      <h3 style="font-size: 1.1rem; margin-bottom: 8px;">Recommended Follow-Up Probes</h3>
+      <div id="evaluator-probes" style="background: #FFF; border: 1px solid var(--border-sand); border-radius: 8px; padding: 12px; font-size: 0.9rem; line-height: 1.45;"></div>
+    </div>
+
+    <button class="btn btn-primary" style="margin-top: 24px;" onclick="location.reload();">Start New Session</button>
+  </div>
+
+</div>
+
+<script>
+const QUESTION_BANK = [
+  // FINANCE
+  {
+    field: "Finance",
+    level: "Fresher",
+    badge: "✦ Finance • Working Capital Standard",
+    text: "If our Days Sales Outstanding increases from 35 days to 65 days while our reported sales stay flat, what does that indicate about our working capital and liquidity?",
+    thinkingTimeSec: 10
+  },
+  {
+    field: "Finance",
+    level: "Fresher",
+    badge: "✦ Finance • Core Accounting Filter",
+    text: "Can a business show strong net profit on its income statement but still fail to meet payroll next Monday? Walk me through how that happens.",
+    thinkingTimeSec: 10
+  },
+  {
+    field: "Finance",
+    level: "Experienced",
+    badge: "✦ Finance • Corporate Credit Probe",
+    text: "When evaluating working capital limits for a fast-growing manufacturing firm, how do you verify if inventory build-up is genuine business expansion or unsold stock risk?",
+    thinkingTimeSec: 10
+  },
+
+  // MARKETING
+  {
+    field: "Marketing",
+    level: "Fresher",
+    badge: "✦ Marketing • Grassroots Strategy Standard",
+    text: "Imagine you are given zero advertising budget to launch a new eco-friendly product on our campus next week. Walk me through how you would acquire your first 150 customers.",
+    thinkingTimeSec: 10
+  },
+  {
+    field: "Marketing",
+    level: "Fresher",
+    badge: "✦ Marketing • Consumer Demand Check",
+    text: "Many students confuse marketing with advertising. In simple terms, how do you explain the difference between selling a product and creating genuine market demand?",
+    thinkingTimeSec: 10
+  },
+
+  // HUMAN RESOURCES
+  {
+    field: "HR",
+    level: "Fresher",
+    badge: "✦ HR • Team Conflict Resolution",
+    text: "If two talented members of your project team refuse to communicate because of personal friction and a client deadline is in 48 hours, what is your immediate mediation protocol?",
+    thinkingTimeSec: 10
+  },
+  {
+    field: "HR",
+    level: "Experienced",
+    badge: "✦ HR • Strategic Talent Retention",
+    text: "When team attrition in a high-pressure department reaches 25% within six months, what diagnostic process do you run before recommending compensation adjustments?",
+    thinkingTimeSec: 10
+  },
+
+  // GLOBAL LOGISTICS
+  {
+    field: "Logistics",
+    level: "Fresher",
+    badge: "✦ Logistics • Port Clearance Escalation",
+    text: "If a container shipment gets stuck at the port due to unexpected customs clearance delays and our client is furious, what is your step-by-step resolution process?",
+    thinkingTimeSec: 10
+  },
+  {
+    field: "Logistics",
+    level: "Experienced",
+    badge: "✦ Logistics • Carrier Contract Strategy",
+    text: "With international ocean freight spot rates fluctuating by 40% quarter-over-quarter, how do you structure carrier contracts to protect margin without losing spot allocation?",
+    thinkingTimeSec: 10
+  }
+];
+
+let sessionQuestions = [];
+let currentQIndex = 0;
+let answerStartTime = null;
+let currentQuestionText = "";
+let currentTranscript = "";
+let sessionHistory = [];
+
+let recognition = null;
+let audioCtx = null;
+let analyser = null;
+let micStream = null;
+let hardPauseCount = 0;
+let lastSoundTime = Date.now();
+let thinkingInterval = null;
+
+const screenSetup = document.getElementById("screen-setup");
+const screenInterview = document.getElementById("screen-interview");
+const screenReport = document.getElementById("screen-report");
+
+const spokenQuestionText = document.getElementById("spoken-question-text");
+const provenanceBadgeContainer = document.getElementById("provenance-badge-container");
+const liveTranscript = document.getElementById("live-transcript");
+const micLevelFill = document.getElementById("mic-level-fill");
+const thinkingBarFill = document.getElementById("thinking-bar-fill");
+const thinkingCountdownText = document.getElementById("thinking-countdown-text");
+const interviewProgressLabel = document.getElementById("interview-progress-label");
+const wpmLiveLabel = document.getElementById("wpm-live-label");
+
+document.getElementById("btn-start-interview").addEventListener("click", async () => {
+  const chosenField = document.getElementById("select-field").value;
+  const chosenLevel = document.getElementById("select-level").value;
+  const chosenCount = parseInt(document.getElementById("select-qcount").value, 10);
+
+  let available = QUESTION_BANK.filter(q => q.field === chosenField && q.level === chosenLevel);
+  if (available.length === 0) available = QUESTION_BANK.filter(q => q.field === chosenField);
+  
+  available.sort(() => 0.5 - Math.random());
+  sessionQuestions = available.slice(0, chosenCount);
+
+  while (sessionQuestions.length < chosenCount) {
+    sessionQuestions.push({
+      field: chosenField,
+      level: chosenLevel,
+      badge: "✦ Placement Standard",
+      text: "Describe a project where you faced an unexpected operational challenge and how you resolved it.",
+      thinkingTimeSec: 10
+    });
+  }
+
+  try {
+    await initAudioContext();
+    initSpeechRecognition();
+  } catch (err) {
+    alert("Microphone permission was denied. Please allow microphone access in your browser to run the interview.");
+    return;
+  }
+
+  screenSetup.classList.add("hidden");
+  screenInterview.classList.remove("hidden");
+  currentQIndex = 0;
+  loadCurrentQuestion();
+});
+
+async function initAudioContext() {
+  micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 256;
+  
+  const source = audioCtx.createMediaStreamSource(micStream);
+  source.connect(analyser);
+
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+
+  function checkAudioFrame() {
+    analyser.getByteFrequencyData(dataArray);
+    let sum = 0;
+    for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
+    const avgVolume = sum / bufferLength;
+
+    const meterPercent = Math.min(100, Math.round((avgVolume / 60) * 100));
+    micLevelFill.style.width = meterPercent + "%";
+
+    if (avgVolume < 6 && answerStartTime) {
+      if (Date.now() - lastSoundTime >= 2000) {
+        hardPauseCount++;
+        lastSoundTime = Date.now();
+      }
+    } else {
+      lastSoundTime = Date.now();
+    }
+    requestAnimationFrame(checkAudioFrame);
+  }
+  checkAudioFrame();
+}
+
+function initSpeechRecognition() {
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRec) {
+    alert("Speech recognition is best supported in Google Chrome. Please open this in Chrome.");
+    return;
+  }
+  recognition = new SpeechRec();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-IN';
+
+  recognition.onresult = (event) => {
+    let interim = '';
+    let finalStr = '';
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        finalStr += event.results[i].transcript + ' ';
+      } else {
+        interim += event.results[i].transcript;
+      }
+    }
+    currentTranscript = (finalStr + interim).trim();
+    liveTranscript.textContent = currentTranscript || "Listening to your answer...";
+
+    if (answerStartTime) {
+      const words = currentTranscript.split(/\s+/).filter(Boolean).length;
+      const minutes = (Date.now() - answerStartTime) / 60000;
+      const wpm = minutes > 0 ? Math.round(words / minutes) : 0;
+      wpmLiveLabel.textContent = `${wpm} WPM`;
+    }
+  };
+}
+
+function loadCurrentQuestion() {
+  const qData = sessionQuestions[currentQIndex];
+  currentQuestionText = qData.text;
+  currentTranscript = "";
+  hardPauseCount = 0;
+  answerStartTime = null;
+
+  interviewProgressLabel.textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length}`;
+  provenanceBadgeContainer.innerHTML = `<span>${qData.badge}</span>`;
+  spokenQuestionText.textContent = qData.text;
+  liveTranscript.innerHTML = `<span style="color: var(--slate-muted); font-style: italic;">Interviewer speaking...</span>`;
+  wpmLiveLabel.textContent = "0 WPM";
+
+  try { recognition.stop(); } catch(e){}
+
+  const utter = new SpeechSynthesisUtterance(qData.text);
+  utter.lang = 'en-IN';
+  utter.rate = 0.95;
+
+  utter.onend = () => {
+    startThinkingCountdown(qData.thinkingTimeSec || 10);
+  };
+
+  window.speechSynthesis.speak(utter);
+}
+
+function startThinkingCountdown(seconds) {
+  let remaining = seconds;
+  thinkingCountdownText.textContent = `${remaining}s remaining`;
+  thinkingBarFill.style.width = "100%";
+
+  if (thinkingInterval) clearInterval(thinkingInterval);
+
+  thinkingInterval = setInterval(() => {
+    remaining--;
+    thinkingCountdownText.textContent = `${remaining}s remaining`;
+    thinkingBarFill.style.width = `${(remaining / seconds) * 100}%`;
+
+    if (remaining <= 0) {
+      clearInterval(thinkingInterval);
+      thinkingCountdownText.textContent = "Your turn to speak!";
+      liveTranscript.textContent = "Microphone listening... Speak your answer now.";
+      answerStartTime = Date.now();
+      lastSoundTime = Date.now();
+      try { recognition.start(); } catch(e){}
+    }
+  }, 1000);
+}
+
+document.getElementById("btn-finish-answer").addEventListener("click", () => {
+  const words = currentTranscript.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 3) {
+    const promptVoice = new SpeechSynthesisUtterance("I didn't catch an answer. Please speak your answer or click move next.");
+    promptVoice.lang = 'en-IN';
+    window.speechSynthesis.speak(promptVoice);
+    liveTranscript.innerHTML = `<span style="color: var(--accent-red); font-weight: 600;">Please speak your answer or click "I Don't Know / Move Next".</span>`;
+    return;
+  }
+  recordAndAdvance(currentTranscript, false);
+});
+
+document.getElementById("btn-idk-skip").addEventListener("click", () => {
+  recordAndAdvance("Candidate elected to pass this question.", true);
+});
+
+function recordAndAdvance(transcriptText, wasSkipped) {
+  if (thinkingInterval) clearInterval(thinkingInterval);
+  try { recognition.stop(); } catch(e){}
+
+  const elapsedMinutes = answerStartTime ? (Date.now() - answerStartTime) / 60000 : 0.15;
+  const wordCount = transcriptText.split(/\s+/).filter(Boolean).length;
+  const wpm = wasSkipped ? 0 : Math.round(wordCount / Math.max(0.15, elapsedMinutes));
+
+  const fillerRegex = /\b(um|uh|basically|you know|actually|like)\b/gi;
+  const matches = transcriptText.match(fillerRegex);
+  const fillerCount = matches ? matches.length : 0;
+
+  sessionHistory.push({
+    questionNum: currentQIndex + 1,
+    questionText: currentQuestionText,
+    badge: sessionQuestions[currentQIndex].badge,
+    transcript: transcriptText,
+    wpm: wpm,
+    fillers: fillerCount,
+    pauses: hardPauseCount,
+    wasSkipped: wasSkipped
+  });
+
+  currentQIndex++;
+  if (currentQIndex < sessionQuestions.length) {
+    loadCurrentQuestion();
+  } else {
+    finishInterviewAndShowReport();
+  }
+}
+
+function finishInterviewAndShowReport() {
+  screenInterview.classList.add("hidden");
+  screenReport.classList.remove("hidden");
+
+  const validAnswers = sessionHistory.filter(h => !h.wasSkipped);
+  const avgWPM = validAnswers.length > 0 ? Math.round(validAnswers.reduce((a, b) => a + b.wpm, 0) / validAnswers.length) : 0;
+  const totalFillers = sessionHistory.reduce((a, b) => a + b.fillers, 0);
+  const chosenField = document.getElementById("select-field").value;
+
+  document.getElementById("report-exec-summary").innerHTML = `
+    Across ${sessionHistory.length} rounds in <strong>${chosenField}</strong>, your pace averaged 
+    <strong>${avgWPM} WPM</strong> with <strong>${totalFillers} verbal filler words</strong> recorded. 
+    ${avgWPM >= 120 && avgWPM <= 155 ? "Pacing was in the executive target range (120–150 WPM)." : "Aim to stabilize cadence around 130–140 WPM."}
+  `;
+
+  const sample = validAnswers?.transcript || "We tried to talk to stakeholders and resolve the timeline...";
+  document.getElementById("rewrite-before").textContent = `"${sample.slice(0, 160)}..."`;
+  document.getElementById("rewrite-after").textContent = `"When challenged with this bottleneck, I aligned cross-functional priorities, established daily milestones, and protected project delivery timelines."`;
+
+  const tableBody = document.getElementById("telemetry-table-body");
+  tableBody.innerHTML = "";
+  sessionHistory.forEach(h => {
+    const tr = document.createElement("tr");
+    let ratingTag = '<span class="tag-pill tag-strong">Strong</span>';
+    if (h.wasSkipped) ratingTag = '<span class="tag-pill tag-needswork">Skipped</span>';
+    else if (h.fillers > 3 || h.pauses > 1) ratingTag = '<span class="tag-pill tag-developing">Needs Polish</span>';
+
+    tr.innerHTML = `
+      <td>Q${h.questionNum}</td>
+      <td>${h.wpm} WPM</td>
+      <td>${h.fillers}</td>
+      <td>${h.pauses}</td>
+      <td>${ratingTag}</td>
+    `;
+    tableBody.appendChild(tr);
+  });
+
+  document.getElementById("evaluator-probes").innerHTML = `
+    <p><strong>1. Depth Probe:</strong> "In Question 1, the candidate outlined the concept. In Round 2, ask for specific metrics or trade-offs they had to defend."</p>
+    <p style="margin-top: 8px;"><strong>2. Ownership Probe:</strong> "Ask what specific corrective action they personally took when an initial plan stalled."</p>
+  `;
+}
+
+document.getElementById("tab-btn-candidate").addEventListener("click", () => {
+  document.getElementById("tab-btn-candidate").classList.add("active");
+  document.getElementById("tab-btn-evaluator").classList.remove("active");
+  document.getElementById("view-candidate-blueprint").classList.remove("hidden");
+  document.getElementById("view-evaluator-briefing").classList.add("hidden");
+});
+
+document.getElementById("tab-btn-evaluator").addEventListener("click", () => {
+  document.getElementById("tab-btn-evaluator").classList.add("active");
+  document.getElementById("tab-btn-candidate").classList.remove("active");
+  document.getElementById("view-evaluator-briefing").classList.remove("hidden");
+  document.getElementById("view-candidate-blueprint").classList.add("hidden");
+});
+</script>
+
+</body>
+</html>
