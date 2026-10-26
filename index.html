@@ -3,26 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Executive Placement Simulator</title>
+  <title>Executive Placement Simulator | Diagnostic Dossier</title>
   <style>
     :root {
       --bg-surface: #F8FAFC;
       --card-surface: #FFFFFF;
       --border-subtle: #E2E8F0;
+      --border-strong: #CBD5E1;
       --primary-navy: #0F172A;
+      --primary-blue: #1E3A8A;
       --accent-teal: #0D9488;
       --accent-teal-dark: #0F766E;
-      --text-main: #1E293B;
+      --text-main: #0F172A;
       --text-muted: #64748B;
       --danger-red: #BE123C;
+      --danger-bg: #FFF1F2;
       --badge-bg: #F1F5F9;
+      --accent-amber: #D97706;
+      --success-green: #10B981;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background-color: var(--bg-surface);
       color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -31,7 +36,7 @@
 
     #app-container {
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -43,7 +48,7 @@
       border: 1px solid var(--border-subtle);
       border-radius: 12px;
       padding: 28px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
     }
 
     h1 { font-size: 1.5rem; font-weight: 700; color: var(--primary-navy); letter-spacing: -0.02em; }
@@ -51,21 +56,36 @@
     h3 { font-size: 1rem; font-weight: 600; color: var(--primary-navy); margin-bottom: 8px; }
     .serif-text { font-family: Georgia, Cambria, serif; }
 
+    /* TAGS & BADGES */
     .provenance-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background-color: var(--badge-bg);
-      color: var(--text-main);
-      font-size: 0.8rem;
-      font-weight: 600;
+      background-color: #EEF2F6;
+      color: var(--primary-blue);
+      font-size: 0.82rem;
+      font-weight: 700;
       padding: 6px 12px;
       border-radius: 6px;
-      border: 1px solid var(--border-subtle);
-      margin-bottom: 16px;
+      border: 1px solid #DCE3EA;
+      margin-bottom: 14px;
     }
 
-    label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
+    .timer-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background-color: #FEF3C7;
+      color: #92400E;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #FDE68A;
+      margin-left: 8px;
+    }
+
+    label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
     select {
       width: 100%;
       height: 48px;
@@ -109,17 +129,45 @@
       font-size: 1.25rem;
       line-height: 1.55;
       color: var(--primary-navy);
-      margin: 12px 0 20px;
+      margin: 12px 0 18px;
     }
 
     .status-banner {
-      background-color: #F1F5F9;
+      background-color: #F8FAFC;
+      border: 1px solid var(--border-subtle);
       border-left: 4px solid var(--accent-teal);
-      padding: 12px 16px;
-      border-radius: 4px;
-      font-size: 0.9rem;
+      padding: 14px 16px;
+      border-radius: 6px;
+      font-size: 0.92rem;
       color: var(--text-main);
       margin-bottom: 18px;
+    }
+
+    /* HARDWARE VOLUME METER */
+    .hardware-audio-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #F1F5F9;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .audio-meter-track {
+      flex: 1;
+      height: 8px;
+      background: #E2E8F0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .audio-meter-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--success-green);
+      transition: width 0.05s ease;
     }
 
     .transcript-box {
@@ -142,8 +190,9 @@
       background-color: #94A3B8;
       margin-right: 6px;
     }
-    .mic-live { background-color: #10B981; box-shadow: 0 0 8px #10B981; }
+    .mic-live { background-color: var(--success-green); box-shadow: 0 0 8px var(--success-green); }
 
+    /* TABS */
     .tab-switch {
       display: flex;
       border: 1px solid var(--border-subtle);
@@ -170,9 +219,32 @@
     .report-card {
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
-      padding: 18px;
+      padding: 20px;
       margin-bottom: 16px;
       background: #FFF;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .kpi-tile {
+      background: #F8FAFC;
+      border: 1px solid var(--border-subtle);
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+    }
+    .kpi-val { font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); }
+    .kpi-lbl { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
+
+    @media print {
+      body { background: #FFF; padding: 0; }
+      .btn, .tab-switch, #btn-print-dossier { display: none !important; }
+      .card { border: none; box-shadow: none; padding: 0; }
+      #view-candidate-blueprint, #view-evaluator-briefing { display: block !important; }
     }
 
     .hidden { display: none !important; }
@@ -182,14 +254,13 @@
 
 <div id="app-container">
 
-  <!-- ================= SETUP SCREEN ================= -->
+  <!-- ================= 1. SETUP SCREEN ================= -->
   <div id="screen-setup" class="card">
     <h1>Executive Interview Practice</h1>
     <p style="color: var(--text-muted); font-size: 0.95rem; margin: 6px 0 24px;">
       Campus Placement & Corporate Readiness Diagnostic
     </p>
 
-    <!-- CLEAN DOMAINS ONLY (NO NAMES IN SELECTOR) -->
     <label for="select-field">Interview Domain</label>
     <select id="select-field">
       <option value="Marketing">Marketing</option>
@@ -220,101 +291,146 @@
     <button class="btn btn-primary" id="btn-proceed-to-mic">Proceed to Audio Check &rarr;</button>
   </div>
 
-  <!-- ================= PRE-FLIGHT MIC CHECK ================= -->
+  <!-- ================= 2. MANDATORY HARDWARE MIC CHECK ================= -->
   <div id="screen-mic-check" class="card hidden">
-    <h2>Microphone Input Verification</h2>
+    <h2>Microphone Hardware Verification</h2>
     <p style="color: var(--text-muted); font-size: 0.9rem; margin: 6px 0 20px;">
-      Verify that your browser is capturing your voice clearly before entering the interview room.
+      Confirm that your browser and microphone hardware are actively receiving speech.
     </p>
 
+    <!-- LIVE HARDWARE VOLUME VISUALIZER -->
+    <div class="hardware-audio-bar">
+      <span>Hardware Signal:</span>
+      <div class="audio-meter-track">
+        <div id="test-audio-fill" class="audio-meter-fill"></div>
+      </div>
+      <span id="test-volume-label">0%</span>
+    </div>
+
     <div class="status-banner" id="mic-check-instructions">
-      Click <strong>"Start Mic Test"</strong> below and say: <em>"Hello, testing my microphone."</em>
+      Click <strong>"Connect Microphone"</strong> below and say: <em>"Testing my microphone for placement."</em>
     </div>
 
     <div id="mic-test-output" class="transcript-box" style="font-style: italic; color: var(--text-muted);">
       Microphone inactive.
     </div>
 
-    <button class="btn btn-navy" id="btn-run-mic-test">Start Mic Test</button>
+    <button class="btn btn-navy" id="btn-run-mic-test">Connect Microphone</button>
     <button class="btn btn-primary hidden" id="btn-mic-ok-proceed" style="margin-top: 12px;">
       Voice Verified &mdash; Enter Interview Room &rarr;
     </button>
     <button class="btn btn-secondary" id="btn-back-to-setup">Back</button>
   </div>
 
-  <!-- ================= ACTIVE INTERVIEW ================= -->
+  <!-- ================= 3. ACTIVE INTERVIEW ================= -->
   <div id="screen-interview" class="card hidden">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
       <span id="interview-progress-label" style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Question 1 of 5</span>
       <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;">
         <span id="mic-dot" class="mic-indicator-dot"></span>
-        <span id="mic-status-label">Standby</span>
+        <span id="mic-status-label">Interviewer Speaking...</span>
       </span>
     </div>
 
-    <!-- PROVENANCE BADGE (Shows author) -->
-    <div id="provenance-badge-container" class="provenance-badge">
-      <span>Curated Question</span>
+    <!-- PROVENANCE BADGE + TIMER TAG -->
+    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+      <div id="provenance-badge-container" class="provenance-badge">
+        <span>Curated Question</span>
+      </div>
+      <span id="question-timer-tag" class="timer-tag hidden">⏱ 10s Window</span>
     </div>
 
     <div id="spoken-question-text" class="question-box serif-text">
       Loading prompt...
     </div>
 
-    <!-- CALM THINKING STATE (NO SHRINKING RACING BAR) -->
-    <div id="thinking-state-box" class="status-banner">
-      <div id="thinking-text-label"><strong>Thinking Pause:</strong> Take your time to gather your thoughts. Click below when ready.</div>
+    <!-- AUTOMATIC STATE BANNER (NO BUTTONS TO START) -->
+    <div id="interview-flow-status" class="status-banner">
+      <span id="flow-status-text">Interviewer is speaking the question...</span>
     </div>
 
-    <button class="btn btn-primary" id="btn-start-answering">I'm Ready to Speak</button>
-
-    <!-- ACTIVE LISTENING BOX -->
-    <div id="answering-controls" class="hidden" style="margin-top: 16px;">
-      <label>What I'm Hearing from You:</label>
-      <div id="live-transcript" class="transcript-box">
-        Listening... Speak naturally at your normal pace.
+    <!-- LIVE HARDWARE VOLUME VISUALIZER (Proves mic is active!) -->
+    <div class="hardware-audio-bar">
+      <span>Mic Signal:</span>
+      <div class="audio-meter-track">
+        <div id="live-audio-fill" class="audio-meter-fill"></div>
       </div>
-      <button class="btn btn-primary" id="btn-finish-answer">Finish Answer</button>
-      <button class="btn btn-secondary" id="btn-idk-skip">I Don't Know / Pass Question</button>
+      <span id="live-volume-label">Listening</span>
     </div>
+
+    <!-- LIVE TRANSCRIPTION -->
+    <label>What I'm Hearing from You:</label>
+    <div id="live-transcript" class="transcript-box">
+      Microphone will activate automatically...
+    </div>
+
+    <!-- CANDIDATE CONTROLS -->
+    <button class="btn btn-primary" id="btn-finish-answer">Finish Answer</button>
+    <button class="btn btn-secondary" id="btn-idk-skip">I Don't Know / Pass Question</button>
   </div>
 
-  <!-- ================= DIAGNOSTIC REPORT ================= -->
+  <!-- ================= 4. EXECUTIVE DIAGNOSTIC REPORT ================= -->
   <div id="screen-report" class="card hidden">
-    <h2>Practice Diagnostic Report</h2>
-    <p style="color: var(--text-muted); font-size: 0.85rem; margin: 4px 0 20px;">
-      Evaluation Based Strictly on Spoken Audio
-    </p>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+      <div>
+        <h2>Executive Placement Diagnostic Dossier</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
+          Formal Evaluation Based Strictly on Spoken Audio Telemetry
+        </p>
+      </div>
+      <button class="btn btn-secondary" id="btn-print-dossier" style="width: auto; height: 36px; padding: 0 14px; font-size: 0.82rem; margin: 0;" onclick="window.print();">
+        🖨 Print / Export PDF
+      </button>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-tile">
+        <div class="kpi-val" id="kpi-score">--</div>
+        <div class="kpi-lbl">Readiness Tier</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-val" id="kpi-wpm">0</div>
+        <div class="kpi-lbl">Spoken WPM</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-val" id="kpi-fillers">0</div>
+        <div class="kpi-lbl">Total Fillers</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-val" id="kpi-completed">0/0</div>
+        <div class="kpi-lbl">Attempted</div>
+      </div>
+    </div>
 
     <div class="tab-switch">
       <button class="tab-btn active" id="tab-btn-candidate">Candidate Blueprint</button>
-      <button class="tab-btn" id="tab-btn-evaluator">Evaluator Briefing</button>
+      <button class="tab-btn" id="tab-btn-evaluator">Evaluator Dossier</button>
     </div>
 
     <!-- TAB A: CANDIDATE BLUEPRINT -->
     <div id="view-candidate-blueprint">
       <div class="report-card" style="background: #F8FAFC;">
-        <h3>Session Audit Summary</h3>
-        <p id="report-summary-text" style="font-size: 0.95rem; line-height: 1.5; color: var(--text-main);">
+        <h3>Session Audit & Executive Summary</h3>
+        <p id="report-summary-text" style="font-size: 0.92rem; line-height: 1.55; color: var(--text-main);">
           Evaluating session telemetry...
         </p>
       </div>
 
-      <h3 style="margin-top: 24px; margin-bottom: 12px;">Question Breakdown & Truthful Review</h3>
+      <h3 style="margin-top: 24px; margin-bottom: 12px;">Round-by-Round Verbatim Review</h3>
       <div id="candidate-questions-breakdown"></div>
     </div>
 
-    <!-- TAB B: EVALUATOR BRIEFING -->
+    <!-- TAB B: EVALUATOR DOSSIER -->
     <div id="view-evaluator-briefing" class="hidden">
       <div class="report-card" style="background: #F8FAFC;">
-        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Interview Panel Readiness</span>
-        <h3 id="evaluator-tier-title" style="margin: 4px 0 8px; color: var(--accent-teal);">Initial Baseline Assessment</h3>
-        <p id="evaluator-tier-summary" style="font-size: 0.92rem; line-height: 1.5;">
+        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Panel Readiness Classification</span>
+        <h3 id="evaluator-tier-title" style="margin: 4px 0 8px; color: var(--primary-blue);">Evaluation Baseline</h3>
+        <p id="evaluator-tier-summary" style="font-size: 0.92rem; line-height: 1.55;">
           Reviewing candidate responses...
         </p>
       </div>
 
-      <h3 style="margin-top: 24px; margin-bottom: 12px;">Candidate Performance & Panel Probes</h3>
+      <h3 style="margin-top: 24px; margin-bottom: 12px;">Socratic Round-2 Interviewer Follow-Ups</h3>
       <div id="evaluator-probes-breakdown"></div>
     </div>
 
@@ -326,7 +442,7 @@
 <!-- ================= JAVASCRIPT ENGINE ================= -->
 <script>
 /**
- * YOUR 30 EXACT QUESTIONS MAPPED BY DOMAIN, LEVEL, AUTHOR & TIMER
+ * YOUR 30 EXACT QUESTIONS MAPPED BY DOMAIN, LEVEL, AUTHOR & EXACT TIMER
  */
 const QUESTION_BANK = [
   // ================= MARKETING =================
@@ -338,11 +454,11 @@ const QUESTION_BANK = [
     text: "What is the difference between a marketing campaign and a promotion? Give an example of each.",
     thinkingTimeSec: 0,
     corePoints: [
-      "Campaign: Long-term strategic goal (brand awareness, positioning, multi-channel).",
-      "Promotion: Short-term tactical incentive designed to stimulate immediate sales (discounts, buy-one-get-one).",
+      "Campaign: Strategic, sustained brand objective across multiple touchpoints.",
+      "Promotion: Tactical, short-term commercial incentive to drive immediate volume.",
       "Example: Dove Real Beauty (Campaign) vs. 20% off shampoo this weekend (Promotion)."
     ],
-    idealModelAnswer: "A marketing campaign is a broader, long-term strategic initiative designed to achieve specific brand objectives—such as launching Dove's Real Beauty campaign across TV and digital. In contrast, a promotion is a short-term tactical incentive aimed at immediate conversion, such as offering a 20% weekend discount on Dove products."
+    idealModelAnswer: "A marketing campaign is a broader, long-term strategic initiative designed to achieve specific brand objectives—such as Dove's Real Beauty campaign across digital and TV. In contrast, a promotion is a short-term tactical incentive aimed at immediate conversion, such as offering a 20% weekend discount on products."
   },
   {
     field: "Marketing",
@@ -351,11 +467,11 @@ const QUESTION_BANK = [
     text: "Which metrics would you track to tell whether a social media post worked?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Engagement rate (shares, comments, saves) over vanity metrics like impressions.",
-      "Click-through rate (CTR) to website/landing page.",
-      "Conversion rate or qualified leads generated."
+      "Engagement rate (saves, shares, comments) over passive vanity impressions.",
+      "Click-through rate (CTR) to landing page.",
+      "Conversion or qualified lead generation."
     ],
-    idealModelAnswer: "I evaluate performance based on the post's core objective. If the goal is brand resonance, I prioritize saves, meaningful comments, and shares over passive impressions. If the goal is conversion, I track link clicks, click-through rate (CTR), and actual landing page conversions."
+    idealModelAnswer: "I evaluate performance based on the specific post objective. For brand resonance, I prioritize saves, meaningful comments, and shares over passive impressions. For commercial conversion, I track outbound link clicks, click-through rate (CTR), and landing page conversions."
   },
   {
     field: "Marketing",
@@ -364,11 +480,11 @@ const QUESTION_BANK = [
     text: "What is a target audience, and how would you describe one for a new product?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Target audience: specific group of consumers most likely to need and purchase your offering.",
+      "Target audience: specific consumer segment most inclined to adopt the product.",
       "Segmentation criteria: Demographics (age, income), Psychographics (lifestyle, values), Behaviors.",
-      "Pain point identification that the product directly solves."
+      "Direct alignment with the product's core value proposition."
     ],
-    idealModelAnswer: "A target audience is the defined segment of consumers most likely to buy your product. For a new offering, I define them through three lenses: demographics (age, income bracket), psychographics (their daily lifestyle, core values), and behavioral pain points—specifically identifying what obstacle they face that our product uniquely solves."
+    idealModelAnswer: "A target audience is the defined group of consumers most likely to purchase your product. For a new offering, I define them through three lenses: demographics (age, income), psychographics (lifestyle, core values), and behavioral pain points—specifically identifying the friction they experience that our product uniquely solves."
   },
   {
     field: "Marketing",
@@ -377,11 +493,11 @@ const QUESTION_BANK = [
     text: "What is the difference between organic and paid reach?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Organic reach: Unpaid visibility achieved naturally via algorithm, search, and audience sharing.",
-      "Paid reach: Guaranteed ad impressions funded by marketing spend.",
-      "Longevity vs. immediate velocity trade-off."
+      "Organic reach: Unpaid visibility achieved naturally via algorithmic relevance and audience sharing.",
+      "Paid reach: Guaranteed ad impressions funded by media spend.",
+      "Long-term equity vs. immediate targeted speed."
     ],
-    idealModelAnswer: "Organic reach is the audience you reach naturally without ad spend, driven by content quality, search rankings, and word-of-mouth. Paid reach is visibility you purchase through sponsored ads or pay-per-click. Organic builds long-term compounding credibility, while paid delivers immediate, targeted velocity."
+    idealModelAnswer: "Organic reach is the audience you reach naturally without ad spend, driven by content quality, search rankings, and peer sharing. Paid reach is visibility purchased through sponsored ads or pay-per-click. Organic builds long-term compounding credibility, while paid delivers immediate, targeted velocity."
   },
   {
     field: "Marketing",
@@ -390,11 +506,11 @@ const QUESTION_BANK = [
     text: "If a brand’s Instagram followers grow but sales don’t, what would you check first?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Audience-product alignment (are followers the actual buyer demographic?).",
-      "Friction in customer journey: link-in-bio UX, landing page speed, checkout drop-off.",
-      "Offer clarity: is the content purely entertaining without clear commercial calls-to-action?"
+      "Audience-buyer alignment (are followers qualified buyers or vanity consumers?).",
+      "Conversion funnel friction (link-in-bio UX, landing page speed, checkout drop-off).",
+      "Call-to-action clarity (entertainment content vs. clear purchase proposition)."
     ],
-    idealModelAnswer: "First, I would verify audience quality to confirm followers match our target buyer persona rather than vanity engagement. Second, I would audit the conversion funnel—inspecting bio link clicks, landing page loading speeds, checkout drop-off rates, and checking whether our content actually presents a clear call-to-action."
+    idealModelAnswer: "First, I audit follower quality to confirm our new followers match our target buyer profile rather than vanity engagement. Second, I inspect the conversion funnel—evaluating bio link clicks, landing page loading speeds, checkout drop-off rates, and checking whether our content actually presents a clear commercial call-to-action."
   },
 
   // Experienced (2+ years)
@@ -405,12 +521,12 @@ const QUESTION_BANK = [
     text: "Tell me about a campaign you planned. How did you decide the budget, audience, and channels, and what was the result?",
     thinkingTimeSec: 10,
     corePoints: [
-      "Budget methodology: objective-and-task method based on target CPA and expected customer LTV.",
-      "Audience persona definition and segmentation.",
-      "Channel allocation justified by audience consumption habits.",
-      "Quantifiable business outcome (CAC, ROAS, revenue generated)."
+      "Objective-and-task budget modeling based on target CAC and customer LTV.",
+      "Audience segmentation based on purchase intent.",
+      "Channel allocation justified by audience consumption patterns.",
+      "Quantifiable commercial outcome (ROAS, CPA reduction, pipeline revenue)."
     ],
-    idealModelAnswer: "In a previous product launch, I determined budget using the objective-and-task method, calculating our target customer acquisition cost against lifetime value. We focused on young working professionals across LinkedIn and Google Search because purchase intent was highest there. The campaign lowered our blended CAC by 22% and achieved a 3.4x return on ad spend."
+    idealModelAnswer: "In a previous campaign, I determined the budget using the objective-and-task method, calculating our target customer acquisition cost against customer lifetime value. We concentrated spend on Google Search and LinkedIn where commercial intent was highest. The campaign lowered our blended CAC by 22% and achieved a 3.4x return on ad spend."
   },
   {
     field: "Marketing",
@@ -419,11 +535,11 @@ const QUESTION_BANK = [
     text: "How would you decide whether to spend more on paid ads or on content and SEO for a product that is already selling?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Analyze current Paid CAC vs. Organic acquisition cost.",
-      "Evaluate market saturation and margin headroom.",
-      "Blended strategy: use paid for quick testing and scale, invest in SEO/content to lower blended CAC over time."
+      "Evaluate current paid CAC vs organic acquisition baseline.",
+      "Assess market saturation and margin contribution.",
+      "Deploy paid for immediate scaling while allocating 25-30% into SEO to permanently lower blended CAC."
     ],
-    idealModelAnswer: "I assess our customer acquisition payback period and current organic footprint. If the product has healthy unit economics and immediate capacity to scale, paid ads capture immediate market demand. However, to defend margins and prevent paid-ad fatigue, I allocate a steady 25-30% of spend into SEO and evergreen content to permanently reduce blended acquisition costs."
+    idealModelAnswer: "I evaluate our customer acquisition payback period and current organic search share. If unit economics are healthy and immediate scale is demanded, paid ads capture available market demand quickly. However, to defend gross margins against ad inflation, I allocate a consistent 25% of budget into SEO and content to permanently lower our blended CAC."
   },
   {
     field: "Marketing",
@@ -432,11 +548,11 @@ const QUESTION_BANK = [
     text: "How do you judge whether a brand’s messaging is working in a market that is changing quickly?",
     thinkingTimeSec: 10,
     corePoints: [
-      "Customer sentiment and inbound feedback shifts.",
-      "Conversion velocity and sales cycle duration.",
-      "A/B testing message value propositions across agile digital channels."
+      "Frontline sales feedback and customer sentiment shifts.",
+      "Conversion velocity and sales cycle duration changes.",
+      "Rapid A/B testing of messaging value propositions across agile digital channels."
     ],
-    idealModelAnswer: "I look at qualitative feedback from frontline sales and customer support alongside quantitative conversion velocity. When messaging stops resonating in a fast-moving market, conversion rates stall and sales cycles lengthen. I deploy weekly A/B ad copy tests to rapidly benchmark which pain points resonate with current market realities."
+    idealModelAnswer: "I track frontline sales feedback alongside conversion velocity. When messaging disconnects from a changing market, conversion rates stall and sales cycles lengthen. I deploy weekly A/B ad copy tests to rapidly benchmark which pain points resonate with current market realities."
   },
   {
     field: "Marketing",
@@ -445,11 +561,11 @@ const QUESTION_BANK = [
     text: "Describe how you would launch a product in a new city where the brand is unknown.",
     thinkingTimeSec: 0,
     corePoints: [
-      "Hyper-local market research and competitor benchmarking.",
+      "Hyper-local research and competitor positioning benchmarking.",
       "High-trust local partnerships, micro-influencers, and on-ground activations.",
-      "Localized performance marketing with tailored regional messaging."
+      "Geo-targeted digital performance marketing with localized messaging."
     ],
-    idealModelAnswer: "I execute a phased market-entry plan: First, identify local cultural nuances and partner with trusted local businesses and campus groups for initial credibility. Second, activate localized geo-targeted digital ads offering an exclusive trial. Third, incentivize early adopters with referral bonuses to build grassroots word-of-mouth."
+    idealModelAnswer: "I execute a phased market-entry plan: First, partner with respected local businesses and community groups for immediate credibility. Second, activate geo-targeted digital ads offering an exclusive trial. Third, incentivize early adopters with referral bonuses to build grassroots word-of-mouth."
   },
   {
     field: "Marketing",
@@ -458,11 +574,11 @@ const QUESTION_BANK = [
     text: "A campaign’s cost per lead has doubled over three weeks. What would you do?",
     thinkingTimeSec: 10,
     corePoints: [
-      "Diagnose ad fatigue: frequency metrics, CTR drop, audience saturation.",
-      "Review creative and audience overlap.",
-      "Audit post-click funnel: landing page issues or form tracking errors."
+      "Diagnose ad creative fatigue (rising frequency, declining CTR).",
+      "Check audience saturation and ad-set overlap.",
+      "Audit landing page technical health and attribution tracking."
     ],
-    idealModelAnswer: "I run a rapid diagnosis across three areas: First, check ad frequency—if frequency is high and CTR has dropped, we are facing ad fatigue, requiring fresh creative hooks. Second, verify audience overlap across ad sets. Third, audit the landing page for technical glitches or tracking errors that could be inflating reported CPL."
+    idealModelAnswer: "I run a rapid diagnosis across three areas: First, check ad frequency—if frequency is climbing and CTR is falling, the audience has creative fatigue and needs fresh angles. Second, verify audience overlap across ad sets. Third, audit the landing page for tracking errors or technical glitches inflating reported CPL."
   },
 
   // ================= FINANCE =================
@@ -474,11 +590,11 @@ const QUESTION_BANK = [
     text: "What is the difference between profit and cash flow, and why can a profitable business still run out of money?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Profit: Accrual accounting calculation (Revenue - Expenses).",
-      "Cash Flow: Actual physical cash moving in and out of bank accounts.",
-      "Reason: Cash locked in unpaid receivables, excessive inventory, or debt obligations."
+      "Profit: Accrual accounting calculation (Revenues recognized minus Expenses incurred).",
+      "Cash Flow: Actual liquid funds moving in and out of bank accounts.",
+      "Reason: Cash tied up in customer receivables, unsold inventory, or debt obligations."
     ],
-    idealModelAnswer: "Profit is an accounting figure calculated on an accrual basis where revenue is recorded when billed, not collected. Cash flow tracks the physical money entering and leaving bank accounts. A profitable company can run out of cash if clients take 90 days to pay while bills and payroll are due immediately."
+    idealModelAnswer: "Profit is an accounting metric calculated on an accrual basis where revenue is recorded when billed, not collected. Cash flow tracks the physical money entering and leaving bank accounts. A profitable company can run out of cash if clients take 90 days to pay while bills and payroll are due immediately."
   },
   {
     field: "Finance",
@@ -487,11 +603,11 @@ const QUESTION_BANK = [
     text: "What does a balance sheet show, and what are its three main parts?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Snapshot of financial position at a specific point in time.",
-      "Three core pillars: Assets, Liabilities, and Equity.",
-      "Fundamental equation: Assets = Liabilities + Equity."
+      "Financial snapshot of a company's financial condition at a specific date.",
+      "Three pillars: Assets, Liabilities, and Shareholders' Equity.",
+      "Governing identity: Assets = Liabilities + Equity."
     ],
-    idealModelAnswer: "A balance sheet presents a financial snapshot of a business at a specific point in time. Its three core parts are: Assets (what the business owns), Liabilities (what it owes to creditors), and Equity (the residual interest belonging to shareholders), governed by the rule Assets equal Liabilities plus Equity."
+    idealModelAnswer: "A balance sheet presents a financial snapshot of a business at a specific point in time. Its three core parts are: Assets (what the company owns), Liabilities (what it owes to creditors), and Equity (the residual interest belonging to shareholders), governed by the rule Assets equal Liabilities plus Equity."
   },
   {
     field: "Finance",
@@ -500,9 +616,9 @@ const QUESTION_BANK = [
     text: "What is the difference between a debit and a credit?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Debit: Increases assets and expenses; decreases liabilities, equity, and revenues.",
-      "Credit: Increases liabilities, equity, and revenues; decreases assets and expenses.",
-      "Dual-aspect convention maintaining balance in double-entry bookkeeping."
+      "Debit: Increases asset and expense accounts; decreases liability, equity, and revenue accounts.",
+      "Credit: Increases liability, equity, and revenue accounts; decreases asset and expense accounts.",
+      "Double-entry bookkeeping convention maintaining systemic balance."
     ],
     idealModelAnswer: "In double-entry bookkeeping, debits and credits represent opposing financial entries. A debit increases asset and expense accounts while decreasing liabilities and equity. A credit increases liability, equity, and revenue accounts while decreasing assets. Every transaction requires equal debits and credits."
   },
@@ -513,11 +629,11 @@ const QUESTION_BANK = [
     text: "What is the difference between fixed costs and variable costs? Give one example of each.",
     thinkingTimeSec: 10,
     corePoints: [
-      "Fixed costs: Do not vary with production or sales volume (e.g., office rent, base salaries).",
+      "Fixed costs: Remain constant regardless of output volume (e.g., rent, baseline executive salaries).",
       "Variable costs: Change in direct proportion to production volume (e.g., raw materials, packaging).",
-      "Impact on operating leverage and breakeven point."
+      "Significance for operating leverage and breakeven volume."
     ],
-    idealModelAnswer: "Fixed costs remain constant regardless of production volume, such as factory rent or monthly software subscriptions. Variable costs fluctuate directly with production output, such as packaging materials or direct raw material costs needed to produce each individual unit."
+    idealModelAnswer: "Fixed costs remain constant regardless of production volume, such as factory rent or monthly software subscriptions. Variable costs fluctuate directly with production output, such as packaging materials or raw materials needed to produce each individual unit."
   },
   {
     field: "Finance",
@@ -526,9 +642,9 @@ const QUESTION_BANK = [
     text: "What is working capital, and why does it matter to a business?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Definition: Current Assets minus Current Liabilities.",
-      "Measures short-term operational liquidity and ability to fund day-to-day operations.",
-      "Protects against supplier payment defaults and operational stalls."
+      "Formula: Current Assets minus Current Liabilities.",
+      "Measures short-term operational liquidity and solvency.",
+      "Safeguards against supplier defaults and operational halts."
     ],
     idealModelAnswer: "Working capital is calculated as Current Assets minus Current Liabilities. It is vital because it measures a company's immediate operational health and ability to meet short-term obligations like supplier bills and payroll without needing emergency external borrowing."
   },
@@ -541,9 +657,9 @@ const QUESTION_BANK = [
     text: "A department is 15 percent over budget halfway through the year. What steps would you take to find the cause and bring spending back on track?",
     thinkingTimeSec: 10,
     corePoints: [
-      "Variance analysis line-by-line against budgeted line items.",
-      "Distinguish one-off non-recurring shocks from chronic recurring overages.",
-      "Implement corrective spend controls, hiring freezes, or re-budgeting."
+      "Line-by-line budget variance analysis.",
+      "Distinguish one-off non-recurring shocks from ongoing structural cost creep.",
+      "Enforce spending controls, discretionary freezes, or revised run-rates."
     ],
     idealModelAnswer: "First, I conduct a detailed variance analysis across every line item to identify whether the overrun is driven by a one-time non-recurring cost or structural operational creep. Second, meet with the department head to freeze non-essential discretionary expenses and establish weekly spending checkpoints to recover the variance over the remaining quarters."
   },
@@ -554,9 +670,9 @@ const QUESTION_BANK = [
     text: "How would you build a monthly cash flow forecast for a small business, and what would you watch most closely?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Direct cash forecasting method: Cash Inflows minus Cash Outflows over 12 months.",
-      "Accounts receivable aging schedule and customer payment delays.",
-      "Monitor minimum required operating cash balance closely."
+      "Direct forecasting modeling: Cash collections vs. cash disbursements over 12 months.",
+      "Accounts receivable aging analysis and real collection lag.",
+      "Minimum required operational cash buffer."
     ],
     idealModelAnswer: "I build a direct cash forecast modeling collections based on historical aging schedules rather than billed invoices, mapped against scheduled outflows including payroll, vendor contracts, taxes, and debt. I watch the minimum operating cash threshold and receivables collection lag most closely to avoid cash flow crunches."
   },
@@ -568,8 +684,8 @@ const QUESTION_BANK = [
     thinkingTimeSec: 10,
     corePoints: [
       "Price vs. Volume vs. Cost analysis (Cost of Goods Sold breakdown).",
-      "Raw material price inflation, direct labor increases, or freight surges.",
-      "Unplanned sales discounting or unfavorable product mix shift."
+      "Raw material price inflation, direct labor cost increases, or freight shocks.",
+      "Unauthorized sales discounting or product mix shift."
     ],
     idealModelAnswer: "I isolate whether the drop was caused by revenue dilution or cost inflation. I review our pricing realizations to see if sales teams gave unauthorized discounts, then audit COGS line-by-line for raw material price surges, rising direct labor, or unfavorable product mix changes toward lower-margin lines."
   },
@@ -580,9 +696,9 @@ const QUESTION_BANK = [
     text: "How would you decide whether a new piece of equipment is worth buying?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Capital budgeting: Net Present Value (NPV) and Internal Rate of Return (IRR).",
-      "Payback period and cash flow impact.",
-      "Total cost of ownership including maintenance, training, and operational risk."
+      "Capital budgeting: Net Present Value (NPV), Internal Rate of Return (IRR), Payback Period.",
+      "Total Cost of Ownership (maintenance, power, training, depreciation).",
+      "Impact on working capital and liquidity risk."
     ],
     idealModelAnswer: "I evaluate the capital investment using Net Present Value (NPV) and Internal Rate of Return (IRR) discounted at our cost of capital. In addition to financial metrics, I assess total cost of ownership—including maintenance, training, and efficiency gains—and ensure the payback period matches our cash liquidity tolerances."
   },
@@ -593,9 +709,9 @@ const QUESTION_BANK = [
     text: "Tell me about a time you found an error in financial figures. How did you find it and what did you do?",
     thinkingTimeSec: 10,
     corePoints: [
-      "Discovery via reconciliation, trend discrepancy, or sanity checks.",
-      "Root cause investigation and corrective ledger adjustments.",
-      "Instituting internal controls to prevent recurrence."
+      "Detection via reconciliation, sanity check, or variance analysis.",
+      "Root cause investigation and corrective ledger posting.",
+      "Control implementation to prevent recurrence."
     ],
     idealModelAnswer: "During a monthly bank reconciliation, I noticed an unexpected variance between billed receivables and cash ledgers. I traced the transaction back to an inverted journal entry that misallocated a vendor refund. I corrected the entry, documented the adjustment for our auditor, and introduced a standardized verification checklist."
   },
@@ -609,9 +725,9 @@ const QUESTION_BANK = [
     text: "What is the difference between recruitment and selection?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Recruitment: Positive process of discovering, attracting, and building a candidate talent pool.",
-      "Selection: Negative screening process of evaluating, filtering, and choosing the right candidate.",
-      "Recruitment expands choices; selection filters down to the final hire."
+      "Recruitment: Positive talent attraction and pool building.",
+      "Selection: Rigorous filtering, evaluation, and elimination process.",
+      "Recruitment creates candidate supply; selection chooses the final hire."
     ],
     idealModelAnswer: "Recruitment is the positive process of advertising, sourcing, and attracting a large pool of candidates to apply for an opening. Selection is the rigorous screening process of interviewing, testing, and filtering that pool down to choose the best-suited individual for the role."
   },
@@ -622,9 +738,9 @@ const QUESTION_BANK = [
     text: "How would you handle a new employee who is struggling to keep up with the team in the first month?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Empathetic check-in to diagnose skill gaps vs. process confusion.",
-      "Assign a senior peer mentor and establish weekly milestone clarity.",
-      "Structured 30-day coaching plan before punitive action."
+      "Empathetic check-in to diagnose skill gaps vs. process ambiguity.",
+      "Peer mentor pairing and bite-sized weekly goal setting.",
+      "Constructive 30-day coaching roadmap before escalation."
     ],
     idealModelAnswer: "I would schedule an informal, supportive check-in to understand whether their struggle stems from training gaps, unclear expectations, or tooling friction. I would pair them with an experienced peer buddy, set bite-sized weekly milestones, and review their progress constructively at the end of each week."
   },
@@ -636,8 +752,8 @@ const QUESTION_BANK = [
     thinkingTimeSec: 0,
     corePoints: [
       "Reduces initial anxiety and accelerates time-to-productivity.",
-      "Covers company culture, operational tools, role expectations, and compliance.",
-      "Significantly improves 90-day retention rates."
+      "Covers culture, tools, compliance, and role expectations.",
+      "Direct correlation with 90-day retention rates."
     ],
     idealModelAnswer: "An onboarding program accelerates new hire time-to-productivity and directly drives first-year retention. It should cover company culture and values, IT and workflow systems, clear role responsibilities, compliance policies, and introduce key cross-functional team members."
   },
@@ -648,9 +764,9 @@ const QUESTION_BANK = [
     text: "What makes an interview question fair and legal to ask?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Direct job-relatedness and bona fide occupational qualifications (BFOQ).",
-      "Strict avoidance of personal inquiries (age, marital status, religion, caste, family planning).",
-      "Standardized scoring rubric applied uniformly to all applicants."
+      "Direct job-relatedness and bona fide occupational qualifications.",
+      "Strict avoidance of personal characteristics (religion, marital status, caste, family planning).",
+      "Standardized evaluation rubric applied uniformly to all candidates."
     ],
     idealModelAnswer: "A fair interview question is directly related to the candidate's ability to perform essential job duties. It strictly avoids personal inquiries into religion, marital status, gender, family planning, or caste, and is asked consistently to all applicants using a standardized evaluation rubric."
   },
@@ -661,9 +777,9 @@ const QUESTION_BANK = [
     text: "What is the difference between an employee’s job description and their key performance indicators?",
     thinkingTimeSec: 10,
     corePoints: [
-      "Job Description (JD): Qualitative outline of ongoing responsibilities, scope, and qualifications.",
-      "KPIs: Quantifiable, time-bound metrics evaluating success in that scope.",
-      "JD defines what you do; KPIs measure how well you achieve goals."
+      "Job Description (JD): Qualitative scope of ongoing duties, responsibilities, and qualifications.",
+      "KPIs: Quantitative, time-bound targets measuring execution success.",
+      "JD outlines what you do; KPIs measure how effectively you achieve results."
     ],
     idealModelAnswer: "A job description outlines the qualitative scope, duties, and responsibilities of a role—explaining what the employee is responsible for. Key Performance Indicators (KPIs) are the specific, measurable, time-bound targets that assess how successfully the employee is executing that work."
   },
@@ -677,7 +793,7 @@ const QUESTION_BANK = [
     thinkingTimeSec: 0,
     corePoints: [
       "Neutrality and individual active listening.",
-      "Joint mediation focusing on objective workflow impact rather than personalities.",
+      "Joint mediation focusing on workflow impact rather than personal friction.",
       "Establishing agreed ground rules and follow-up accountability."
     ],
     idealModelAnswer: "When two team members reached an impasse over project deliverables, I met with each individually to hear their concerns without taking sides. I then facilitated a joint session focused exclusively on shared project milestones, established clear ownership of tasks, and conducted check-ins to ensure collaborative alignment."
@@ -689,9 +805,9 @@ const QUESTION_BANK = [
     text: "How would you reduce employee turnover in a team where people leave after about a year?",
     thinkingTimeSec: 10,
     corePoints: [
-      "Conduct rigorous exit interview thematic analysis to identify root causes.",
-      "Evaluate manager effectiveness, career progression pathing, and compensation benchmarks.",
-      "Implement stay interviews and structured internal advancement ladders."
+      "Rigorous exit and stay interview analysis to isolate root causes.",
+      "Evaluate managerial effectiveness, career progression pathways, and compensation parity.",
+      "Establish visible internal mobility and growth milestones."
     ],
     idealModelAnswer: "I conduct a root-cause diagnostic by analyzing exit interview trends and conducting stay interviews with current team members. A 12-month turnover spike usually signals a lack of career progression or managerial friction. I establish clear internal growth milestones and implement regular manager feedback loops."
   },
@@ -702,9 +818,9 @@ const QUESTION_BANK = [
     text: "How do you run a performance review that is fair and useful to the employee?",
     thinkingTimeSec: 0,
     corePoints: [
-      "No surprises: continuous feedback throughout the year.",
-      "Data-backed assessment tied to agreed KPIs, not subjective perceptions.",
-      "Forward-looking development plan with actionable coaching."
+      "No surprises: continuous feedback delivered throughout the appraisal cycle.",
+      "Data-backed evaluation tied to agreed KPIs, not subjective impressions.",
+      "Forward-looking career development and coaching focus."
     ],
     idealModelAnswer: "A fair review should hold zero surprises. It should evaluate clear, documented evidence against agreed-upon KPIs rather than personal impressions. I structure the conversation 30% on past results and 70% on forward-looking professional development and actionable career goals."
   },
@@ -715,8 +831,8 @@ const QUESTION_BANK = [
     text: "How would you handle an employee who is performing well but is disruptive to the team?",
     thinkingTimeSec: 0,
     corePoints: [
-      "Do not tolerate toxic behavior for technical performance.",
-      "Direct private feedback citing specific disruptive behaviors and team impact.",
+      "Never excuse toxic behavior for technical performance.",
+      "Direct private feedback citing specific behaviors and team impact.",
       "Set measurable behavioral standards alongside performance metrics."
     ],
     idealModelAnswer: "High performance never excuses toxic behavior. I hold a private, direct conversation highlighting their strong work while showing specific examples of how their conduct impacts team morale and productivity. I set clear, measurable expectations for professional behavior, making it clear that culture fit is an equal requirement for success."
@@ -728,9 +844,9 @@ const QUESTION_BANK = [
     text: "A company is planning to cut 10 percent of its staff. How would you plan and communicate it?",
     thinkingTimeSec: 10,
     corePoints: [
-      "Objective, non-discriminatory criteria for workforce reduction.",
-      "Transparent, empathetic leadership communication without corporate evasion.",
-      "Comprehensive transition support (severance, healthcare, outplacement assistance)."
+      "Objective, role-based criteria vetted against bias.",
+      "Transparent, empathetic leadership communication delivered simultaneously.",
+      "Comprehensive transition support (severance, healthcare, outplacement)."
     ],
     idealModelAnswer: "I would ensure selection criteria are strictly objective, role-based, and legally vetted to eliminate bias. Communication must be transparent, empathetic, and delivered directly by senior leadership on the same day. For impacted employees, we provide clear transition packages and outplacement assistance, while immediately holding an all-hands meeting to reassure and refocus retained staff."
   }
@@ -744,10 +860,16 @@ let currentQuestionTranscript = "";
 let sessionResults = [];
 let selectedVoice = null;
 let recognition = null;
-let isListening = false;
-let countdownTimer = null;
+let isRecognitionActive = false;
+let countdownInterval = null;
 
-// SPEECH ENGINE SETUP
+// HARDWARE AUDIO PIPELINE
+let audioCtx = null;
+let analyser = null;
+let micStream = null;
+let animFrameId = null;
+
+// SPEECH SYNTHESIS ENGINE
 function initVoices() {
   const voiceSelect = document.getElementById("select-voice");
   const voices = window.speechSynthesis.getVoices();
@@ -801,7 +923,6 @@ document.getElementById("btn-proceed-to-mic").addEventListener("click", () => {
   const voiceName = document.getElementById("select-voice").value;
   selectedVoice = window.speechSynthesis.getVoices().find(v => v.name === voiceName) || null;
 
-  // Filter exact questions
   let pool = QUESTION_BANK.filter(q => q.field === chosenField && q.level === chosenLevel);
   sessionQuestions = pool.slice(0, chosenCount);
 
@@ -814,15 +935,49 @@ document.getElementById("btn-back-to-setup").addEventListener("click", () => {
   document.getElementById("screen-setup").classList.remove("hidden");
 });
 
-// PRE-FLIGHT MIC CHECK TESTER
-document.getElementById("btn-run-mic-test").addEventListener("click", () => {
+// HARDWARE MIC VERIFICATION
+document.getElementById("btn-run-mic-test").addEventListener("click", async () => {
   const micOutput = document.getElementById("mic-test-output");
   const proceedBtn = document.getElementById("btn-mic-ok-proceed");
   const runBtn = document.getElementById("btn-run-mic-test");
 
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    const source = audioCtx.createMediaStreamSource(micStream);
+    source.connect(analyser);
+
+    // Run hardware audio visualizer loop
+    const testFill = document.getElementById("test-audio-fill");
+    const testLabel = document.getElementById("test-volume-label");
+    const liveFill = document.getElementById("live-audio-fill");
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    function trackAudio() {
+      analyser.getByteFrequencyData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+      const volume = Math.min(100, Math.round((sum / dataArray.length) * 2.2));
+
+      if (testFill) testFill.style.width = volume + "%";
+      if (testLabel) testLabel.textContent = volume + "%";
+      if (liveFill) liveFill.style.width = volume + "%";
+
+      animFrameId = requestAnimationFrame(trackAudio);
+    }
+    trackAudio();
+
+  } catch (err) {
+    micOutput.innerHTML = `<span style="color: var(--danger-red);">Microphone Access Blocked: ${err.message}. Please enable microphone permissions in your browser.</span>`;
+    return;
+  }
+
+  // Initialize Speech Recognition
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRec) {
-    micOutput.innerHTML = `<span style="color: var(--danger-red);">Speech recognition is not supported in this browser. Please use Google Chrome.</span>`;
+    micOutput.innerHTML = `<span style="color: var(--danger-red);">Speech recognition engine not supported. Please use Google Chrome.</span>`;
     return;
   }
 
@@ -831,25 +986,21 @@ document.getElementById("btn-run-mic-test").addEventListener("click", () => {
   testRec.interimResults = true;
   testRec.lang = 'en-IN';
 
-  micOutput.innerHTML = `<span style="color: var(--accent-teal);">Listening... Speak now.</span>`;
+  micOutput.innerHTML = `<span style="color: var(--accent-teal);">Microphone connected. Speak now...</span>`;
   runBtn.disabled = true;
 
   testRec.onresult = (e) => {
     let spoken = "";
     for (let i = 0; i < e.results.length; i++) spoken += e.results[i].transcript;
-    micOutput.innerHTML = `<strong>Heard:</strong> "${spoken}"`;
+    micOutput.innerHTML = `<strong>Hardware Heard:</strong> "${spoken}"`;
     if (spoken.trim().length > 2) {
       proceedBtn.classList.remove("hidden");
-      runBtn.textContent = "Test Passed";
+      runBtn.textContent = "Hardware Verified ✓";
     }
   };
 
   testRec.onerror = (err) => {
-    micOutput.innerHTML = `<span style="color: var(--danger-red);">Microphone Error: ${err.error}. Ensure microphone access is allowed in your browser settings.</span>`;
-    runBtn.disabled = false;
-  };
-
-  testRec.onend = () => {
+    micOutput.innerHTML = `<span style="color: var(--danger-red);">Recognition Note: ${err.error}. Ensure microphone is selected.</span>`;
     runBtn.disabled = false;
   };
 
@@ -868,78 +1019,77 @@ function loadCurrentQuestion() {
   const qData = sessionQuestions[currentQIndex];
   currentQuestionTranscript = "";
   answerStartTime = null;
-  if (countdownTimer) clearInterval(countdownTimer);
+  if (countdownInterval) clearInterval(countdownInterval);
 
+  // Update Header & Badge
   document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length}`;
   document.getElementById("provenance-badge-container").innerHTML = `<span>${qData.author}</span>`;
   document.getElementById("spoken-question-text").textContent = qData.text;
 
-  const thinkingLabel = document.getElementById("thinking-text-label");
-  document.getElementById("thinking-state-box").classList.remove("hidden");
-  document.getElementById("btn-start-answering").classList.remove("hidden");
-  document.getElementById("answering-controls").classList.add("hidden");
-  setMicStatus("Standby", false);
-
-  // CONDITIONAL TIMER (NO SHRINKING RACING BAR)
+  // Timer Tag Display
+  const timerTag = document.getElementById("question-timer-tag");
   if (qData.thinkingTimeSec > 0) {
-    let timeLeft = qData.thinkingTimeSec;
-    thinkingLabel.innerHTML = `<strong>Thinking Window:</strong> <span id="countdown-val">${timeLeft}s remaining</span> (Take your time to structure your thoughts)`;
-
-    countdownTimer = setInterval(() => {
-      timeLeft--;
-      const valSpan = document.getElementById("countdown-val");
-      if (valSpan) valSpan.textContent = `${timeLeft}s remaining`;
-      if (timeLeft <= 0) {
-        clearInterval(countdownTimer);
-        thinkingLabel.innerHTML = `<strong>Ready to Speak:</strong> Click below to start recording your response.`;
-      }
-    }, 1000);
+    timerTag.textContent = `⏱ ${qData.thinkingTimeSec}s Thinking Window`;
+    timerTag.classList.remove("hidden");
   } else {
-    thinkingLabel.innerHTML = `<strong>Thinking Pause:</strong> Take your time to gather your thoughts. Click below when ready to speak.`;
+    timerTag.classList.add("hidden");
   }
+
+  const flowStatus = document.getElementById("flow-status-text");
+  const transcriptBox = document.getElementById("live-transcript");
+  flowStatus.textContent = "Interviewer speaking the question...";
+  transcriptBox.innerHTML = `<span style="color: var(--text-muted); font-style: italic;">Microphone standing by...</span>`;
+  setMicStatus("Interviewer Speaking...", false);
 
   // Speak Prompt
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(qData.text);
   if (selectedVoice) utter.voice = selectedVoice;
   utter.rate = 0.95;
+
+  utter.onend = () => {
+    // When question finishes reading aloud:
+    if (qData.thinkingTimeSec > 0) {
+      let secondsLeft = qData.thinkingTimeSec;
+      flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--accent-amber); font-weight:700;">${secondsLeft}s remaining</span> (Structure your thoughts)`;
+
+      countdownInterval = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft > 0) {
+          flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--accent-amber); font-weight:700;">${secondsLeft}s remaining</span> (Structure your thoughts)`;
+        } else {
+          clearInterval(countdownInterval);
+          flowStatus.innerHTML = `<strong>Microphone Active:</strong> Answering window open. Speak now.`;
+          startListeningAutomatically();
+        }
+      }, 1000);
+    } else {
+      flowStatus.innerHTML = `<strong>Microphone Active:</strong> Answering window open. Speak now.`;
+      startListeningAutomatically();
+    }
+  };
+
   window.speechSynthesis.speak(utter);
 }
 
-// CANDIDATE INITIATES ANSWERING
-document.getElementById("btn-start-answering").addEventListener("click", () => {
-  if (countdownTimer) clearInterval(countdownTimer);
-  window.speechSynthesis.cancel();
-
-  document.getElementById("thinking-state-box").classList.add("hidden");
-  document.getElementById("btn-start-answering").classList.add("hidden");
-  document.getElementById("answering-controls").classList.remove("hidden");
-
-  const transcriptBox = document.getElementById("live-transcript");
-  transcriptBox.innerHTML = `<span style="color: var(--text-muted); font-style: italic;">Microphone active. Speak your answer...</span>`;
-
-  startSpeechCapture();
-});
-
-function setMicStatus(label, isLive) {
-  document.getElementById("mic-status-label").textContent = label;
-  const dot = document.getElementById("mic-dot");
-  if (isLive) dot.classList.add("mic-live");
-  else dot.classList.remove("mic-live");
-}
-
-function startSpeechCapture() {
+// AUTOMATIC SPEECH ACTIVATION (NO "READY TO SPEAK" BUTTON!)
+function startListeningAutomatically() {
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRec) return;
+
+  if (recognition) {
+    try { recognition.abort(); } catch(e){}
+  }
 
   recognition = new SpeechRec();
   recognition.continuous = true;
   recognition.interimResults = true;
   recognition.lang = 'en-IN';
 
-  isListening = true;
+  isRecognitionActive = true;
   answerStartTime = Date.now();
-  setMicStatus("Recording", true);
+  setMicStatus("Recording Answer", true);
+  document.getElementById("live-transcript").textContent = "Listening to your response... speak naturally.";
 
   recognition.onresult = (event) => {
     let full = "";
@@ -951,12 +1101,12 @@ function startSpeechCapture() {
   };
 
   recognition.onerror = (e) => {
-    console.warn("Speech recognition notice:", e.error);
     if (e.error === "no-speech") setMicStatus("Listening...", true);
   };
 
   recognition.onend = () => {
-    if (isListening) {
+    // Auto-restart if candidate is still on this question
+    if (isRecognitionActive) {
       try { recognition.start(); } catch(err){}
     }
   };
@@ -964,22 +1114,31 @@ function startSpeechCapture() {
   try { recognition.start(); } catch(e){}
 }
 
-function stopSpeechCapture() {
-  isListening = false;
+function stopListening() {
+  isRecognitionActive = false;
   if (recognition) {
     try { recognition.stop(); } catch(e){}
   }
   setMicStatus("Standby", false);
 }
 
+function setMicStatus(label, isLive) {
+  document.getElementById("mic-status-label").textContent = label;
+  const dot = document.getElementById("mic-dot");
+  if (isLive) dot.classList.add("mic-live");
+  else dot.classList.remove("mic-live");
+}
+
 // FINISH ANSWER
 document.getElementById("btn-finish-answer").addEventListener("click", () => {
-  stopSpeechCapture();
+  stopListening();
+  if (countdownInterval) clearInterval(countdownInterval);
+
   const text = currentQuestionTranscript.trim();
   const words = text.split(/\s+/).filter(Boolean).length;
 
   if (words < 3) {
-    recordAnswer(text, true, "No substantial audio recorded.");
+    recordAnswer(text, true, "No substantial spoken audio recorded.");
   } else {
     recordAnswer(text, false, "");
   }
@@ -987,7 +1146,9 @@ document.getElementById("btn-finish-answer").addEventListener("click", () => {
 
 // PASS / I DON'T KNOW
 document.getElementById("btn-idk-skip").addEventListener("click", () => {
-  stopSpeechCapture();
+  stopListening();
+  if (countdownInterval) clearInterval(countdownInterval);
+
   const utter = new SpeechSynthesisUtterance("Understood. Let us proceed to the next question.");
   if (selectedVoice) utter.voice = selectedVoice;
   utter.rate = 1.0;
@@ -997,7 +1158,7 @@ document.getElementById("btn-idk-skip").addEventListener("click", () => {
 });
 
 function recordAnswer(transcript, wasSkipped, skipReason) {
-  const elapsedMin = answerStartTime ? (Date.now() - answerStartTime) / 60000 : 0.1;
+  const elapsedMin = answerStartTime ? (Date.now() - answerStartTime) / 60000 : 0.15;
   const wordCount = transcript.split(/\s+/).filter(Boolean).length;
   const wpm = wasSkipped ? 0 : Math.round(wordCount / Math.max(0.15, elapsedMin));
 
@@ -1022,7 +1183,7 @@ function recordAnswer(transcript, wasSkipped, skipReason) {
   }
 }
 
-// TRUTHFUL REPORT GENERATOR (ZERO HALLUCINATIONS)
+// EXECUTIVE DIAGNOSTIC DOSSIER (STRICTLY TRUTHFUL)
 function renderTruthfulReport() {
   document.getElementById("screen-interview").classList.add("hidden");
   document.getElementById("screen-report").classList.remove("hidden");
@@ -1030,23 +1191,41 @@ function renderTruthfulReport() {
   const answeredRounds = sessionResults.filter(r => !r.wasSkipped && r.wordCount >= 3);
   const passedRounds = sessionResults.filter(r => r.wasSkipped);
 
+  const avgWPM = answeredRounds.length > 0 ? Math.round(answeredRounds.reduce((acc, r) => acc + r.wpm, 0) / answeredRounds.length) : 0;
+  const totalFillers = answeredRounds.reduce((acc, r) => acc + r.fillers, 0);
+
+  // Update KPI Tiles
+  document.getElementById("kpi-wpm").textContent = avgWPM;
+  document.getElementById("kpi-fillers").textContent = totalFillers;
+  document.getElementById("kpi-completed").textContent = `${answeredRounds.length}/${sessionResults.length}`;
+
+  const kpiScore = document.getElementById("kpi-score");
+  if (answeredRounds.length === sessionResults.length && totalFillers <= 3) {
+    kpiScore.textContent = "Tier 1";
+    kpiScore.style.color = "var(--success-green)";
+  } else if (answeredRounds.length >= 1) {
+    kpiScore.textContent = "Tier 2";
+    kpiScore.style.color = "var(--primary-blue)";
+  } else {
+    kpiScore.textContent = "Incomplete";
+    kpiScore.style.color = "var(--danger-red)";
+  }
+
   // SUMMARY AUDIT
   const summaryBox = document.getElementById("report-summary-text");
   if (answeredRounds.length === 0) {
     summaryBox.innerHTML = `
-      <strong>Session Audit:</strong> You passed or provided no spoken answers across all ${sessionResults.length} prompts.
-      <br><br>Zero spoken telemetry was captured. Review the <strong>Executive Benchmarks</strong> below to study the core concepts and model answers for each prompt.
+      <strong>Session Audit:</strong> Candidate elected to pass or produced no spoken responses across all <strong>${sessionResults.length}</strong> prompts. 
+      <br><br>Zero spoken telemetry was recorded. The interview panel should conduct a foundational baseline screening on core domain terminology. Review the <strong>Executive Benchmarks</strong> below for study.
     `;
   } else {
-    const avgWPM = Math.round(answeredRounds.reduce((acc, r) => acc + r.wpm, 0) / answeredRounds.length);
-    const totalFillers = answeredRounds.reduce((acc, r) => acc + r.fillers, 0);
     summaryBox.innerHTML = `
       <strong>Session Audit:</strong> Completed <strong>${answeredRounds.length}</strong> answered rounds and <strong>${passedRounds.length}</strong> passed rounds.
-      <br>Average Spoken Cadence: <strong>${avgWPM} WPM</strong>. Total Verbal Fillers: <strong>${totalFillers}</strong>.
+      <br>Average Spoken Cadence: <strong>${avgWPM} WPM</strong> (Target: 120–150 WPM). Total Verbal Fillers: <strong>${totalFillers}</strong> recorded.
     `;
   }
 
-  // BUILD CANDIDATE BLUEPRINT (Strictly Truthful)
+  // CANDIDATE BLUEPRINT
   const candidateContainer = document.getElementById("candidate-questions-breakdown");
   candidateContainer.innerHTML = "";
 
@@ -1057,8 +1236,8 @@ function renderTruthfulReport() {
     let answerSection = "";
     if (r.wasSkipped) {
       answerSection = `
-        <div style="background-color: #FFF1F2; border: 1px solid #FECDD3; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 0.88rem; color: #9F1239;">
-          <strong>[ NO SPOKEN ANSWER RECORDED / QUESTION PASSED ]</strong><br>
+        <div style="background-color: var(--danger-bg); border: 1px solid #FECDD3; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 0.88rem; color: #9F1239;">
+          <strong>[ NO SPOKEN AUDIO RECORDED / CANDIDATE PASSED ]</strong><br>
           ${r.skipReason}
         </div>
       `;
@@ -1066,8 +1245,8 @@ function renderTruthfulReport() {
       answerSection = `
         <div style="background-color: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; margin-bottom: 12px;">
           <p style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Your Verbatim Response:</p>
-          <p style="font-size: 0.9rem; margin: 4px 0 8px; font-style: italic;">"${r.transcript}"</p>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Delivery Pace: <strong>${r.wpm} WPM</strong> | Filler Words: <strong>${r.fillers}</strong></p>
+          <p style="font-size: 0.92rem; margin: 4px 0 8px; font-style: italic; color: var(--text-main);">"${r.transcript}"</p>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Delivery Pace: <strong>${r.wpm} WPM</strong> | Verbal Fillers: <strong>${r.fillers}</strong></p>
         </div>
       `;
     }
@@ -1075,9 +1254,9 @@ function renderTruthfulReport() {
     const corePointsHtml = r.questionData.corePoints.map(pt => `<li>${pt}</li>`).join("");
 
     card.innerHTML = `
-      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-teal);">QUESTION ${idx + 1}</span>
-        <span style="font-size: 0.8rem; color: var(--text-muted);">${r.questionData.author}</span>
+        <span style="font-size: 0.8rem; font-weight: 600; color: var(--primary-blue);">${r.questionData.author}</span>
       </div>
       <p style="font-size: 1rem; font-weight: 600; margin-bottom: 12px;">${r.questionData.text}</p>
       
@@ -1087,13 +1266,13 @@ function renderTruthfulReport() {
         <p style="font-size: 0.8rem; font-weight: 700; color: var(--primary-navy); text-transform: uppercase; margin-bottom: 6px;">
           Executive Model Benchmark (What Recruiters Look For):
         </p>
-        <ul style="padding-left: 20px; font-size: 0.88rem; line-height: 1.45; color: var(--text-main); margin-bottom: 10px;">
+        <ul style="padding-left: 20px; font-size: 0.88rem; line-height: 1.5; color: var(--text-main); margin-bottom: 10px;">
           ${corePointsHtml}
         </ul>
         <p style="font-size: 0.8rem; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; margin-bottom: 4px;">
           Structured Model Answer:
         </p>
-        <p style="font-size: 0.88rem; line-height: 1.45; color: var(--text-main); background: #F0FDFA; border-left: 3px solid var(--accent-teal); padding: 8px 12px; border-radius: 4px;">
+        <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-main); background: #F0FDFA; border-left: 3px solid var(--accent-teal); padding: 8px 12px; border-radius: 4px;">
           "${r.questionData.idealModelAnswer}"
         </p>
       </div>
@@ -1101,7 +1280,7 @@ function renderTruthfulReport() {
     candidateContainer.appendChild(card);
   });
 
-  // BUILD EVALUATOR BRIEFING
+  // EVALUATOR DOSSIER
   const evalContainer = document.getElementById("evaluator-probes-breakdown");
   evalContainer.innerHTML = "";
 
@@ -1115,7 +1294,7 @@ function renderTruthfulReport() {
     evalTitle.textContent = "Selective Competency Demonstrated";
     evalSummary.textContent = "Candidate demonstrated verbal willingness on selected prompts but deferred on others. Panel should probe candidate's composure and problem-solving methodology when confronted with unfamiliar scenarios.";
   } else {
-    evalTitle.textContent = "Active Verbal Engagement";
+    evalTitle.textContent = "Active Verbal Engagement (Placement Ready)";
     evalSummary.textContent = "Candidate attempted all prompts with measurable spoken delivery. Recommended for Round 2 technical scrutiny.";
   }
 
@@ -1127,19 +1306,22 @@ function renderTruthfulReport() {
     if (r.wasSkipped) {
       probeHtml = `
         <p style="font-size: 0.88rem; color: #9F1239;">
-          <strong>Round-2 Strategy:</strong> Candidate passed this prompt. Interviewer should step back to the foundational principle: <em>"Can you explain the basic definition of this concept in everyday terms?"</em>
+          <strong>Round-2 Diagnostic Strategy:</strong> Candidate passed this prompt. Interviewer should step back to the foundational principle: <em>"Can you explain the basic definition of this concept in everyday terms?"</em>
         </p>
       `;
     } else {
       probeHtml = `
         <p style="font-size: 0.88rem; color: var(--primary-navy);">
-          <strong>Round-2 Pushback Probe:</strong> Candidate attempted the question (${r.wpm} WPM). Probe operational trade-offs: <em>"Walk me through the potential downside or risks associated with your proposed approach."</em>
+          <strong>Round-2 Socratic Pushback:</strong> Candidate attempted the question (${r.wpm} WPM). Probe operational trade-offs: <em>"Walk me through the potential downside or risks associated with your proposed approach."</em>
         </p>
       `;
     }
 
     card.innerHTML = `
-      <p style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">QUESTION ${idx + 1} PANEL PROBE</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">QUESTION ${idx + 1} PANEL PROBE</span>
+        <span style="font-size: 0.78rem; font-weight: 600; color: var(--primary-blue);">${r.questionData.author}</span>
+      </div>
       <p style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">${r.questionData.text}</p>
       ${probeHtml}
     `;
