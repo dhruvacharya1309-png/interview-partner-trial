@@ -192,11 +192,12 @@
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
       padding: 16px;
-      min-height: 85px;
+      min-height: 95px;
       font-size: 0.95rem;
       line-height: 1.5;
       color: var(--text-main);
       margin-bottom: 16px;
+      word-break: break-word;
     }
 
     .mic-indicator-dot {
@@ -312,7 +313,7 @@
   <div id="screen-setup" class="card">
     <h1>Executive Interview Practice</h1>
     <p style="color: var(--text-muted); font-size: 0.95rem; margin: 6px 0 24px;">
-      Campus Placement & Corporate Readiness Diagnostic with Context-Driven Follow-Ups
+      Placement Diagnostic with Context-Aware Pushback & Real-Time Telemetry
     </p>
 
     <label for="select-field">Interview Domain</label>
@@ -509,7 +510,6 @@ function normalizeSpokenText(text) {
 
 const QUESTION_BANK = [
   // ================= MARKETING =================
-  // Freshers
   {
     field: "Marketing",
     level: "Fresher",
@@ -665,7 +665,6 @@ const QUESTION_BANK = [
   },
 
   // ================= FINANCE =================
-  // Freshers
   {
     field: "Finance",
     level: "Fresher",
@@ -820,7 +819,6 @@ const QUESTION_BANK = [
   },
 
   // ================= HUMAN RESOURCES =================
-  // Freshers
   {
     field: "HR",
     level: "Fresher",
@@ -997,6 +995,7 @@ let audioContext = null;
 let analyserNode = null;
 let volumeCheckInterval = null;
 let speechRecognizer = null;
+let isRecognizerExplicitlyStopped = false;
 
 async function getOrInitMicrophone() {
   if (!activeStream) {
@@ -1068,7 +1067,7 @@ function initVoices() {
     voiceSelect.appendChild(opt);
   });
 
-  selectedVoice = displayList || voices;
+  selectedVoice = displayList[0] || voices[0];
 }
 
 window.speechSynthesis.onvoiceschanged = initVoices;
@@ -1120,14 +1119,14 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
 
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRec) {
-      micOutput.innerHTML = `<span style="color:var(--danger-red);">Speech recognition engine not supported. Please use Google Chrome.</span>`;
+      micOutput.innerHTML = `<span style="color:var(--danger-red);">Speech recognition engine not supported. Please open this page in Google Chrome.</span>`;
       return;
     }
 
     const testRec = new SpeechRec();
-    testRec.continuous = false;
+    testRec.continuous = true;
     testRec.interimResults = true;
-    testRec.lang = navigator.language || 'en-US';
+    testRec.lang = 'en-US';
 
     micOutput.innerHTML = `<span style="color:var(--accent-teal);">Listening... Speak now into your microphone.</span>`;
     runBtn.disabled = true;
@@ -1135,20 +1134,21 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
     testRec.onresult = (e) => {
       let spoken = "";
       for (let i = 0; i < e.results.length; i++) {
-        if (e.results[i] && e.results[i] && e.results[i].transcript) {
-          spoken += e.results[i].transcript + " ";
+        // FIXED INDEXING: e.results[i][0].transcript
+        if (e.results[i] && e.results[i][0] && e.results[i][0].transcript) {
+          spoken += e.results[i][0].transcript + " ";
         }
       }
       spoken = normalizeSpokenText(spoken.trim());
-      micOutput.innerHTML = `<strong>Transcribed Text:</strong> "${spoken}"`;
-      if (spoken.length > 2) {
+      if (spoken.length > 0) {
+        micOutput.innerHTML = `<strong>Transcribed Text:</strong> "${spoken}"`;
         proceedBtn.classList.remove("hidden");
         runBtn.textContent = "Verified ✓";
       }
     };
 
     testRec.onerror = (err) => {
-      micOutput.innerHTML = `<span style="color:var(--danger-red);">Error: ${err.error}. Check browser microphone permissions.</span>`;
+      micOutput.innerHTML = `<span style="color:var(--danger-red);">Recognition notice: ${err.error}. Check browser microphone permissions.</span>`;
       runBtn.disabled = false;
     };
 
@@ -1247,7 +1247,6 @@ function loadCurrentQuestion() {
 
 // INTELLIGENT GATING: DECIDE IF A SPONTANEOUS PUSHBACK IS GENUINELY WARRANTED
 function evaluateFollowUpNeed(transcript, qData, wasSkipped) {
-  // If the candidate passed, do NOT force an awkward follow-up
   if (wasSkipped) return { needed: false, reason: "Candidate elected to pass" };
 
   const words = transcript.trim().split(/\s+/).filter(Boolean).length;
@@ -1262,7 +1261,7 @@ function evaluateFollowUpNeed(transcript, qData, wasSkipped) {
     };
   }
 
-  // CASE 2: Vague / Partial / Superficial Answer (Probe the gap)
+  // CASE 2: Vague / Partial Answer (Probe the gap)
   if (words >= 4 && hitKeywords.length <= 2) {
     return {
       needed: true,
@@ -1313,6 +1312,8 @@ function triggerSocraticProbe(probeText, leadIn) {
 async function startVoiceRecording() {
   const stream = await getOrInitMicrophone();
   audioChunks = [];
+  isRecognizerExplicitlyStopped = false;
+
   if (inSocraticProbeMode) currentProbeTranscript = "";
   else currentQuestionTranscript = "";
 
@@ -1335,17 +1336,22 @@ async function startVoiceRecording() {
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRec) {
     try {
-      if (speechRecognizer) speechRecognizer.abort();
+      if (speechRecognizer) {
+        isRecognizerExplicitlyStopped = true;
+        speechRecognizer.abort();
+      }
+      isRecognizerExplicitlyStopped = false;
       speechRecognizer = new SpeechRec();
       speechRecognizer.continuous = true;
       speechRecognizer.interimResults = true;
-      speechRecognizer.lang = navigator.language || 'en-US';
+      speechRecognizer.lang = 'en-US';
 
       speechRecognizer.onresult = (event) => {
         let full = "";
         for (let i = 0; i < event.results.length; i++) {
-          if (event.results[i] && event.results[i] && event.results[i].transcript) {
-            full += event.results[i].transcript + " ";
+          // FIXED INDEXING: event.results[i][0].transcript
+          if (event.results[i] && event.results[i][0] && event.results[i][0].transcript) {
+            full += event.results[i][0].transcript + " ";
           }
         }
         const cleaned = normalizeSpokenText(full.trim());
@@ -1363,12 +1369,19 @@ async function startVoiceRecording() {
       };
 
       speechRecognizer.onerror = (e) => {
-        console.warn("Speech recognition notice:", e.error);
+        if (e.error === 'not-allowed') {
+          document.getElementById("live-transcript").innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Mic permission denied in browser. Please allow microphone in your URL bar.</span>`;
+        }
       };
 
       speechRecognizer.onend = () => {
-        if (answerStartTime) {
-          try { speechRecognizer.start(); } catch(err){}
+        // Auto-restart if browser stops recognition while user is still answering
+        if (!isRecognizerExplicitlyStopped && answerStartTime) {
+          setTimeout(() => {
+            if (!isRecognizerExplicitlyStopped && answerStartTime) {
+              try { speechRecognizer.start(); } catch(err){}
+            }
+          }, 150);
         }
       };
 
@@ -1381,6 +1394,7 @@ async function startVoiceRecording() {
 
 function stopVoiceRecording() {
   return new Promise((resolve) => {
+    isRecognizerExplicitlyStopped = true;
     if (speechRecognizer) {
       try { speechRecognizer.stop(); } catch(e){}
     }
@@ -1430,18 +1444,14 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
   if (countdownInterval) clearInterval(countdownInterval);
 
   if (!inSocraticProbeMode) {
-    // Record Primary Answer
     recordPrimaryAnswer(currentText, audioBlob, false, "", false, durationSec);
 
-    // DYNAMIC GATING: Check if follow-up is actually needed
     const qData = sessionQuestions[currentQIndex];
     const decision = evaluateFollowUpNeed(currentText, qData, false);
 
     if (decision.needed) {
-      // Natural, justified pushback
       triggerSocraticProbe(decision.probe, decision.leadIn);
     } else {
-      // Clean, natural progression with verbal confirmation
       window.speechSynthesis.cancel();
       const ackUtter = new SpeechSynthesisUtterance("Understood. Let's move to the next question.");
       if (selectedVoice) ackUtter.voice = selectedVoice;
@@ -1452,7 +1462,6 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
       advanceToNextQuestion();
     }
   } else {
-    // Save Probe Answer and advance
     recordProbeAnswer(currentText, audioBlob, false);
     advanceToNextQuestion();
   }
@@ -1469,7 +1478,6 @@ document.getElementById("btn-idk-skip").addEventListener("click", async () => {
   if (!inSocraticProbeMode) {
     recordPrimaryAnswer("", null, true, "Candidate elected to pass / stated 'I don't know'.", isReflexivePass, deliberationSeconds);
     
-    // No artificial interrogation on a pass—transition cleanly like a real executive
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance("Understood. Let us proceed to the next area.");
     if (selectedVoice) utter.voice = selectedVoice;
