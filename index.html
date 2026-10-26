@@ -18,8 +18,9 @@
       --text-muted: #64748B;
       --danger-red: #BE123C;
       --danger-bg: #FFF1F2;
+      --warning-amber: #D97706;
+      --warning-bg: #FEF3C7;
       --badge-bg: #F1F5F9;
-      --accent-amber: #D97706;
       --success-green: #10B981;
     }
 
@@ -56,33 +57,35 @@
     h3 { font-size: 1rem; font-weight: 600; color: var(--primary-navy); margin-bottom: 8px; }
     .serif-text { font-family: Georgia, Cambria, serif; }
 
-    /* TAGS & BADGES */
-    .provenance-badge {
+    /* INLINE TAGS BESIDE QUESTION MARK */
+    .author-tag-inline {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background-color: #EEF2F6;
-      color: var(--primary-blue);
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      padding: 6px 12px;
-      border-radius: 6px;
+      color: var(--primary-blue);
+      background: #EEF2F6;
       border: 1px solid #DCE3EA;
-      margin-bottom: 14px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    .timer-tag {
+    .timer-tag-inline {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      background-color: #FEF3C7;
-      color: #92400E;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 4px;
+      color: #92400E;
+      background: #FEF3C7;
       border: 1px solid #FDE68A;
-      margin-left: 8px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
@@ -127,9 +130,9 @@
 
     .question-box {
       font-size: 1.25rem;
-      line-height: 1.55;
+      line-height: 1.6;
       color: var(--primary-navy);
-      margin: 12px 0 18px;
+      margin: 14px 0 20px;
     }
 
     .status-banner {
@@ -141,33 +144,6 @@
       font-size: 0.92rem;
       color: var(--text-main);
       margin-bottom: 18px;
-    }
-
-    /* HARDWARE VOLUME METER */
-    .hardware-audio-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #F1F5F9;
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin-bottom: 12px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-    .audio-meter-track {
-      flex: 1;
-      height: 8px;
-      background: #E2E8F0;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .audio-meter-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--success-green);
-      transition: width 0.05s ease;
     }
 
     .transcript-box {
@@ -192,7 +168,6 @@
     }
     .mic-live { background-color: var(--success-green); box-shadow: 0 0 8px var(--success-green); }
 
-    /* TABS */
     .tab-switch {
       display: flex;
       border: 1px solid var(--border-subtle);
@@ -291,31 +266,22 @@
     <button class="btn btn-primary" id="btn-proceed-to-mic">Proceed to Audio Check &rarr;</button>
   </div>
 
-  <!-- ================= 2. MANDATORY HARDWARE MIC CHECK ================= -->
+  <!-- ================= 2. MANDATORY PRE-FLIGHT MIC CHECK ================= -->
   <div id="screen-mic-check" class="card hidden">
-    <h2>Microphone Hardware Verification</h2>
+    <h2>Microphone Input Verification</h2>
     <p style="color: var(--text-muted); font-size: 0.9rem; margin: 6px 0 20px;">
-      Confirm that your browser and microphone hardware are actively receiving speech.
+      Test that your browser is actively recognizing and transcribing your voice.
     </p>
 
-    <!-- LIVE HARDWARE VOLUME VISUALIZER -->
-    <div class="hardware-audio-bar">
-      <span>Hardware Signal:</span>
-      <div class="audio-meter-track">
-        <div id="test-audio-fill" class="audio-meter-fill"></div>
-      </div>
-      <span id="test-volume-label">0%</span>
-    </div>
-
     <div class="status-banner" id="mic-check-instructions">
-      Click <strong>"Connect Microphone"</strong> below and say: <em>"Testing my microphone for placement."</em>
+      Click <strong>"Connect & Speak"</strong> and say clearly: <em>"Hello, testing my microphone."</em>
     </div>
 
     <div id="mic-test-output" class="transcript-box" style="font-style: italic; color: var(--text-muted);">
-      Microphone inactive.
+      Microphone standby.
     </div>
 
-    <button class="btn btn-navy" id="btn-run-mic-test">Connect Microphone</button>
+    <button class="btn btn-navy" id="btn-run-mic-test">Connect & Speak</button>
     <button class="btn btn-primary hidden" id="btn-mic-ok-proceed" style="margin-top: 12px;">
       Voice Verified &mdash; Enter Interview Room &rarr;
     </button>
@@ -328,40 +294,31 @@
       <span id="interview-progress-label" style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Question 1 of 5</span>
       <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;">
         <span id="mic-dot" class="mic-indicator-dot"></span>
-        <span id="mic-status-label">Interviewer Speaking...</span>
+        <span id="mic-status-label">Standby</span>
       </span>
     </div>
 
-    <!-- PROVENANCE BADGE + TIMER TAG -->
-    <div style="display: flex; align-items: center; flex-wrap: wrap;">
-      <div id="provenance-badge-container" class="provenance-badge">
-        <span>Curated Question</span>
-      </div>
-      <span id="question-timer-tag" class="timer-tag hidden">⏱ 10s Window</span>
-    </div>
-
+    <!-- QUESTION BOX (INLINE TAGS EMBEDDED BESIDE THE QUESTION MARK) -->
     <div id="spoken-question-text" class="question-box serif-text">
       Loading prompt...
     </div>
 
-    <!-- AUTOMATIC STATE BANNER (NO BUTTONS TO START) -->
+    <!-- INTERVIEW FLOW BANNER -->
     <div id="interview-flow-status" class="status-banner">
-      <span id="flow-status-text">Interviewer is speaking the question...</span>
-    </div>
-
-    <!-- LIVE HARDWARE VOLUME VISUALIZER (Proves mic is active!) -->
-    <div class="hardware-audio-bar">
-      <span>Mic Signal:</span>
-      <div class="audio-meter-track">
-        <div id="live-audio-fill" class="audio-meter-fill"></div>
-      </div>
-      <span id="live-volume-label">Listening</span>
+      <span id="flow-status-text">Interviewer speaking the question...</span>
     </div>
 
     <!-- LIVE TRANSCRIPTION -->
     <label>What I'm Hearing from You:</label>
     <div id="live-transcript" class="transcript-box">
-      Microphone will activate automatically...
+      Microphone standing by...
+    </div>
+
+    <!-- RECOVERY OVERRIDE (IF BROWSER RECOGNITION IS BLOCKED) -->
+    <div id="mic-recovery-controls" style="text-align: right; margin-top: -10px; margin-bottom: 12px;">
+      <button id="btn-manual-mic-retry" style="background:none; border:none; color:var(--accent-teal); font-size:0.8rem; font-weight:600; cursor:pointer; text-decoration:underline;">
+        Mic not responding? Tap to force-start listening
+      </button>
     </div>
 
     <!-- CANDIDATE CONTROLS -->
@@ -369,13 +326,13 @@
     <button class="btn btn-secondary" id="btn-idk-skip">I Don't Know / Pass Question</button>
   </div>
 
-  <!-- ================= 4. EXECUTIVE DIAGNOSTIC REPORT ================= -->
+  <!-- ================= 4. EXECUTIVE DIAGNOSTIC DOSSIER ================= -->
   <div id="screen-report" class="card hidden">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
       <div>
         <h2>Executive Placement Diagnostic Dossier</h2>
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
-          Formal Evaluation Based Strictly on Spoken Audio Telemetry
+          Evaluation Based Strictly on Spoken Telemetry
         </p>
       </div>
       <button class="btn btn-secondary" id="btn-print-dossier" style="width: auto; height: 36px; padding: 0 14px; font-size: 0.82rem; margin: 0;" onclick="window.print();">
@@ -394,7 +351,7 @@
       </div>
       <div class="kpi-tile">
         <div class="kpi-val" id="kpi-fillers">0</div>
-        <div class="kpi-lbl">Total Fillers</div>
+        <div class="kpi-lbl">Verbal Fillers</div>
       </div>
       <div class="kpi-tile">
         <div class="kpi-val" id="kpi-completed">0/0</div>
@@ -410,13 +367,13 @@
     <!-- TAB A: CANDIDATE BLUEPRINT -->
     <div id="view-candidate-blueprint">
       <div class="report-card" style="background: #F8FAFC;">
-        <h3>Session Audit & Executive Summary</h3>
+        <h3>Session Audit & Executive Readout</h3>
         <p id="report-summary-text" style="font-size: 0.92rem; line-height: 1.55; color: var(--text-main);">
           Evaluating session telemetry...
         </p>
       </div>
 
-      <h3 style="margin-top: 24px; margin-bottom: 12px;">Round-by-Round Verbatim Review</h3>
+      <h3 style="margin-top: 24px; margin-bottom: 12px;">Round-by-Round Breakdown</h3>
       <div id="candidate-questions-breakdown"></div>
     </div>
 
@@ -430,7 +387,7 @@
         </p>
       </div>
 
-      <h3 style="margin-top: 24px; margin-bottom: 12px;">Socratic Round-2 Interviewer Follow-Ups</h3>
+      <h3 style="margin-top: 24px; margin-bottom: 12px;">Socratic Round-2 Panel Probes & Evasion Flags</h3>
       <div id="evaluator-probes-breakdown"></div>
     </div>
 
@@ -442,7 +399,7 @@
 <!-- ================= JAVASCRIPT ENGINE ================= -->
 <script>
 /**
- * YOUR 30 EXACT QUESTIONS MAPPED BY DOMAIN, LEVEL, AUTHOR & EXACT TIMER
+ * 30 EXACT QUESTIONS WITH VERIFIED CURATOR ATTRIBUTIONS AND TIMERS
  */
 const QUESTION_BANK = [
   // ================= MARKETING =================
@@ -454,11 +411,11 @@ const QUESTION_BANK = [
     text: "What is the difference between a marketing campaign and a promotion? Give an example of each.",
     thinkingTimeSec: 0,
     corePoints: [
-      "Campaign: Strategic, sustained brand objective across multiple touchpoints.",
-      "Promotion: Tactical, short-term commercial incentive to drive immediate volume.",
+      "Campaign: Long-term strategic goal (brand awareness, positioning, multi-channel).",
+      "Promotion: Short-term tactical incentive designed to stimulate immediate sales (discounts, BOGO).",
       "Example: Dove Real Beauty (Campaign) vs. 20% off shampoo this weekend (Promotion)."
     ],
-    idealModelAnswer: "A marketing campaign is a broader, long-term strategic initiative designed to achieve specific brand objectives—such as Dove's Real Beauty campaign across digital and TV. In contrast, a promotion is a short-term tactical incentive aimed at immediate conversion, such as offering a 20% weekend discount on products."
+    idealModelAnswer: "A marketing campaign is a broader, long-term strategic initiative designed to achieve specific brand objectives—such as Dove's Real Beauty campaign across TV and digital. In contrast, a promotion is a short-term tactical incentive aimed at immediate conversion, such as offering a 20% weekend discount on products."
   },
   {
     field: "Marketing",
@@ -856,20 +813,17 @@ const QUESTION_BANK = [
 let sessionQuestions = [];
 let currentQIndex = 0;
 let answerStartTime = null;
+let questionActiveTimestamp = null;
 let currentQuestionTranscript = "";
 let sessionResults = [];
 let selectedVoice = null;
 let recognition = null;
-let isRecognitionActive = false;
+let isListeningActive = false;
 let countdownInterval = null;
+let speechWatchdogTimeout = null;
+let activeUtterance = null; // Prevents Chrome garbage-collection bug
 
-// HARDWARE AUDIO PIPELINE
-let audioCtx = null;
-let analyser = null;
-let micStream = null;
-let animFrameId = null;
-
-// SPEECH SYNTHESIS ENGINE
+// SPEECH ENGINE SETUP
 function initVoices() {
   const voiceSelect = document.getElementById("select-voice");
   const voices = window.speechSynthesis.getVoices();
@@ -897,7 +851,7 @@ function initVoices() {
     voiceSelect.appendChild(opt);
   });
 
-  selectedVoice = displayList[0] || voices[0];
+  selectedVoice = displayList || voices;
 }
 
 window.speechSynthesis.onvoiceschanged = initVoices;
@@ -908,9 +862,11 @@ document.getElementById("btn-test-voice").addEventListener("click", () => {
   const voices = window.speechSynthesis.getVoices();
   const chosen = voices.find(v => v.name === voiceName);
 
+  window.speechSynthesis.cancel();
   const testUtter = new SpeechSynthesisUtterance("Good morning. I will be conducting your placement interview today. Let us begin.");
   if (chosen) testUtter.voice = chosen;
   testUtter.rate = 0.95;
+  activeUtterance = testUtter;
   window.speechSynthesis.speak(testUtter);
 });
 
@@ -935,49 +891,15 @@ document.getElementById("btn-back-to-setup").addEventListener("click", () => {
   document.getElementById("screen-setup").classList.remove("hidden");
 });
 
-// HARDWARE MIC VERIFICATION
-document.getElementById("btn-run-mic-test").addEventListener("click", async () => {
+// PRE-FLIGHT HARDWARE MIC VERIFICATION
+document.getElementById("btn-run-mic-test").addEventListener("click", () => {
   const micOutput = document.getElementById("mic-test-output");
   const proceedBtn = document.getElementById("btn-mic-ok-proceed");
   const runBtn = document.getElementById("btn-run-mic-test");
 
-  try {
-    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 256;
-    const source = audioCtx.createMediaStreamSource(micStream);
-    source.connect(analyser);
-
-    // Run hardware audio visualizer loop
-    const testFill = document.getElementById("test-audio-fill");
-    const testLabel = document.getElementById("test-volume-label");
-    const liveFill = document.getElementById("live-audio-fill");
-    const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-    function trackAudio() {
-      analyser.getByteFrequencyData(dataArray);
-      let sum = 0;
-      for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-      const volume = Math.min(100, Math.round((sum / dataArray.length) * 2.2));
-
-      if (testFill) testFill.style.width = volume + "%";
-      if (testLabel) testLabel.textContent = volume + "%";
-      if (liveFill) liveFill.style.width = volume + "%";
-
-      animFrameId = requestAnimationFrame(trackAudio);
-    }
-    trackAudio();
-
-  } catch (err) {
-    micOutput.innerHTML = `<span style="color: var(--danger-red);">Microphone Access Blocked: ${err.message}. Please enable microphone permissions in your browser.</span>`;
-    return;
-  }
-
-  // Initialize Speech Recognition
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRec) {
-    micOutput.innerHTML = `<span style="color: var(--danger-red);">Speech recognition engine not supported. Please use Google Chrome.</span>`;
+    micOutput.innerHTML = `<span style="color: var(--danger-red);">Speech recognition engine not supported. Please open this in Google Chrome.</span>`;
     return;
   }
 
@@ -986,25 +908,34 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
   testRec.interimResults = true;
   testRec.lang = 'en-IN';
 
-  micOutput.innerHTML = `<span style="color: var(--accent-teal);">Microphone connected. Speak now...</span>`;
+  micOutput.innerHTML = `<span style="color: var(--accent-teal);">Listening... Speak now.</span>`;
   runBtn.disabled = true;
 
   testRec.onresult = (e) => {
     let spoken = "";
     for (let i = 0; i < e.results.length; i++) spoken += e.results[i].transcript;
-    micOutput.innerHTML = `<strong>Hardware Heard:</strong> "${spoken}"`;
+    micOutput.innerHTML = `<strong>Heard:</strong> "${spoken}"`;
     if (spoken.trim().length > 2) {
       proceedBtn.classList.remove("hidden");
-      runBtn.textContent = "Hardware Verified ✓";
+      runBtn.textContent = "Verified ✓";
     }
   };
 
   testRec.onerror = (err) => {
-    micOutput.innerHTML = `<span style="color: var(--danger-red);">Recognition Note: ${err.error}. Ensure microphone is selected.</span>`;
+    micOutput.innerHTML = `<span style="color: var(--danger-red);">Microphone Error: ${err.error}. Ensure microphone access is allowed in your browser settings.</span>`;
     runBtn.disabled = false;
   };
 
-  testRec.start();
+  testRec.onend = () => {
+    runBtn.disabled = false;
+  };
+
+  try {
+    testRec.start();
+  } catch (e) {
+    micOutput.innerHTML = `<span style="color: var(--danger-red);">Unable to start microphone: ${e.message}</span>`;
+    runBtn.disabled = false;
+  }
 });
 
 // START INTERVIEW
@@ -1019,21 +950,18 @@ function loadCurrentQuestion() {
   const qData = sessionQuestions[currentQIndex];
   currentQuestionTranscript = "";
   answerStartTime = null;
+  questionActiveTimestamp = null;
   if (countdownInterval) clearInterval(countdownInterval);
+  if (speechWatchdogTimeout) clearTimeout(speechWatchdogTimeout);
 
-  // Update Header & Badge
   document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length}`;
-  document.getElementById("provenance-badge-container").innerHTML = `<span>${qData.author}</span>`;
-  document.getElementById("spoken-question-text").textContent = qData.text;
-
-  // Timer Tag Display
-  const timerTag = document.getElementById("question-timer-tag");
-  if (qData.thinkingTimeSec > 0) {
-    timerTag.textContent = `⏱ ${qData.thinkingTimeSec}s Thinking Window`;
-    timerTag.classList.remove("hidden");
-  } else {
-    timerTag.classList.add("hidden");
-  }
+  
+  // RENDER QUESTION WITH INLINE TAGS BESIDE THE QUESTION MARK
+  const questionBox = document.getElementById("spoken-question-text");
+  const timerBadgeHtml = qData.thinkingTimeSec > 0 ? `<span class="timer-tag-inline">⏱ ${qData.thinkingTimeSec}s</span>` : '';
+  const authorBadgeHtml = `<span class="author-tag-inline">${qData.author}</span>`;
+  
+  questionBox.innerHTML = `${qData.text} ${authorBadgeHtml} ${timerBadgeHtml}`;
 
   const flowStatus = document.getElementById("flow-status-text");
   const transcriptBox = document.getElementById("live-transcript");
@@ -1041,41 +969,70 @@ function loadCurrentQuestion() {
   transcriptBox.innerHTML = `<span style="color: var(--text-muted); font-style: italic;">Microphone standing by...</span>`;
   setMicStatus("Interviewer Speaking...", false);
 
-  // Speak Prompt
+  // SPEAK QUESTION ALOUD WITH WATCHDOG PROTECTION
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(qData.text);
   if (selectedVoice) utter.voice = selectedVoice;
   utter.rate = 0.95;
+  activeUtterance = utter; // Prevent garbage collection
 
-  utter.onend = () => {
-    // When question finishes reading aloud:
+  let speechFinished = false;
+  function handleQuestionSpeechEnd() {
+    if (speechFinished) return;
+    speechFinished = true;
+    if (speechWatchdogTimeout) clearTimeout(speechWatchdogTimeout);
+
+    questionActiveTimestamp = Date.now();
+
+    // HANDLE CONDITIONAL TIMER
     if (qData.thinkingTimeSec > 0) {
       let secondsLeft = qData.thinkingTimeSec;
-      flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--accent-amber); font-weight:700;">${secondsLeft}s remaining</span> (Structure your thoughts)`;
+      flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span> (Take a moment to structure your thoughts)`;
 
       countdownInterval = setInterval(() => {
         secondsLeft--;
         if (secondsLeft > 0) {
-          flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--accent-amber); font-weight:700;">${secondsLeft}s remaining</span> (Structure your thoughts)`;
+          flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span> (Take a moment to structure your thoughts)`;
         } else {
           clearInterval(countdownInterval);
           flowStatus.innerHTML = `<strong>Microphone Active:</strong> Answering window open. Speak now.`;
-          startListeningAutomatically();
+          startContinuousListening();
         }
       }, 1000);
     } else {
       flowStatus.innerHTML = `<strong>Microphone Active:</strong> Answering window open. Speak now.`;
-      startListeningAutomatically();
+      startContinuousListening();
     }
-  };
+  }
+
+  utter.onend = handleQuestionSpeechEnd;
+  utter.onerror = handleQuestionSpeechEnd;
+
+  // Watchdog: If Chrome fails to fire onend, force start
+  const wordCount = qData.text.split(" ").length;
+  const estimatedDurationMs = Math.max(4500, wordCount * 550);
+  speechWatchdogTimeout = setTimeout(() => {
+    if (!speechFinished) {
+      console.warn("SpeechSynthesis onend watchdog triggered.");
+      handleQuestionSpeechEnd();
+    }
+  }, estimatedDurationMs);
 
   window.speechSynthesis.speak(utter);
 }
 
-// AUTOMATIC SPEECH ACTIVATION (NO "READY TO SPEAK" BUTTON!)
-function startListeningAutomatically() {
+// FORCE RETRY BUTTON IF BROWSER MISBEHAVES
+document.getElementById("btn-manual-mic-retry").addEventListener("click", () => {
+  startContinuousListening();
+});
+
+// SPEECH RECOGNITION ENGINE
+function startContinuousListening() {
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRec) return;
+  if (!SpeechRec) {
+    alert("Speech recognition engine not supported. Please use Google Chrome.");
+    return;
+  }
 
   if (recognition) {
     try { recognition.abort(); } catch(e){}
@@ -1086,9 +1043,9 @@ function startListeningAutomatically() {
   recognition.interimResults = true;
   recognition.lang = 'en-IN';
 
-  isRecognitionActive = true;
+  isListeningActive = true;
   answerStartTime = Date.now();
-  setMicStatus("Recording Answer", true);
+  setMicStatus("Microphone Recording", true);
   document.getElementById("live-transcript").textContent = "Listening to your response... speak naturally.";
 
   recognition.onresult = (event) => {
@@ -1101,21 +1058,30 @@ function startListeningAutomatically() {
   };
 
   recognition.onerror = (e) => {
-    if (e.error === "no-speech") setMicStatus("Listening...", true);
+    console.warn("Recognition event error:", e.error);
+    if (e.error === "no-speech") {
+      setMicStatus("Listening...", true);
+    } else if (e.error === "not-allowed") {
+      document.getElementById("live-transcript").innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Mic Blocked: Please click the lock icon in Chrome address bar to Allow Microphone.</span>`;
+    }
   };
 
   recognition.onend = () => {
-    // Auto-restart if candidate is still on this question
-    if (isRecognitionActive) {
+    // Keep alive while question is active
+    if (isListeningActive) {
       try { recognition.start(); } catch(err){}
     }
   };
 
-  try { recognition.start(); } catch(e){}
+  try {
+    recognition.start();
+  } catch (err) {
+    console.warn("Recognition start warning:", err);
+  }
 }
 
 function stopListening() {
-  isRecognitionActive = false;
+  isListeningActive = false;
   if (recognition) {
     try { recognition.stop(); } catch(e){}
   }
@@ -1129,35 +1095,53 @@ function setMicStatus(label, isLive) {
   else dot.classList.remove("mic-live");
 }
 
-// FINISH ANSWER
+// ANTI-GAMING CHECK ON FINISH ANSWER
 document.getElementById("btn-finish-answer").addEventListener("click", () => {
-  stopListening();
-  if (countdownInterval) clearInterval(countdownInterval);
-
   const text = currentQuestionTranscript.trim();
   const words = text.split(/\s+/).filter(Boolean).length;
 
+  // Intercept empty submissions
   if (words < 3) {
-    recordAnswer(text, true, "No substantial spoken audio recorded.");
-  } else {
-    recordAnswer(text, false, "");
+    window.speechSynthesis.cancel();
+    const promptVoice = new SpeechSynthesisUtterance("You clicked finish without speaking an answer. In an actual placement drive, silence is penalized. Please speak your answer or choose to pass.");
+    if (selectedVoice) promptVoice.voice = selectedVoice;
+    promptVoice.rate = 1.0;
+    activeUtterance = promptVoice;
+    window.speechSynthesis.speak(promptVoice);
+
+    document.getElementById("live-transcript").innerHTML = `
+      <span style="color: var(--danger-red); font-weight: 700;">
+        ⚠️ Empty Submission Intercepted: Please speak your response, or click "I Don't Know / Pass Question" below.
+      </span>
+    `;
+    return;
   }
+
+  stopListening();
+  if (countdownInterval) clearInterval(countdownInterval);
+  recordAnswer(text, false, "", false);
 });
 
-// PASS / I DON'T KNOW
+// ANTI-GAMING / RAPID PASS DETECTION ON "I DON'T KNOW"
 document.getElementById("btn-idk-skip").addEventListener("click", () => {
   stopListening();
   if (countdownInterval) clearInterval(countdownInterval);
 
+  // Measure deliberation time
+  const deliberationSeconds = questionActiveTimestamp ? ((Date.now() - questionActiveTimestamp) / 1000).toFixed(1) : 0;
+  const isReflexivePass = deliberationSeconds < 4.0; // Rapid pass flag
+
+  window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance("Understood. Let us proceed to the next question.");
   if (selectedVoice) utter.voice = selectedVoice;
   utter.rate = 1.0;
+  activeUtterance = utter;
   window.speechSynthesis.speak(utter);
 
-  recordAnswer("", true, "Candidate elected to pass / stated 'I don't know'.");
+  recordAnswer("", true, "Candidate elected to pass / stated 'I don't know'.", isReflexivePass, deliberationSeconds);
 });
 
-function recordAnswer(transcript, wasSkipped, skipReason) {
+function recordAnswer(transcript, wasSkipped, skipReason, isReflexivePass, deliberationSeconds) {
   const elapsedMin = answerStartTime ? (Date.now() - answerStartTime) / 60000 : 0.15;
   const wordCount = transcript.split(/\s+/).filter(Boolean).length;
   const wpm = wasSkipped ? 0 : Math.round(wordCount / Math.max(0.15, elapsedMin));
@@ -1170,6 +1154,8 @@ function recordAnswer(transcript, wasSkipped, skipReason) {
     transcript: transcript,
     wasSkipped: wasSkipped,
     skipReason: skipReason,
+    isReflexivePass: isReflexivePass,
+    deliberationSeconds: deliberationSeconds,
     wpm: wpm,
     fillers: fillers,
     wordCount: wordCount
@@ -1183,18 +1169,18 @@ function recordAnswer(transcript, wasSkipped, skipReason) {
   }
 }
 
-// EXECUTIVE DIAGNOSTIC DOSSIER (STRICTLY TRUTHFUL)
+// EXECUTIVE DIAGNOSTIC DOSSIER
 function renderTruthfulReport() {
   document.getElementById("screen-interview").classList.add("hidden");
   document.getElementById("screen-report").classList.remove("hidden");
 
   const answeredRounds = sessionResults.filter(r => !r.wasSkipped && r.wordCount >= 3);
   const passedRounds = sessionResults.filter(r => r.wasSkipped);
+  const rapidPassRounds = sessionResults.filter(r => r.isReflexivePass);
 
   const avgWPM = answeredRounds.length > 0 ? Math.round(answeredRounds.reduce((acc, r) => acc + r.wpm, 0) / answeredRounds.length) : 0;
   const totalFillers = answeredRounds.reduce((acc, r) => acc + r.fillers, 0);
 
-  // Update KPI Tiles
   document.getElementById("kpi-wpm").textContent = avgWPM;
   document.getElementById("kpi-fillers").textContent = totalFillers;
   document.getElementById("kpi-completed").textContent = `${answeredRounds.length}/${sessionResults.length}`;
@@ -1215,13 +1201,14 @@ function renderTruthfulReport() {
   const summaryBox = document.getElementById("report-summary-text");
   if (answeredRounds.length === 0) {
     summaryBox.innerHTML = `
-      <strong>Session Audit:</strong> Candidate elected to pass or produced no spoken responses across all <strong>${sessionResults.length}</strong> prompts. 
+      <strong>Session Audit:</strong> Candidate passed or provided zero spoken audio across all <strong>${sessionResults.length}</strong> prompts. 
       <br><br>Zero spoken telemetry was recorded. The interview panel should conduct a foundational baseline screening on core domain terminology. Review the <strong>Executive Benchmarks</strong> below for study.
     `;
   } else {
+    let rapidPassNotice = rapidPassRounds.length > 0 ? `<br><strong style="color:var(--danger-red);">Avoidance Warning:</strong> Detected ${rapidPassRounds.length} reflexive pass(es) under 4.0s.` : '';
     summaryBox.innerHTML = `
       <strong>Session Audit:</strong> Completed <strong>${answeredRounds.length}</strong> answered rounds and <strong>${passedRounds.length}</strong> passed rounds.
-      <br>Average Spoken Cadence: <strong>${avgWPM} WPM</strong> (Target: 120–150 WPM). Total Verbal Fillers: <strong>${totalFillers}</strong> recorded.
+      <br>Average Spoken Cadence: <strong>${avgWPM} WPM</strong> (Target: 120–150 WPM). Total Verbal Fillers: <strong>${totalFillers}</strong>.${rapidPassNotice}
     `;
   }
 
@@ -1235,10 +1222,17 @@ function renderTruthfulReport() {
 
     let answerSection = "";
     if (r.wasSkipped) {
+      let rapidPassAlert = r.isReflexivePass ? `
+        <div style="background-color: var(--warning-bg); border: 1px solid #FDE68A; border-radius: 4px; padding: 6px 10px; margin-top: 6px; font-size: 0.8rem; color: #92400E; font-weight: 600;">
+          ⚠️ Rapid Pass Warning (${r.deliberationSeconds}s): You surrendered this prompt without taking time to structure a response. Interview panels view rapid surrender as severe anxiety under technical pressure.
+        </div>
+      ` : '';
+
       answerSection = `
         <div style="background-color: var(--danger-bg); border: 1px solid #FECDD3; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 0.88rem; color: #9F1239;">
           <strong>[ NO SPOKEN AUDIO RECORDED / CANDIDATE PASSED ]</strong><br>
           ${r.skipReason}
+          ${rapidPassAlert}
         </div>
       `;
     } else {
@@ -1290,6 +1284,9 @@ function renderTruthfulReport() {
   if (answeredRounds.length === 0) {
     evalTitle.textContent = "Insufficient Spoken Evidence (All Passed)";
     evalSummary.textContent = "Candidate did not produce spoken responses to the technical prompts. The interview panel should conduct a foundational baseline screening on core domain terminology before proceeding to operational case questions.";
+  } else if (rapidPassRounds.length >= 2) {
+    evalTitle.textContent = "High Evasion Tendency Detected";
+    evalSummary.textContent = `Candidate exhibited ${rapidPassRounds.length} reflexive passes in under 4 seconds. Panel is advised to address situational anxiety and test foundational knowledge under low pressure.`;
   } else if (passedRounds.length > 0) {
     evalTitle.textContent = "Selective Competency Demonstrated";
     evalSummary.textContent = "Candidate demonstrated verbal willingness on selected prompts but deferred on others. Panel should probe candidate's composure and problem-solving methodology when confronted with unfamiliar scenarios.";
@@ -1304,15 +1301,22 @@ function renderTruthfulReport() {
 
     let probeHtml = "";
     if (r.wasSkipped) {
+      let evasionWarning = r.isReflexivePass ? `
+        <div style="background-color: var(--danger-bg); border: 1px solid #FECDD3; border-radius: 4px; padding: 6px 10px; margin-bottom: 8px; font-size: 0.82rem; color: #9F1239; font-weight: 700;">
+          🚩 Reflexive Avoidance Flag: Candidate passed in ${r.deliberationSeconds}s without attempting to structure an approach.
+        </div>
+      ` : '';
+
       probeHtml = `
+        ${evasionWarning}
         <p style="font-size: 0.88rem; color: #9F1239;">
-          <strong>Round-2 Diagnostic Strategy:</strong> Candidate passed this prompt. Interviewer should step back to the foundational principle: <em>"Can you explain the basic definition of this concept in everyday terms?"</em>
+          <strong>Round-2 Diagnostic Strategy:</strong> Step back to the foundational principle: <em>"Can you explain the basic definition of this concept in everyday terms?"</em>
         </p>
       `;
     } else {
       probeHtml = `
         <p style="font-size: 0.88rem; color: var(--primary-navy);">
-          <strong>Round-2 Socratic Pushback:</strong> Candidate attempted the question (${r.wpm} WPM). Probe operational trade-offs: <em>"Walk me through the potential downside or risks associated with your proposed approach."</em>
+          <strong>Round-2 Socratic Pushback:</strong> Candidate attempted prompt (${r.wpm} WPM). Probe operational trade-offs: <em>"Walk me through the potential downside or risks associated with your proposed approach."</em>
         </p>
       `;
     }
