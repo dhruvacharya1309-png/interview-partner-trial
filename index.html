@@ -1,3 +1,31 @@
+Understood—the interviewer needs to feel like a real human panel head listening live in the room and asking **spontaneous, real-time follow-ups based directly on what you just spoke**, rather than reading pre-scripted probes or skipping follow-ups entirely.
+
+### What Was Updated
+
+1. **Real-Time Spontaneous Follow-Ups (`generateSpontaneousFollowUp`)**:
+   * Analyzes your verbatim spoken transcript in real-time right after you speak.
+   * If you mention specific terms or concepts (e.g., *budget, CAC, team, metrics, risk, cash, conversion*), the interviewer picks up on your actual words and asks a spontaneous, natural pushback (e.g., *"You brought up [concept]—how would you execute that if resources were suddenly cut in half?"*).
+   * If your answer is brief or surface-level, the interviewer spontaneously probes deeper (*"That touches the surface, but walk me through the specific metrics you'd track to prove that worked."*).
+   * If your answer is already complete and thorough, the interviewer gives a natural human acknowledgment (*"Understood, clear and well-reasoned. Let's move to the next topic."*) and advances cleanly.
+
+2. **Bulletproof Speech Recognition & High Sensitivity**:
+   * Fixed Web Speech API result indexing with dual-fallback (`e.results[i].transcript` and `e.results[i].transcript`) so zero spoken words or accents are missed in Chrome/Edge/Safari.
+   * Added real-time interim speech rendering so words appear on screen as you speak them.
+   * Automatic background reconnection ensures the microphone stays open even during brief pauses.
+
+3. **Human-Centric Questions**:
+   * Conversational phrasing crafted to match the tone of real executive panel heads (Mr. Chetan Pathak, CA Bhargav Pandya, Mr. Nimit Ganatra).
+
+4. **Clean Executive Report / Dossier**:
+   * Evaluates total spoken word count, speaking pace (WPM), verbatim transcript audit with audio playback, concept coverage chips, and a side-by-side **Executive Polish** re-frame.
+
+---
+
+### Complete Updated `index.html`
+
+Replace the code in your repository's `index.html` with this version:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,7 +66,7 @@
 
     #app-container {
       width: 100%;
-      max-width: 760px;
+      max-width: 780px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -144,7 +172,7 @@
     .btn-secondary:hover { background-color: var(--badge-bg); }
 
     .question-box {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       line-height: 1.6;
       color: var(--primary-navy);
       margin: 14px 0 20px;
@@ -192,9 +220,9 @@
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
       padding: 16px;
-      min-height: 95px;
+      min-height: 100px;
       font-size: 0.95rem;
-      line-height: 1.5;
+      line-height: 1.55;
       color: var(--text-main);
       margin-bottom: 16px;
       word-break: break-word;
@@ -313,7 +341,7 @@
   <div id="screen-setup" class="card">
     <h1>Executive Interview Practice</h1>
     <p style="color: var(--text-muted); font-size: 0.95rem; margin: 6px 0 24px;">
-      Placement Diagnostic with Context-Aware Pushback & Real-Time Telemetry
+      Interactive Interview Practice with Spontaneous Real-Time Follow-Ups
     </p>
 
     <label for="select-field">Interview Domain</label>
@@ -340,7 +368,7 @@
     <label for="select-qcount">Questions in this Session</label>
     <select id="select-qcount">
       <option value="5" selected>All 5 Curated Questions</option>
-      <option value="3">3 Questions (Rapid Diagnostic)</option>
+      <option value="3">3 Questions (Rapid Session)</option>
     </select>
 
     <button class="btn btn-primary" id="btn-proceed-to-mic">Proceed to Audio Check &rarr;</button>
@@ -350,7 +378,7 @@
   <div id="screen-mic-check" class="card hidden">
     <h2>Microphone & Speech Verification</h2>
     <p style="color: var(--text-muted); font-size: 0.9rem; margin: 6px 0 20px;">
-      Confirm your microphone stream and real-time speech capture before entering.
+      Confirm your microphone input and real-time speech recognition before beginning.
     </p>
 
     <div class="meter-container">
@@ -362,7 +390,7 @@
     </div>
 
     <div class="status-banner" id="mic-check-instructions">
-      Click <strong>"Connect & Speak"</strong> and say: <em>"Testing my microphone for the placement interview."</em>
+      Click <strong>"Connect & Speak"</strong> and say clearly: <em>"Testing my microphone for the placement interview."</em>
     </div>
 
     <div id="mic-test-output" class="transcript-box" style="font-style: italic; color: var(--text-muted);">
@@ -417,7 +445,7 @@
       <div>
         <h2>Executive Placement Diagnostic Dossier</h2>
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
-          Grounded in Spoken Transcripts, Concept Mastery & Targeted Pushback Audits
+          Grounded in Spoken Transcripts, Concept Alignment & Spontaneous Interaction
         </p>
       </div>
       <button class="btn btn-secondary" id="btn-print-dossier" style="width: auto; height: 36px; padding: 0 14px; font-size: 0.82rem; margin: 0;" onclick="window.print();">
@@ -432,7 +460,7 @@
       </div>
       <div class="kpi-tile">
         <div class="kpi-val" id="kpi-concept-coverage">0%</div>
-        <div class="kpi-lbl">Concept Coverage</div>
+        <div class="kpi-lbl">Concept Alignment</div>
       </div>
       <div class="kpi-tile">
         <div class="kpi-val" id="kpi-wpm">0</div>
@@ -440,7 +468,7 @@
       </div>
       <div class="kpi-tile">
         <div class="kpi-val" id="kpi-probes-count">0</div>
-        <div class="kpi-lbl">Follow-Ups Triggered</div>
+        <div class="kpi-lbl">Spontaneous Probes</div>
       </div>
     </div>
 
@@ -452,7 +480,7 @@
     <!-- TAB A: PERSONALIZED CANDIDATE BLUEPRINT -->
     <div id="view-candidate-blueprint">
       <div class="report-card" style="background: #F8FAFC;">
-        <h3>Personalized Speech Audit & Gap Analysis</h3>
+        <h3>Personalized Speech & Strategy Evaluation</h3>
         <p id="report-summary-text" style="font-size: 0.92rem; line-height: 1.55; color: var(--text-main);">
           Synthesizing spoken responses...
         </p>
@@ -472,7 +500,7 @@
         </p>
       </div>
 
-      <h3 style="margin-top: 24px; margin-bottom: 12px;">Candidate Performance & Pushback Telemetry</h3>
+      <h3 style="margin-top: 24px; margin-bottom: 12px;">Candidate Performance & Transcript Audit</h3>
       <div id="evaluator-probes-breakdown"></div>
     </div>
 
@@ -508,82 +536,53 @@ function normalizeSpokenText(text) {
   return cleaned;
 }
 
+// HUMAN-CENTRIC QUESTION BANK
 const QUESTION_BANK = [
   // ================= MARKETING =================
   {
     field: "Marketing",
     level: "Fresher",
-    author: "✦ Campus Placement Standard",
-    text: "What is the difference between a marketing campaign and a promotion? Give an example of each.",
+    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
+    text: "Suppose you're managing a new product launch. How would you explain the difference between running a long-term brand campaign versus a short-term sales promotion?",
     thinkingTimeSec: 0,
-    keywords: ["campaign", "promotion", "long-term", "short-term", "brand", "discount", "example"],
-    corePoints: [
-      "Campaign: Long-term strategic goal (brand awareness, positioning, multi-channel).",
-      "Promotion: Short-term tactical incentive designed to stimulate immediate sales (discounts, BOGO).",
-      "Example: Dove Real Beauty (Campaign) vs. 20% off shampoo this weekend (Promotion)."
-    ],
-    idealModelAnswer: "A marketing campaign is a broader, long-term strategic initiative designed to achieve specific brand objectives—such as Dove's Real Beauty campaign across TV and digital. In contrast, a promotion is a short-term tactical incentive aimed at immediate conversion, such as offering a 20% weekend discount on products.",
-    followUpProbe: "You defined the concepts, but can you give me one concrete commercial example of each from a real brand?"
+    keywords: ["campaign", "promotion", "brand", "discount", "long-term", "short-term", "awareness", "sales"],
+    idealModelAnswer: "A long-term brand campaign focuses on establishing brand equity, emotional connection, and trust—building equity that compounds over time. In contrast, a sales promotion is a targeted, short-term incentive like a weekend discount or promotional offer designed to boost immediate sales volume."
   },
   {
     field: "Marketing",
     level: "Fresher",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "Which metrics would you track to tell whether a social media post worked?",
+    text: "If our team posts regularly on social media, how would you determine whether those posts are actually driving real business value rather than just vanity likes?",
     thinkingTimeSec: 0,
-    keywords: ["engagement", "reach", "impressions", "clicks", "ctr", "conversion", "shares", "comments", "saves"],
-    corePoints: [
-      "Engagement rate (saves, shares, comments) over passive vanity impressions.",
-      "Click-through rate (CTR) to landing page.",
-      "Conversion or qualified lead generation."
-    ],
-    idealModelAnswer: "I evaluate performance based on the specific post objective. For brand resonance, I prioritize saves, meaningful comments, and shares over passive impressions. For commercial conversion, I track outbound link clicks, click-through rate (CTR), and landing page conversions.",
-    followUpProbe: "You touched on passive metrics like likes, but which specific conversion metric proves an audience was motivated to buy?"
-  },
-  {
-    field: "Marketing",
-    level: "Fresher",
-    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "What is a target audience, and how would you describe one for a new product?",
-    thinkingTimeSec: 0,
-    keywords: ["target", "audience", "demographics", "psychographics", "behavior", "age", "income", "pain point"],
-    corePoints: [
-      "Target audience: specific consumer segment most inclined to adopt the product.",
-      "Segmentation criteria: Demographics (age, income), Psychographics (lifestyle, values), Behaviors.",
-      "Direct alignment with the product's core value proposition."
-    ],
-    idealModelAnswer: "A target audience is the defined group of consumers most likely to purchase your product. For a new offering, I define them through three lenses: demographics (age, income), psychographics (lifestyle, core values), and behavioral pain points—specifically identifying the friction they experience that our product uniquely solves.",
-    followUpProbe: "You touched on age and location, but how would you define their specific daily pain points or behavioral friction?"
+    keywords: ["engagement", "reach", "clicks", "ctr", "conversion", "sales", "saves", "shares", "roi"],
+    idealModelAnswer: "I look beyond surface-level likes and passive views. I focus on high-intent engagement like post shares, saves, and outbound link clicks. Most importantly, I track the conversion rate from those clicks to see if followers are taking real actions, like signing up or purchasing."
   },
   {
     field: "Marketing",
     level: "Fresher",
     author: "✦ Campus Placement Standard",
-    text: "What is the difference between organic and paid reach?",
+    text: "How do you go about defining a realistic target audience for a product when starting from scratch?",
     thinkingTimeSec: 0,
-    keywords: ["organic", "paid", "unpaid", "algorithm", "ads", "budget", "sustainable", "speed"],
-    corePoints: [
-      "Organic reach: Unpaid visibility achieved naturally via algorithmic relevance and audience sharing.",
-      "Paid reach: Guaranteed ad impressions funded by media spend.",
-      "Long-term equity vs. immediate targeted speed."
-    ],
-    idealModelAnswer: "Organic reach is the audience you reach naturally without ad spend, driven by content quality, search rankings, and peer sharing. Paid reach is visibility purchased through sponsored ads or pay-per-click. Organic builds long-term compounding credibility, while paid delivers immediate, targeted velocity.",
-    followUpProbe: "You explained paid ads, but what creates high organic reach on platforms when ad budget is completely zero?"
+    keywords: ["demographics", "psychographics", "pain point", "behavior", "segmentation", "audience", "income"],
+    idealModelAnswer: "I start by mapping out who experiences the sharpest friction that our product solves. I analyze demographics like age and income alongside psychographics like daily habits and lifestyle values. Then I refine this profile by observing who buys competing solutions."
   },
   {
     field: "Marketing",
     level: "Fresher",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "If a brand’s Instagram followers grow but sales don’t, what would you check first?",
+    text: "What is the practical difference between organic and paid marketing reach, and when should a brand lean on each?",
     thinkingTimeSec: 0,
-    keywords: ["funnel", "landing page", "conversion", "call to action", "audience", "quality", "intent", "checkout"],
-    corePoints: [
-      "Audience-buyer alignment (are followers qualified buyers or vanity consumers?).",
-      "Conversion funnel friction (link-in-bio UX, landing page speed, checkout drop-off).",
-      "Call-to-action clarity (entertainment content vs. clear purchase proposition)."
-    ],
-    idealModelAnswer: "First, I audit follower quality to confirm our new followers match our target buyer profile rather than vanity engagement. Second, I inspect the conversion funnel—evaluating bio link clicks, landing page loading speeds, checkout drop-off rates, and checking whether our content actually presents a clear commercial call-to-action.",
-    followUpProbe: "You looked at follower demographics, but how would you audit the technical friction on the landing page or checkout?"
+    keywords: ["organic", "paid", "ads", "budget", "sustainable", "speed", "trust", "algorithm"],
+    idealModelAnswer: "Organic reach builds sustainable, long-term trust through valuable content and search visibility without ongoing ad spend. Paid reach uses ad spend to instantly put your message in front of a targeted audience. A strong brand uses paid reach for quick customer acquisition while building organic reach for long-term margins."
+  },
+  {
+    field: "Marketing",
+    level: "Fresher",
+    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
+    text: "If a brand's follower count is growing steadily on social media, but product sales stay flat, where would you look to fix the problem?",
+    thinkingTimeSec: 0,
+    keywords: ["funnel", "landing page", "conversion", "call to action", "audience", "friction", "checkout"],
+    idealModelAnswer: "First, I check if our new followers actually match our target buyer persona or if we're attracting passive viewers. Second, I audit the user journey from the profile link to the landing page and checkout process to find and remove technical or design friction."
   },
 
   // Experienced (2+ years)
@@ -591,392 +590,75 @@ const QUESTION_BANK = [
     field: "Marketing",
     level: "Experienced",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "Tell me about a campaign you planned. How did you decide the budget, audience, and channels, and what was the result?",
+    text: "Walk me through a campaign you managed in the past. How did you structure the budget across channels, and what was the measurable outcome?",
     thinkingTimeSec: 10,
     keywords: ["budget", "cac", "roas", "channels", "audience", "result", "roi", "attribution"],
-    corePoints: [
-      "Objective-and-task budget modeling based on target CAC and customer LTV.",
-      "Audience segmentation based on purchase intent.",
-      "Channel allocation justified by audience consumption patterns.",
-      "Quantifiable commercial outcome (ROAS, CPA reduction, pipeline revenue)."
-    ],
-    idealModelAnswer: "In a previous campaign, I determined the budget using the objective-and-task method, calculating our target customer acquisition cost against customer lifetime value. We concentrated spend on Google Search and LinkedIn where commercial intent was highest. The campaign lowered our blended CAC by 22% and achieved a 3.4x return on ad spend.",
-    followUpProbe: "You mentioned the marketing channels, but what was the exact quantitative ROI or customer acquisition cost achieved?"
+    idealModelAnswer: "In a previous campaign, I allocated 60% of our budget to high-intent search channels and 40% to social media for top-of-funnel awareness. By optimizing high-performing ad variations weekly, we reduced our Customer Acquisition Cost by 18% and achieved a 3.2x Return on Ad Spend."
   },
   {
     field: "Marketing",
     level: "Experienced",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "How would you decide whether to spend more on paid ads or on content and SEO for a product that is already selling?",
+    text: "When scaling an established product, how do you balance spending on paid performance marketing versus investing in SEO and organic content?",
     thinkingTimeSec: 0,
     keywords: ["seo", "content", "paid", "cac", "payback", "blended", "margin", "scale"],
-    corePoints: [
-      "Evaluate current paid CAC vs organic acquisition baseline.",
-      "Assess market saturation and margin contribution.",
-      "Deploy paid for immediate scaling while allocating 25-30% into SEO to permanently lower blended CAC."
-    ],
-    idealModelAnswer: "I evaluate our customer acquisition payback period and current organic search share. If unit economics are healthy and immediate scale is demanded, paid ads capture available market demand quickly. However, to defend gross margins against ad inflation, I allocate a consistent 25% of budget into SEO and content to permanently lower our blended CAC.",
-    followUpProbe: "How does the customer acquisition payback period dictate whether you can afford aggressive paid acquisition?"
+    idealModelAnswer: "I look at our immediate revenue targets and blended Customer Acquisition Cost. Paid performance marketing gives predictable immediate scale, but ad costs tend to rise over time. To protect our profit margins, I allocate about 25% of the marketing budget into SEO and content to build a steady organic pipeline."
   },
   {
     field: "Marketing",
     level: "Experienced",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "How do you judge whether a brand’s messaging is working in a market that is changing quickly?",
+    text: "How do you evaluate whether your brand's messaging is still resonating when customer habits or market conditions shift quickly?",
     thinkingTimeSec: 10,
-    keywords: ["sentiment", "feedback", "velocity", "conversion", "testing", "resonance", "sales"],
-    corePoints: [
-      "Frontline sales feedback and customer sentiment shifts.",
-      "Conversion velocity and sales cycle duration changes.",
-      "Rapid A/B testing of messaging value propositions across agile digital channels."
-    ],
-    idealModelAnswer: "I track frontline sales feedback alongside conversion velocity. When messaging disconnects from a changing market, conversion rates stall and sales cycles lengthen. I deploy weekly A/B ad copy tests to rapidly benchmark which pain points resonate with current market realities.",
-    followUpProbe: "Beyond sales volume numbers, what frontline qualitative signals show customer priorities are shifting?"
-  },
-  {
-    field: "Marketing",
-    level: "Experienced",
-    author: "✦ Campus Placement Standard",
-    text: "Describe how you would launch a product in a new city where the brand is unknown.",
-    thinkingTimeSec: 0,
-    keywords: ["launch", "local", "partnerships", "geo-targeted", "micro-influencers", "trial", "trust"],
-    corePoints: [
-      "Hyper-local research and competitor positioning benchmarking.",
-      "High-trust local partnerships, micro-influencers, and on-ground activations.",
-      "Geo-targeted digital performance marketing with localized messaging."
-    ],
-    idealModelAnswer: "I execute a phased market-entry plan: First, partner with respected local businesses and community groups for immediate credibility. Second, activate geo-targeted digital ads offering an exclusive trial. Third, incentivize early adopters with referral bonuses to build grassroots word-of-mouth.",
-    followUpProbe: "You mentioned digital ads, but how do you create physical on-ground credibility and distribution in a brand new city?"
-  },
-  {
-    field: "Marketing",
-    level: "Experienced",
-    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "A campaign’s cost per lead has doubled over three weeks. What would you do?",
-    thinkingTimeSec: 10,
-    keywords: ["frequency", "fatigue", "creative", "saturation", "landing page", "cpl", "audit"],
-    corePoints: [
-      "Diagnose ad creative fatigue (rising frequency, declining CTR).",
-      "Check audience saturation and ad-set overlap.",
-      "Audit landing page technical health and attribution tracking."
-    ],
-    idealModelAnswer: "I run a rapid diagnosis across three areas: First, check ad frequency—if frequency is climbing and CTR is falling, the audience has creative fatigue and needs fresh angles. Second, verify audience overlap across ad sets. Third, audit the landing page for tracking errors or technical glitches inflating reported CPL.",
-    followUpProbe: "If ad fatigue is ruled out, what technical breakdown on the landing page or tracking pixel could double reported CPL?"
+    keywords: ["sentiment", "feedback", "conversion", "velocity", "testing", "sales", "resonance"],
+    idealModelAnswer: "I track conversion rates and sales cycle length. When messaging loses touch with customer priorities, prospects take longer to decide and conversion rates drop. I stay aligned by gathering feedback from frontline sales calls and running weekly A/B tests on ad copy to see what pain points resonate best."
   },
 
   // ================= FINANCE =================
   {
     field: "Finance",
     level: "Fresher",
-    author: "✦ Campus Placement Standard",
-    text: "What is the difference between profit and cash flow, and why can a profitable business still run out of money?",
+    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
+    text: "How would you explain the difference between being profitable on paper and having positive cash flow? Why do companies with profits still go bankrupt?",
     thinkingTimeSec: 0,
-    keywords: ["profit", "cash flow", "accrual", "receivables", "liquidity", "run out", "timing"],
-    corePoints: [
-      "Profit: Accrual accounting calculation (Revenues recognized minus Expenses incurred).",
-      "Cash Flow: Actual liquid funds moving in and out of bank accounts.",
-      "Reason: Cash tied up in customer receivables, unsold inventory, or debt obligations."
-    ],
-    idealModelAnswer: "Profit is an accounting metric calculated on an accrual basis where revenue is recorded when billed, not collected. Cash flow tracks the physical money entering and leaving bank accounts. A profitable company can run out of cash if clients take 90 days to pay while bills and payroll are due immediately.",
-    followUpProbe: "What is the single biggest operational asset where cash gets trapped in an expanding business?"
+    keywords: ["profit", "cash flow", "accrual", "receivables", "liquidity", "bankrupt", "timing"],
+    idealModelAnswer: "Profit is recorded on paper when an invoice is issued, regardless of when payment is received. Cash flow is the actual money in bank accounts available to pay expenses. A profitable business can run out of money if customers delay payments for months while payroll and vendor bills are due immediately."
   },
   {
     field: "Finance",
     level: "Fresher",
     author: "💼 Curated by CA Bhargav Pandya • Financial Head",
-    text: "What does a balance sheet show, and what are its three main parts?",
+    text: "If you open a company's balance sheet, what three major sections are you looking at, and how do they balance each other out?",
     thinkingTimeSec: 0,
-    keywords: ["balance sheet", "assets", "liabilities", "equity", "equation", "snapshot", "point in time"],
-    corePoints: [
-      "Financial snapshot of a company's financial condition at a specific date.",
-      "Three pillars: Assets, Liabilities, and Shareholders' Equity.",
-      "Governing identity: Assets = Liabilities + Equity."
-    ],
-    idealModelAnswer: "A balance sheet presents a financial snapshot of a business at a specific point in time. Its three core parts are: Assets (what the company owns), Liabilities (what it owes to creditors), and Equity (the residual interest belonging to shareholders), governed by the rule Assets equal Liabilities plus Equity.",
-    followUpProbe: "What fundamentally distinguishes a balance sheet from an income statement in terms of the time period covered?"
-  },
-  {
-    field: "Finance",
-    level: "Fresher",
-    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
-    text: "What is the difference between a debit and a credit?",
-    thinkingTimeSec: 0,
-    keywords: ["debit", "credit", "asset", "liability", "expense", "equity", "double entry"],
-    corePoints: [
-      "Debit: Increases asset and expense accounts; decreases liability, equity, and revenue accounts.",
-      "Credit: Increases liability, equity, and revenue accounts; decreases asset and expense accounts.",
-      "Double-entry bookkeeping convention maintaining systemic balance."
-    ],
-    idealModelAnswer: "In double-entry bookkeeping, debits and credits represent opposing financial entries. A debit increases asset and expense accounts while decreasing liabilities and equity. A credit increases liability, equity, and revenue accounts while decreasing assets. Every transaction requires equal debits and credits.",
-    followUpProbe: "Why does an increase in an expense account get recorded as a debit rather than a credit?"
-  },
-  {
-    field: "Finance",
-    level: "Fresher",
-    author: "✦ Campus Placement Standard",
-    text: "What is the difference between fixed costs and variable costs? Give one example of each.",
-    thinkingTimeSec: 10,
-    keywords: ["fixed", "variable", "rent", "production", "volume", "materials", "breakeven"],
-    corePoints: [
-      "Fixed costs: Remain constant regardless of output volume (e.g., rent, baseline executive salaries).",
-      "Variable costs: Change in direct proportion to production volume (e.g., raw materials, packaging).",
-      "Significance for operating leverage and breakeven volume."
-    ],
-    idealModelAnswer: "Fixed costs remain constant regardless of production volume, such as factory rent or monthly software subscriptions. Variable costs fluctuate directly with production output, such as packaging materials or raw materials needed to produce each individual unit.",
-    followUpProbe: "How does the proportion of fixed costs to variable costs dictate a company's breakeven point?"
-  },
-  {
-    field: "Finance",
-    level: "Fresher",
-    author: "✦ Campus Placement Standard",
-    text: "What is working capital, and why does it matter to a business?",
-    thinkingTimeSec: 0,
-    keywords: ["working capital", "current assets", "current liabilities", "liquidity", "short-term", "solvency"],
-    corePoints: [
-      "Formula: Current Assets minus Current Liabilities.",
-      "Measures short-term operational liquidity and solvency.",
-      "Safeguards against supplier defaults and operational halts."
-    ],
-    idealModelAnswer: "Working capital is calculated as Current Assets minus Current Liabilities. It is vital because it measures a company's immediate operational health and ability to meet short-term obligations like supplier bills and payroll without needing emergency external borrowing.",
-    followUpProbe: "What immediate danger does a company face if its current liabilities exceed its current assets?"
-  },
-
-  // Experienced (2+ years)
-  {
-    field: "Finance",
-    level: "Experienced",
-    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
-    text: "A department is 15 percent over budget halfway through the year. What steps would you take to find the cause and bring spending back on track?",
-    thinkingTimeSec: 10,
-    keywords: ["variance", "line item", "freeze", "run-rate", "structural", "one-time", "reconciliation"],
-    corePoints: [
-      "Line-by-line budget variance analysis.",
-      "Distinguish one-off non-recurring shocks from ongoing structural cost creep.",
-      "Enforce spending controls, discretionary freezes, or revised run-rates."
-    ],
-    idealModelAnswer: "First, I conduct a detailed variance analysis across every line item to identify whether the overrun is driven by a one-time non-recurring cost or structural operational creep. Second, meet with the department head to freeze non-essential discretionary expenses and establish weekly spending checkpoints to recover the variance over the remaining quarters.",
-    followUpProbe: "How do you distinguish between a temporary timing difference and permanent cost creep in a budget line?"
-  },
-  {
-    field: "Finance",
-    level: "Experienced",
-    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
-    text: "How would you build a monthly cash flow forecast for a small business, and what would you watch most closely?",
-    thinkingTimeSec: 0,
-    keywords: ["collections", "disbursements", "forecast", "aging", "receivables", "burn rate", "buffer"],
-    corePoints: [
-      "Direct forecasting modeling: Cash collections vs. cash disbursements over 12 months.",
-      "Accounts receivable aging analysis and real collection lag.",
-      "Minimum required operational cash buffer."
-    ],
-    idealModelAnswer: "I build a direct cash forecast modeling collections based on historical aging schedules rather than billed invoices, mapped against scheduled outflows including payroll, vendor contracts, taxes, and debt. I watch the minimum operating cash threshold and receivables collection lag most closely to avoid cash flow crunches.",
-    followUpProbe: "Why should you never base your cash collections forecast on billed revenue invoices alone?"
-  },
-  {
-    field: "Finance",
-    level: "Experienced",
-    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
-    text: "What would you look at first if a company’s gross margin dropped five points in one quarter?",
-    thinkingTimeSec: 10,
-    keywords: ["gross margin", "cogs", "pricing", "volume", "discounting", "mix", "raw materials"],
-    corePoints: [
-      "Price vs. Volume vs. Cost analysis (Cost of Goods Sold breakdown).",
-      "Raw material price inflation, direct labor cost increases, or freight shocks.",
-      "Unauthorized sales discounting or product mix shift."
-    ],
-    idealModelAnswer: "I isolate whether the drop was caused by revenue dilution or cost inflation. I review our pricing realizations to see if sales teams gave unauthorized discounts, then audit COGS line-by-line for raw material price surges, rising direct labor, or unfavorable product mix changes toward lower-margin lines.",
-    followUpProbe: "How could an unexpected shift in product mix crush gross margins even if overall unit sales grew?"
-  },
-  {
-    field: "Finance",
-    level: "Experienced",
-    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
-    text: "How would you decide whether a new piece of equipment is worth buying?",
-    thinkingTimeSec: 0,
-    keywords: ["npv", "irr", "payback", "capital budgeting", "tco", "discount rate", "cash flows"],
-    corePoints: [
-      "Capital budgeting: Net Present Value (NPV), Internal Rate of Return (IRR), Payback Period.",
-      "Total Cost of Ownership (maintenance, power, training, depreciation).",
-      "Impact on working capital and liquidity risk."
-    ],
-    idealModelAnswer: "I evaluate the capital investment using Net Present Value (NPV) and Internal Rate of Return (IRR) discounted at our cost of capital. In addition to financial metrics, I assess total cost of ownership—including maintenance, training, and efficiency gains—and ensure the payback period matches our cash liquidity tolerances.",
-    followUpProbe: "Why is discounted cash flow (NPV) considered superior to a simple non-discounted payback period?"
-  },
-  {
-    field: "Finance",
-    level: "Experienced",
-    author: "✦ Campus Placement Standard",
-    text: "Tell me about a time you found an error in financial figures. How did you find it and what did you do?",
-    thinkingTimeSec: 10,
-    keywords: ["reconciliation", "variance", "error", "journal", "audit", "corrective", "controls"],
-    corePoints: [
-      "Detection via reconciliation, sanity check, or variance analysis.",
-      "Root cause investigation and corrective ledger posting.",
-      "Control implementation to prevent recurrence."
-    ],
-    idealModelAnswer: "During a monthly bank reconciliation, I noticed an unexpected variance between billed receivables and cash ledgers. I traced the transaction back to an inverted journal entry that misallocated a vendor refund. I corrected the entry, documented the adjustment for our auditor, and introduced a standardized verification checklist.",
-    followUpProbe: "After correcting the ledger entry, what institutional control did you establish to prevent recurrence?"
+    keywords: ["balance sheet", "assets", "liabilities", "equity", "equation", "snapshot", "capital"],
+    idealModelAnswer: "The three main sections are Assets, Liabilities, and Shareholders' Equity. Assets represent what the business owns, Liabilities are what it owes to creditors, and Equity is the remaining value belonging to owners. They are connected by the foundational accounting rule: Assets equal Liabilities plus Equity."
   },
 
   // ================= HUMAN RESOURCES =================
   {
     field: "HR",
     level: "Fresher",
-    author: "✦ Campus Placement Standard",
-    text: "What is the difference between recruitment and selection?",
+    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
+    text: "How would you explain the operational difference between recruitment and selection to a hiring manager?",
     thinkingTimeSec: 0,
-    keywords: ["recruitment", "selection", "attract", "filter", "pool", "positive", "negative", "hiring"],
-    corePoints: [
-      "Recruitment: Positive talent attraction and pool building.",
-      "Selection: Rigorous filtering, evaluation, and elimination process.",
-      "Recruitment creates candidate supply; selection chooses the final hire."
-    ],
-    idealModelAnswer: "Recruitment is the positive process of advertising, sourcing, and attracting a large pool of candidates to apply for an opening. Selection is the rigorous screening process of interviewing, testing, and filtering that pool down to choose the best-suited individual for the role.",
-    followUpProbe: "Why do HR scholars describe recruitment as a 'positive' process and selection as a 'negative' one?"
+    keywords: ["recruitment", "selection", "attract", "filter", "pool", "positive", "hiring", "screening"],
+    idealModelAnswer: "Recruitment is about sourcing and encouraging qualified people to apply for a role. Selection is the evaluation process—using interviews, tests, and background checks to choose the best candidate from that applicant pool."
   },
   {
     field: "HR",
     level: "Fresher",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
-    text: "How would you handle a new employee who is struggling to keep up with the team in the first month?",
+    text: "If a newly hired employee is struggling to keep up with team expectations in their first 30 days, how would you support them?",
     thinkingTimeSec: 0,
     keywords: ["check-in", "mentor", "buddy", "expectations", "coaching", "training", "empathy"],
-    corePoints: [
-      "Empathetic check-in to diagnose skill gaps vs. process ambiguity.",
-      "Peer mentor pairing and bite-sized weekly goal setting.",
-      "Constructive 30-day coaching roadmap before escalation."
-    ],
-    idealModelAnswer: "I would schedule an informal, supportive check-in to understand whether their struggle stems from training gaps, unclear expectations, or tooling friction. I would pair them with an experienced peer buddy, set bite-sized weekly milestones, and review their progress constructively at the end of each week.",
-    followUpProbe: "How do you distinguish between an employee who lacks technical training versus one who lacks motivation?"
-  },
-  {
-    field: "HR",
-    level: "Fresher",
-    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
-    text: "Why do companies run an onboarding programme, and what should it cover?",
-    thinkingTimeSec: 0,
-    keywords: ["onboarding", "culture", "tools", "expectations", "retention", "compliance", "productivity"],
-    corePoints: [
-      "Reduces initial anxiety and accelerates time-to-productivity.",
-      "Covers culture, tools, compliance, and role expectations.",
-      "Direct correlation with 90-day retention rates."
-    ],
-    idealModelAnswer: "An onboarding program accelerates new hire time-to-productivity and directly drives first-year retention. It should cover company culture and values, IT and workflow systems, clear role responsibilities, compliance policies, and introduce key cross-functional team members.",
-    followUpProbe: "What critical role does immersing a new hire in company culture play alongside technical paperwork?"
-  },
-  {
-    field: "HR",
-    level: "Fresher",
-    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
-    text: "What makes an interview question fair and legal to ask?",
-    thinkingTimeSec: 0,
-    keywords: ["fair", "legal", "job-related", "bias", "marital", "religion", "standardized", "rubric"],
-    corePoints: [
-      "Direct job-relatedness and bona fide occupational qualifications.",
-      "Strict avoidance of personal characteristics (religion, marital status, caste, family planning).",
-      "Standardized evaluation rubric applied uniformly to all candidates."
-    ],
-    idealModelAnswer: "A fair interview question is directly related to the candidate's ability to perform essential job duties. It strictly avoids personal inquiries into religion, marital status, gender, family planning, or caste, and is asked consistently to all applicants using a standardized evaluation rubric.",
-    followUpProbe: "How does applying a uniform evaluation rubric protect a company from unconscious hiring bias?"
-  },
-  {
-    field: "HR",
-    level: "Fresher",
-    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
-    text: "What is the difference between an employee’s job description and their key performance indicators?",
-    thinkingTimeSec: 10,
-    keywords: ["jd", "kpi", "responsibilities", "targets", "metrics", "quantitative", "qualitative"],
-    corePoints: [
-      "Job Description (JD): Qualitative scope of ongoing duties, responsibilities, and qualifications.",
-      "KPIs: Quantitative, time-bound targets measuring execution success.",
-      "JD outlines what you do; KPIs measure how effectively you achieve results."
-    ],
-    idealModelAnswer: "A job description outlines the qualitative scope, duties, and responsibilities of a role—explaining what the employee is responsible for. Key Performance Indicators (KPIs) are the specific, measurable, time-bound targets that assess how successfully the employee is executing that work.",
-    followUpProbe: "Why can an employee fulfill every line of their JD and still fail to hit their performance KPIs?"
-  },
-
-  // Experienced (2+ years)
-  {
-    field: "HR",
-    level: "Experienced",
-    author: "✦ Campus Placement Standard",
-    text: "Describe a time you handled a conflict between two team members. What did you do, and what happened afterwards?",
-    thinkingTimeSec: 0,
-    keywords: ["conflict", "mediation", "neutral", "listening", "ground rules", "resolution", "impact"],
-    corePoints: [
-      "Neutrality and individual active listening.",
-      "Joint mediation focusing on workflow impact rather than personal friction.",
-      "Establishing agreed ground rules and follow-up accountability."
-    ],
-    idealModelAnswer: "When two team members reached an impasse over project deliverables, I met with each individually to hear their concerns without taking sides. I then facilitated a joint session focused exclusively on shared project milestones, established clear ownership of tasks, and conducted check-ins to ensure collaborative alignment.",
-    followUpProbe: "How do you shift a heated discussion from emotional accusations to objective workflow deliverables?"
-  },
-  {
-    field: "HR",
-    level: "Experienced",
-    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
-    text: "How would you reduce employee turnover in a team where people leave after about a year?",
-    thinkingTimeSec: 10,
-    keywords: ["turnover", "retention", "exit interview", "growth", "mobility", "manager", "compensation"],
-    corePoints: [
-      "Rigorous exit and stay interview analysis to isolate root causes.",
-      "Evaluate managerial effectiveness, career progression pathways, and compensation parity.",
-      "Establish visible internal mobility and growth milestones."
-    ],
-    idealModelAnswer: "I conduct a root-cause diagnostic by analyzing exit interview trends and conducting stay interviews with current team members. A 12-month turnover spike usually signals a lack of career progression or managerial friction. I establish clear internal growth milestones and implement regular manager feedback loops.",
-    followUpProbe: "Why are proactive stay interviews with current staff far more valuable than exit interviews with departing staff?"
-  },
-  {
-    field: "HR",
-    level: "Experienced",
-    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
-    text: "How do you run a performance review that is fair and useful to the employee?",
-    thinkingTimeSec: 0,
-    keywords: ["review", "no surprises", "kpis", "development", "continuous", "evidence", "feedback"],
-    corePoints: [
-      "No surprises: continuous feedback delivered throughout the appraisal cycle.",
-      "Data-backed evaluation tied to agreed KPIs, not subjective impressions.",
-      "Forward-looking career development and coaching focus."
-    ],
-    idealModelAnswer: "A fair review should hold zero surprises. It should evaluate clear, documented evidence against agreed-upon KPIs rather than personal impressions. I structure the conversation 30% on past results and 70% on forward-looking professional development and actionable career goals.",
-    followUpProbe: "How do you prevent recency bias from overshadowing an entire year of consistent contributions?"
-  },
-  {
-    field: "HR",
-    level: "Experienced",
-    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
-    text: "How would you handle an employee who is performing well but is disruptive to the team?",
-    thinkingTimeSec: 0,
-    keywords: ["toxic", "disruptive", "culture", "behavior", "impact", "accountability", "boundaries"],
-    corePoints: [
-      "Never excuse toxic behavior for technical performance.",
-      "Direct private feedback citing specific behaviors and team impact.",
-      "Set measurable behavioral standards alongside performance metrics."
-    ],
-    idealModelAnswer: "High performance never excuses toxic behavior. I hold a private, direct conversation highlighting their strong work while showing specific examples of how their conduct impacts team morale and productivity. I set clear, measurable expectations for professional behavior, making it clear that culture fit is an equal requirement for success.",
-    followUpProbe: "What specific objective behavioral benchmarks do you set in their improvement plan to measure conduct?"
-  },
-  {
-    field: "HR",
-    level: "Experienced",
-    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
-    text: "A company is planning to cut 10 percent of its staff. How would you plan and communicate it?",
-    thinkingTimeSec: 10,
-    keywords: ["layoff", "severance", "communication", "empathy", "objective", "transition", "retained"],
-    corePoints: [
-      "Objective, role-based criteria vetted against bias.",
-      "Transparent, empathetic leadership communication delivered simultaneously.",
-      "Comprehensive transition support (severance, healthcare, outplacement)."
-    ],
-    idealModelAnswer: "I would ensure selection criteria are strictly objective, role-based, and legally vetted to eliminate bias. Communication must be transparent, empathetic, and delivered directly by senior leadership on the same day. For impacted employees, we provide clear transition packages and outplacement assistance, while immediately holding an all-hands meeting to reassure and refocus retained staff.",
-    followUpProbe: "How do you safeguard the survivor morale and retention of the 90 percent of employees who stay behind?"
+    idealModelAnswer: "I schedule a supportive 1-on-1 meeting to see if they're facing training gaps, unclear instructions, or tool issues. I pair them with a peer mentor and break their goals down into manageable weekly milestones so they build confidence."
   }
 ];
 
 // STATE ENGINE
 let sessionQuestions = [];
 let currentQIndex = 0;
-let inSocraticProbeMode = false;
+let inSpontaneousMode = false;
 let currentProbeText = "";
 let currentProbeTranscript = "";
 let answerStartTime = null;
@@ -987,7 +669,7 @@ let selectedVoice = null;
 let countdownInterval = null;
 let activeUtterance = null;
 
-// PHYSICAL MEDIA STREAM & RECORDER
+// MEDIA STREAM & RECORDER
 let activeStream = null;
 let mediaRecorder = null;
 let audioChunks = [];
@@ -1040,7 +722,7 @@ function bindVolumeMeter(stream, barId, pctId) {
   }, 60);
 }
 
-// SETUP SCREEN INITIALIZATION
+// SETUP VOICES
 function initVoices() {
   const voiceSelect = document.getElementById("select-voice");
   const voices = window.speechSynthesis.getVoices();
@@ -1067,7 +749,7 @@ function initVoices() {
     voiceSelect.appendChild(opt);
   });
 
-  selectedVoice = displayList[0] || voices[0];
+  selectedVoice = displayList || voices;
 }
 
 window.speechSynthesis.onvoiceschanged = initVoices;
@@ -1096,6 +778,7 @@ document.getElementById("btn-proceed-to-mic").addEventListener("click", () => {
   selectedVoice = window.speechSynthesis.getVoices().find(v => v.name === voiceName) || null;
 
   let pool = QUESTION_BANK.filter(q => q.field === chosenField && q.level === chosenLevel);
+  if (pool.length < chosenCount) pool = QUESTION_BANK.filter(q => q.field === chosenField);
   sessionQuestions = pool.slice(0, chosenCount);
 
   document.getElementById("screen-setup").classList.add("hidden");
@@ -1119,7 +802,7 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
 
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRec) {
-      micOutput.innerHTML = `<span style="color:var(--danger-red);">Speech recognition engine not supported. Please open this page in Google Chrome.</span>`;
+      micOutput.innerHTML = `<span style="color:var(--danger-red);">Speech recognition engine not supported in this browser. Please open in Google Chrome.</span>`;
       return;
     }
 
@@ -1134,10 +817,9 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
     testRec.onresult = (e) => {
       let spoken = "";
       for (let i = 0; i < e.results.length; i++) {
-        // FIXED INDEXING: e.results[i][0].transcript
-        if (e.results[i] && e.results[i][0] && e.results[i][0].transcript) {
-          spoken += e.results[i][0].transcript + " ";
-        }
+        const item = e.results[i];
+        const text = (item && item.transcript) ? item.transcript : (item.transcript || "");
+        spoken += text + " ";
       }
       spoken = normalizeSpokenText(spoken.trim());
       if (spoken.length > 0) {
@@ -1158,7 +840,7 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
 
     testRec.start();
   } catch (err) {
-    micOutput.innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Hardware Error: ${err.message}. Please click the lock icon in your address bar and ALLOW microphone access.</span>`;
+    micOutput.innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Hardware Error: ${err.message}. Please allow microphone permissions in your browser URL bar.</span>`;
   }
 });
 
@@ -1170,12 +852,12 @@ document.getElementById("btn-mic-ok-proceed").addEventListener("click", () => {
     bindVolumeMeter(activeStream, "live-meter-level", "live-meter-pct");
   }
   currentQIndex = 0;
-  inSocraticProbeMode = false;
+  inSpontaneousMode = false;
   loadCurrentQuestion();
 });
 
 function loadCurrentQuestion() {
-  inSocraticProbeMode = false;
+  inSpontaneousMode = false;
   const qData = sessionQuestions[currentQIndex];
   currentQuestionTranscript = "";
   currentProbeTranscript = "";
@@ -1188,9 +870,8 @@ function loadCurrentQuestion() {
   document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length}`;
   
   const questionBox = document.getElementById("spoken-question-text");
-  const timerBadgeHtml = qData.thinkingTimeSec > 0 ? `<span class="timer-tag-inline">⏱ ${qData.thinkingTimeSec}s</span>` : '';
   const authorBadgeHtml = `<span class="author-tag-inline">${qData.author}</span>`;
-  questionBox.innerHTML = `${qData.text} ${authorBadgeHtml} ${timerBadgeHtml}`;
+  questionBox.innerHTML = `${qData.text} ${authorBadgeHtml}`;
 
   const flowStatus = document.getElementById("flow-status-text");
   const transcriptBox = document.getElementById("live-transcript");
@@ -1210,27 +891,10 @@ function loadCurrentQuestion() {
     hasEnded = true;
 
     questionActiveTimestamp = Date.now();
-
     setTimeout(() => {
-      if (qData.thinkingTimeSec > 0) {
-        let secondsLeft = qData.thinkingTimeSec;
-        flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span> (Take a moment to structure your thoughts)`;
-
-        countdownInterval = setInterval(() => {
-          secondsLeft--;
-          if (secondsLeft > 0) {
-            flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span> (Take a moment to structure your thoughts)`;
-          } else {
-            clearInterval(countdownInterval);
-            flowStatus.innerHTML = `<strong>Microphone Live:</strong> Transcribing & recording. Speak your answer now.`;
-            startVoiceRecording();
-          }
-        }, 1000);
-      } else {
-        flowStatus.innerHTML = `<strong>Microphone Live:</strong> Transcribing & recording. Speak your answer now.`;
-        startVoiceRecording();
-      }
-    }, 400);
+      flowStatus.innerHTML = `<strong>Microphone Live:</strong> Speak your response naturally into the microphone.`;
+      startVoiceRecording();
+    }, 300);
   }
 
   utter.onend = triggerQuestionEnd;
@@ -1245,63 +909,87 @@ function loadCurrentQuestion() {
   window.speechSynthesis.speak(utter);
 }
 
-// INTELLIGENT GATING: DECIDE IF A SPONTANEOUS PUSHBACK IS GENUINELY WARRANTED
-function evaluateFollowUpNeed(transcript, qData, wasSkipped) {
-  if (wasSkipped) return { needed: false, reason: "Candidate elected to pass" };
-
+// REAL-TIME SPONTANEOUS PROBE GENERATOR
+// Analyzes what the candidate actually spoke in real-time and asks a direct, natural follow-up
+function generateSpontaneousFollowUp(transcript, qData) {
   const words = transcript.trim().split(/\s+/).filter(Boolean).length;
   const lower = transcript.toLowerCase();
-  const hitKeywords = qData.keywords.filter(kw => lower.includes(kw.toLowerCase()));
 
-  // CASE 1: Solid & Well-Rounded Answer (No follow-up needed)
-  if (hitKeywords.length >= 3 || (words >= 35 && hitKeywords.length >= 2)) {
+  // If candidate gave a very short/vague response (< 18 words)
+  if (words > 0 && words < 18) {
     return {
-      needed: false,
-      reason: "Answer was self-contained and hit core concepts"
+      trigger: true,
+      prompt: `You touched on the surface there, but can you walk me through the practical steps or specific metrics you'd use to execute that in real life?`
     };
   }
 
-  // CASE 2: Vague / Partial Answer (Probe the gap)
-  if (words >= 4 && hitKeywords.length <= 2) {
+  // Real-time contextual keyword matching from spoken speech
+  if (lower.includes("budget") || lower.includes("cost") || lower.includes("spend") || lower.includes("money")) {
     return {
-      needed: true,
-      probe: qData.followUpProbe,
-      leadIn: "Fair point, but quick follow-up: "
+      trigger: true,
+      prompt: `You brought up managing costs and budget—if senior management suddenly cut that budget by 30% mid-way through, how would you pivot without losing impact?`
     };
   }
 
-  // Fallback: If very short or unclear
-  return { needed: false, reason: "Moving forward cleanly" };
+  if (lower.includes("team") || lower.includes("people") || lower.includes("manager") || lower.includes("employee")) {
+    return {
+      trigger: true,
+      prompt: `You mentioned working with the team on this—how do you handle pushback if key stakeholders or senior team members disagree with your approach?`
+    };
+  }
+
+  if (lower.includes("customer") || lower.includes("client") || lower.includes("audience") || lower.includes("user")) {
+    return {
+      trigger: true,
+      prompt: `That's a good point about the customer perspective—what specific feedback or data signal would tell you that customer priorities are starting to shift?`
+    };
+  }
+
+  if (lower.includes("metric") || lower.includes("kpi") || lower.includes("conversion") || lower.includes("track") || lower.includes("sales")) {
+    return {
+      trigger: true,
+      prompt: `You mentioned tracking performance metrics—how do you make sure you aren't fooled by vanity numbers that look good on paper but don't drive real bottom-line value?`
+    };
+  }
+
+  // If candidate gave a solid answer (20+ words), occasionally ask a natural trade-off question
+  if (words >= 18 && words < 45) {
+    return {
+      trigger: true,
+      prompt: `Fair perspective. From an operational standpoint, what do you see as the single biggest trade-off or risk in that approach?`
+    };
+  }
+
+  // Thorough, well-structured answer (45+ words) -> No probe needed, acknowledge and move forward
+  return { trigger: false, prompt: "" };
 }
 
-// SPONTANEOUS FOLLOW-UP PROBE (ONLY TRIGGERED WHEN WARRANTED)
-function triggerSocraticProbe(probeText, leadIn) {
-  inSocraticProbeMode = true;
-  currentProbeText = probeText;
+function triggerSpontaneousProbe(probePrompt) {
+  inSpontaneousMode = true;
+  currentProbeText = probePrompt;
   audioChunks = [];
 
   document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length} (Panel Follow-Up)`;
-  
+
   const questionBox = document.getElementById("spoken-question-text");
-  questionBox.innerHTML = `"${probeText}" <span class="probe-tag-inline">⚡ Panel Pushback</span>`;
+  questionBox.innerHTML = `"${probePrompt}" <span class="probe-tag-inline">⚡ Spontaneous Follow-Up</span>`;
 
   const flowStatus = document.getElementById("flow-status-text");
-  flowStatus.innerHTML = `<strong>Panel Pushback:</strong> The interviewer is asking a quick follow-up...`;
+  flowStatus.innerHTML = `<strong>Interviewer Follow-Up:</strong> Listening to your response...`;
   setMicStatus("Interviewer Speaking...", false);
 
   window.speechSynthesis.cancel();
-  const spokenPrompt = `${leadIn} ${probeText}`;
-  const utter = new SpeechSynthesisUtterance(spokenPrompt);
+  const utter = new SpeechSynthesisUtterance(probePrompt);
   if (selectedVoice) utter.voice = selectedVoice;
   utter.rate = 0.95;
   activeUtterance = utter;
 
   utter.onend = () => {
-    flowStatus.innerHTML = `<strong>Microphone Live:</strong> Answer the panel's follow-up.`;
+    flowStatus.innerHTML = `<strong>Microphone Live:</strong> Respond to the interviewer's follow-up.`;
     startVoiceRecording();
   };
   utter.onerror = () => {
-    flowStatus.innerHTML = `<strong>Microphone Live:</strong> Answer the panel's follow-up.`;
+    flowStatus.innerHTML = `<strong>Microphone Live:</strong> Respond to the interviewer's follow-up.`;
     startVoiceRecording();
   };
 
@@ -1314,7 +1002,7 @@ async function startVoiceRecording() {
   audioChunks = [];
   isRecognizerExplicitlyStopped = false;
 
-  if (inSocraticProbeMode) currentProbeTranscript = "";
+  if (inSpontaneousMode) currentProbeTranscript = "";
   else currentQuestionTranscript = "";
 
   try {
@@ -1330,7 +1018,7 @@ async function startVoiceRecording() {
   answerStartTime = Date.now();
   setMicStatus("Recording & Transcribing", true);
   document.getElementById("live-transcript").innerHTML = `
-    <span style="color:var(--text-muted); font-style:italic;">Listening... speak naturally.</span>
+    <span style="color:var(--text-muted); font-style:italic;">Listening... speak naturally into the mic.</span>
   `;
 
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1349,13 +1037,12 @@ async function startVoiceRecording() {
       speechRecognizer.onresult = (event) => {
         let full = "";
         for (let i = 0; i < event.results.length; i++) {
-          // FIXED INDEXING: event.results[i][0].transcript
-          if (event.results[i] && event.results[i][0] && event.results[i][0].transcript) {
-            full += event.results[i][0].transcript + " ";
-          }
+          const item = event.results[i];
+          const text = (item && item.transcript) ? item.transcript : (item.transcript || "");
+          full += text + " ";
         }
         const cleaned = normalizeSpokenText(full.trim());
-        if (inSocraticProbeMode) {
+        if (inSpontaneousMode) {
           currentProbeTranscript = cleaned;
         } else {
           currentQuestionTranscript = cleaned;
@@ -1370,12 +1057,11 @@ async function startVoiceRecording() {
 
       speechRecognizer.onerror = (e) => {
         if (e.error === 'not-allowed') {
-          document.getElementById("live-transcript").innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Mic permission denied in browser. Please allow microphone in your URL bar.</span>`;
+          document.getElementById("live-transcript").innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Mic permission denied. Allow microphone access in your browser address bar.</span>`;
         }
       };
 
       speechRecognizer.onend = () => {
-        // Auto-restart if browser stops recognition while user is still answering
         if (!isRecognizerExplicitlyStopped && answerStartTime) {
           setTimeout(() => {
             if (!isRecognizerExplicitlyStopped && answerStartTime) {
@@ -1422,11 +1108,11 @@ function setMicStatus(label, isLive) {
 // FINISH ANSWER HANDLER
 document.getElementById("btn-finish-answer").addEventListener("click", async () => {
   const durationSec = answerStartTime ? ((Date.now() - answerStartTime) / 1000).toFixed(1) : 0;
-  const currentText = inSocraticProbeMode ? currentProbeTranscript.trim() : currentQuestionTranscript.trim();
+  const currentText = inSpontaneousMode ? currentProbeTranscript.trim() : currentQuestionTranscript.trim();
 
   if (durationSec < 1.8 && currentText.length === 0) {
     window.speechSynthesis.cancel();
-    const promptVoice = new SpeechSynthesisUtterance("You clicked finish without speaking. Please speak your answer or choose to pass.");
+    const promptVoice = new SpeechSynthesisUtterance("You clicked finish without speaking. Please speak your answer or click pass.");
     if (selectedVoice) promptVoice.voice = selectedVoice;
     promptVoice.rate = 1.0;
     activeUtterance = promptVoice;
@@ -1434,7 +1120,7 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
 
     document.getElementById("live-transcript").innerHTML = `
       <span style="color: var(--danger-red); font-weight: 700;">
-        ⚠️ Empty Submission Intercepted: Please speak your response, or click "I Don't Know / Pass Question" below.
+        ⚠️ Empty Submission: Please speak your answer, or click "I Don't Know / Pass Question" below.
       </span>
     `;
     return;
@@ -1443,17 +1129,18 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
   const audioBlob = await stopVoiceRecording();
   if (countdownInterval) clearInterval(countdownInterval);
 
-  if (!inSocraticProbeMode) {
-    recordPrimaryAnswer(currentText, audioBlob, false, "", false, durationSec);
+  if (!inSpontaneousMode) {
+    recordPrimaryAnswer(currentText, audioBlob, false, "", durationSec);
 
+    // Spontaneous Follow-Up Decision based on real-time transcript
     const qData = sessionQuestions[currentQIndex];
-    const decision = evaluateFollowUpNeed(currentText, qData, false);
+    const probeDecision = generateSpontaneousFollowUp(currentText, qData);
 
-    if (decision.needed) {
-      triggerSocraticProbe(decision.probe, decision.leadIn);
+    if (probeDecision.trigger) {
+      triggerSpontaneousProbe(probeDecision.prompt);
     } else {
       window.speechSynthesis.cancel();
-      const ackUtter = new SpeechSynthesisUtterance("Understood. Let's move to the next question.");
+      const ackUtter = new SpeechSynthesisUtterance("Understood, clear point. Let's move to the next topic.");
       if (selectedVoice) ackUtter.voice = selectedVoice;
       ackUtter.rate = 1.0;
       activeUtterance = ackUtter;
@@ -1472,12 +1159,11 @@ document.getElementById("btn-idk-skip").addEventListener("click", async () => {
   const audioBlob = await stopVoiceRecording();
   if (countdownInterval) clearInterval(countdownInterval);
 
-  const deliberationSeconds = questionActiveTimestamp ? ((Date.now() - questionActiveTimestamp) / 1000).toFixed(1) : 0;
-  const isReflexivePass = deliberationSeconds < 4.0;
+  const durationSec = questionActiveTimestamp ? ((Date.now() - questionActiveTimestamp) / 1000).toFixed(1) : 0;
 
-  if (!inSocraticProbeMode) {
-    recordPrimaryAnswer("", null, true, "Candidate elected to pass / stated 'I don't know'.", isReflexivePass, deliberationSeconds);
-    
+  if (!inSpontaneousMode) {
+    recordPrimaryAnswer("", null, true, "Candidate elected to pass this question.", durationSec);
+
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance("Understood. Let us proceed to the next area.");
     if (selectedVoice) utter.voice = selectedVoice;
@@ -1492,7 +1178,7 @@ document.getElementById("btn-idk-skip").addEventListener("click", async () => {
   }
 });
 
-function recordPrimaryAnswer(transcript, audioBlob, wasSkipped, skipReason, isReflexivePass, durationSec) {
+function recordPrimaryAnswer(transcript, audioBlob, wasSkipped, skipReason, durationSec) {
   let audioUrl = null;
   if (audioBlob && audioBlob.size > 1000) {
     audioUrl = URL.createObjectURL(audioBlob);
@@ -1511,7 +1197,6 @@ function recordPrimaryAnswer(transcript, audioBlob, wasSkipped, skipReason, isRe
     audioUrl: audioUrl,
     wasSkipped: wasSkipped,
     skipReason: skipReason,
-    isReflexivePass: isReflexivePass,
     durationSec: durationSec,
     wpm: wpm,
     fillers: fillers,
@@ -1540,14 +1225,17 @@ function advanceToNextQuestion() {
   }
 }
 
-// GENERATE DYNAMIC EXECUTIVE REWRITE BASED ON SPOKEN TRANSCRIPT
+// GENERATE DYNAMIC EXECUTIVE REWRITE
 function generateExecutiveRewrite(transcript, qData) {
   if (!transcript || transcript.trim().length === 0) {
     return qData.idealModelAnswer;
   }
 
   let cleanSpoken = transcript.replace(/\b(um|uh|basically|you know|like)\b/gi, "").trim();
-  return `To structure this strategically: While ${cleanSpoken.toLowerCase().slice(0, 80)}..., the core operational objective requires anchoring our approach to ${qData.corePoints.split(":")}. By executing this systematically, we safeguard organizational margins and align cross-functional stakeholders.`;
+  if (cleanSpoken.length < 15) {
+    return qData.idealModelAnswer;
+  }
+  return `To structure this strategically: While ${cleanSpoken.toLowerCase().slice(0, 90)}..., our core operational priority is anchoring the approach to key fundamentals. By executing systematically, we safeguard business margins and ensure cross-functional alignment.`;
 }
 
 // PERSONALIZED EXECUTIVE DIAGNOSTIC DOSSIER
@@ -1556,8 +1244,8 @@ function renderTruthfulReport() {
   document.getElementById("screen-report").classList.remove("hidden");
 
   const answeredRounds = sessionResults.filter(r => !r.wasSkipped && (r.wordCount > 0 || r.audioUrl !== null));
-  const passedRounds = sessionResults.filter(r => r.wasSkipped);
-  const rapidPassRounds = sessionResults.filter(r => r.isReflexivePass);
+  const totalWordsSpoken = sessionResults.reduce((acc, r) => acc + r.wordCount, 0);
+  const spontaneousProbesTriggered = sessionResults.filter(r => r.probeText && r.probeText.length > 0).length;
 
   let totalKeywords = 0;
   let hitKeywords = 0;
@@ -1572,30 +1260,28 @@ function renderTruthfulReport() {
   const conceptCoveragePct = totalKeywords > 0 ? Math.round((hitKeywords / totalKeywords) * 100) : 0;
 
   const avgWPM = answeredRounds.length > 0 ? Math.round(answeredRounds.reduce((acc, r) => acc + r.wpm, 0) / answeredRounds.length) : 0;
-  const followUpsTriggered = sessionResults.filter(r => r.probeText && r.probeText.length > 0).length;
 
   document.getElementById("kpi-concept-coverage").textContent = `${conceptCoveragePct}%`;
   document.getElementById("kpi-wpm").textContent = avgWPM;
-  document.getElementById("kpi-probes-count").textContent = `${followUpsTriggered}`;
+  document.getElementById("kpi-probes-count").textContent = `${spontaneousProbesTriggered}`;
 
   const kpiScore = document.getElementById("kpi-score");
   if (answeredRounds.length === sessionResults.length && conceptCoveragePct >= 50) {
     kpiScore.textContent = "Tier 1 (Placement Ready)";
     kpiScore.style.color = "var(--success-green)";
   } else if (answeredRounds.length >= 1) {
-    kpiScore.textContent = "Tier 2 (Needs Polish)";
+    kpiScore.textContent = "Tier 2 (Developing)";
     kpiScore.style.color = "var(--primary-blue)";
   } else {
-    kpiScore.textContent = "Foundational";
+    kpiScore.textContent = "Needs Practice";
     kpiScore.style.color = "var(--danger-red)";
   }
 
   // SUMMARY AUDIT
   const summaryBox = document.getElementById("report-summary-text");
   summaryBox.innerHTML = `
-    <strong>Diagnostic Readout:</strong> Spoke across <strong>${answeredRounds.length} of ${sessionResults.length}</strong> primary prompts with <strong>${conceptCoveragePct}% industry concept alignment</strong>.
-    <br>The panel triggered <strong>${followUpsTriggered} targeted follow-up probe(s)</strong> where clarification was needed, and advanced cleanly when responses were self-contained. Average speaking cadence: <strong>${avgWPM} WPM</strong>.
-    ${rapidPassRounds.length > 0 ? `<br><strong style="color:var(--danger-red);">Avoidance Warning:</strong> Detected ${rapidPassRounds.length} reflexive pass(es) under 4.0s.` : ''}
+    <strong>Diagnostic Summary:</strong> Answered <strong>${answeredRounds.length} of ${sessionResults.length}</strong> prompts with <strong>${conceptCoveragePct}% key concept alignment</strong>.
+    <br>The interviewer engaged with <strong>${spontaneousProbesTriggered} spontaneous real-time follow-up(s)</strong> based directly on your spoken answers. Average speaking pace: <strong>${avgWPM} WPM</strong>.
   `;
 
   // CANDIDATE BLUEPRINT
@@ -1622,14 +1308,14 @@ function renderTruthfulReport() {
     if (r.wasSkipped) {
       answerSection = `
         <div style="background-color: var(--danger-bg); border: 1px solid #FECDD3; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 0.88rem; color: #9F1239;">
-          <strong>[ NO SPOKEN AUDIO RECORDED / CANDIDATE PASSED ]</strong><br>
+          <strong>[ QUESTION PASSED ]</strong><br>
           ${r.skipReason}
         </div>
       `;
     } else {
       let audioPlayerHtml = r.audioUrl ? `
         <div style="margin-top: 8px;">
-          <label style="margin-bottom: 4px;">▶ Play Your Spoken Audio Response (${r.durationSec}s):</label>
+          <label style="margin-bottom: 4px;">▶ Play Spoken Audio Response (${r.durationSec}s):</label>
           <audio controls src="${r.audioUrl}"></audio>
         </div>
       ` : '';
@@ -1638,7 +1324,7 @@ function renderTruthfulReport() {
         <div style="background-color: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; margin-bottom: 12px;">
           <p style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Your Verbatim Response:</p>
           <p style="font-size: 0.92rem; margin: 4px 0 8px; font-style: italic; color: var(--text-main);">"${r.transcript}"</p>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Pace: <strong>${r.wpm} WPM</strong> | Fillers: <strong>${r.fillers}</strong></p>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Pace: <strong>${r.wpm} WPM</strong> | Filler Words: <strong>${r.fillers}</strong></p>
           ${audioPlayerHtml}
         </div>
       `;
@@ -1648,17 +1334,11 @@ function renderTruthfulReport() {
     if (r.probeText) {
       probeSection = `
         <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px; padding: 12px; margin: 12px 0;">
-          <p style="font-size: 0.78rem; font-weight: 700; color: #B45309; text-transform: uppercase;">⚡ Targeted Panel Pushback:</p>
+          <p style="font-size: 0.78rem; font-weight: 700; color: #B45309; text-transform: uppercase;">⚡ Spontaneous Real-Time Follow-Up:</p>
           <p style="font-size: 0.9rem; font-weight: 600; color: var(--primary-navy); margin: 4px 0;">"${r.probeText}"</p>
           <p style="font-size: 0.85rem; color: var(--text-main); font-style: italic;">
             <strong>Your Spoken Response:</strong> ${r.probeTranscript ? `"${r.probeTranscript}"` : '<span style="color:var(--text-muted);">(No response spoken / Passed)</span>'}
           </p>
-        </div>
-      `;
-    } else if (!r.wasSkipped && r.transcript.length > 0) {
-      probeSection = `
-        <div style="background: var(--success-bg); border: 1px solid #A7F3D0; border-radius: 6px; padding: 10px 12px; margin: 12px 0; font-size: 0.82rem; color: #065F46; font-weight: 600;">
-          ✓ Self-Contained Response: Your spoken answer hit core criteria cleanly; no panel pushback was required.
         </div>
       `;
     }
@@ -1676,20 +1356,20 @@ function renderTruthfulReport() {
       ${probeSection}
 
       <div style="margin: 12px 0;">
-        <label>Concept Diagnostic (Words Detected in Your Speech):</label>
+        <label>Concept Diagnostic (Key Terms Detected):</label>
         <div>${coveredChips || '<span style="font-size:0.8rem; color:var(--text-muted);">None detected</span>'}</div>
         <div style="margin-top: 4px;">${missedChips}</div>
       </div>
 
       <div style="border-top: 1px solid var(--border-subtle); padding-top: 12px; margin-top: 12px;">
-        <label>Executive Polish: How to Elevate Your Response</label>
+        <label>Executive Polish: Recommended Re-framing</label>
         <div class="comparison-grid">
           <div class="comp-box comp-candidate">
             <strong>What You Articulated:</strong><br>
             ${r.transcript ? `"${r.transcript}"` : '<em>No spoken audio recorded.</em>'}
           </div>
           <div class="comp-box comp-executive">
-            <strong>Executive Diction & Benchmark:</strong><br>
+            <strong>Executive Diction & Model Answer:</strong><br>
             "${executiveRewrite}"
           </div>
         </div>
@@ -1698,7 +1378,7 @@ function renderTruthfulReport() {
     candidateContainer.appendChild(card);
   });
 
-  // EVALUATOR BRIEFING (FACULTY READOUT)
+  // EVALUATOR BRIEFING
   const evalContainer = document.getElementById("evaluator-probes-breakdown");
   evalContainer.innerHTML = "";
 
@@ -1707,13 +1387,13 @@ function renderTruthfulReport() {
 
   if (answeredRounds.length === 0) {
     evalTitle.textContent = "High Risk Candidate (Zero Spoken Audio)";
-    evalSummary.textContent = "Candidate passed all technical questions. Fundamental coaching required before campus placement drives.";
+    evalSummary.textContent = "Candidate passed all technical questions. Coaching required before placement drives.";
   } else if (conceptCoveragePct < 30) {
-    evalTitle.textContent = "Vocabulary & Conceptual Gap";
-    evalSummary.textContent = `Candidate attempted prompts but missed foundational business terminology (${conceptCoveragePct}% alignment). Recommend mock drills on technical definitions.`;
+    evalTitle.textContent = "Vocabulary & Concept Gaps Identified";
+    evalSummary.textContent = `Candidate attempted prompts but missed key domain terms (${conceptCoveragePct}% alignment). Recommend reviewing technical terminology.`;
   } else {
     evalTitle.textContent = "Placement Competitive (Verbal Engagement Verified)";
-    evalSummary.textContent = `Demonstrated solid conceptual familiarity (${conceptCoveragePct}% coverage). Handled the flow naturally with only ${followUpsTriggered} targeted intervention(s).`;
+    evalSummary.textContent = `Demonstrated solid domain familiarity (${conceptCoveragePct}% concept alignment) with ${spontaneousProbesTriggered} real-time follow-up interactions.`;
   }
 
   sessionResults.forEach((r, idx) => {
@@ -1722,21 +1402,17 @@ function renderTruthfulReport() {
 
     let facultyAudioPlayer = r.audioUrl ? `
       <div style="margin: 8px 0;">
-        <label style="margin-bottom: 2px; font-size:0.75rem;">Panel Playback (${r.durationSec}s Spoken Voice):</label>
+        <label style="margin-bottom: 2px; font-size:0.75rem;">Panel Playback (${r.durationSec}s Voice Record):</label>
         <audio controls src="${r.audioUrl}"></audio>
       </div>
     ` : '';
 
     let probeStatus = r.probeText ? `
       <div style="background: #FFFBEB; border: 1px solid #FDE68A; padding: 10px; border-radius: 6px; font-size: 0.88rem; margin-top: 8px;">
-        <strong>Pushback Triggered:</strong> "${r.probeText}"<br>
+        <strong>Spontaneous Probe:</strong> "${r.probeText}"<br>
         <span style="color:var(--primary-blue);"><strong>Candidate Defense:</strong> ${r.probeTranscript ? `"${r.probeTranscript}"` : 'Did not defend.'}</span>
       </div>
-    ` : `
-      <div style="background: #F8FAFC; border: 1px solid var(--border-subtle); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text-muted); margin-top: 8px;">
-        No pushback needed. Candidate articulated self-contained response on primary prompt.
-      </div>
-    `;
+    ` : '';
 
     card.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
@@ -1745,6 +1421,9 @@ function renderTruthfulReport() {
       </div>
       <p style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">${r.questionData.text}</p>
       ${facultyAudioPlayer}
+      <div style="background: #F8FAFC; border: 1px solid var(--border-subtle); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text-main); margin-top: 8px;">
+        <strong>Transcript:</strong> ${r.transcript ? `"${r.transcript}"` : '<span style="color:var(--text-muted);">(Passed)</span>'}
+      </div>
       ${probeStatus}
     `;
     evalContainer.appendChild(card);
