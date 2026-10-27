@@ -1,31 +1,3 @@
-Understood—the interviewer needs to feel like a real human panel head listening live in the room and asking **spontaneous, real-time follow-ups based directly on what you just spoke**, rather than reading pre-scripted probes or skipping follow-ups entirely.
-
-### What Was Updated
-
-1. **Real-Time Spontaneous Follow-Ups (`generateSpontaneousFollowUp`)**:
-   * Analyzes your verbatim spoken transcript in real-time right after you speak.
-   * If you mention specific terms or concepts (e.g., *budget, CAC, team, metrics, risk, cash, conversion*), the interviewer picks up on your actual words and asks a spontaneous, natural pushback (e.g., *"You brought up [concept]—how would you execute that if resources were suddenly cut in half?"*).
-   * If your answer is brief or surface-level, the interviewer spontaneously probes deeper (*"That touches the surface, but walk me through the specific metrics you'd track to prove that worked."*).
-   * If your answer is already complete and thorough, the interviewer gives a natural human acknowledgment (*"Understood, clear and well-reasoned. Let's move to the next topic."*) and advances cleanly.
-
-2. **Bulletproof Speech Recognition & High Sensitivity**:
-   * Fixed Web Speech API result indexing with dual-fallback (`e.results[i].transcript` and `e.results[i].transcript`) so zero spoken words or accents are missed in Chrome/Edge/Safari.
-   * Added real-time interim speech rendering so words appear on screen as you speak them.
-   * Automatic background reconnection ensures the microphone stays open even during brief pauses.
-
-3. **Human-Centric Questions**:
-   * Conversational phrasing crafted to match the tone of real executive panel heads (Mr. Chetan Pathak, CA Bhargav Pandya, Mr. Nimit Ganatra).
-
-4. **Clean Executive Report / Dossier**:
-   * Evaluates total spoken word count, speaking pace (WPM), verbatim transcript audit with audio playback, concept coverage chips, and a side-by-side **Executive Polish** re-frame.
-
----
-
-### Complete Updated `index.html`
-
-Replace the code in your repository's `index.html` with this version:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -749,7 +721,7 @@ function initVoices() {
     voiceSelect.appendChild(opt);
   });
 
-  selectedVoice = displayList || voices;
+  selectedVoice = displayList[0] || voices[0];
 }
 
 window.speechSynthesis.onvoiceschanged = initVoices;
@@ -818,7 +790,7 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
       let spoken = "";
       for (let i = 0; i < e.results.length; i++) {
         const item = e.results[i];
-        const text = (item && item.transcript) ? item.transcript : (item.transcript || "");
+        const text = (item[0] && item[0].transcript) ? item[0].transcript : (item.transcript || "");
         spoken += text + " ";
       }
       spoken = normalizeSpokenText(spoken.trim());
@@ -1038,7 +1010,7 @@ async function startVoiceRecording() {
         let full = "";
         for (let i = 0; i < event.results.length; i++) {
           const item = event.results[i];
-          const text = (item && item.transcript) ? item.transcript : (item.transcript || "");
+          const text = (item[0] && item[0].transcript) ? item[0].transcript : (item.transcript || "");
           full += text + " ";
         }
         const cleaned = normalizeSpokenText(full.trim());
