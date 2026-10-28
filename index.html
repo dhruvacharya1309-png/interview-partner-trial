@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Executive Placement Simulator | Diagnostic Dossier</title>
+  <title>Executive Placement Simulator | AI Diagnostic Engine</title>
   <style>
     :root {
       --bg-surface: #F8FAFC;
@@ -73,21 +73,6 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    .timer-tag-inline {
-      display: inline-flex;
-      align-items: center;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #92400E;
-      background: #FEF3C7;
-      border: 1px solid #FDE68A;
-      padding: 2px 7px;
-      border-radius: 4px;
-      margin-left: 6px;
-      vertical-align: middle;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
     .probe-tag-inline {
       display: inline-flex;
       align-items: center;
@@ -104,9 +89,9 @@
     }
 
     label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
-    select {
+    select, input[type="text"], input[type="password"] {
       width: 100%;
-      height: 48px;
+      height: 46px;
       border: 1px solid var(--border-subtle);
       border-radius: 8px;
       padding: 0 14px;
@@ -116,7 +101,15 @@
       margin-bottom: 18px;
       outline: none;
     }
-    select:focus { border-color: var(--accent-teal); }
+    select:focus, input:focus { border-color: var(--accent-teal); }
+
+    .ai-box-container {
+      background: #F0FDFA;
+      border: 1px solid #99F6E4;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
 
     .btn {
       display: inline-flex;
@@ -262,19 +255,8 @@
       border-radius: 6px;
       text-align: center;
     }
-    .kpi-val { font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); }
+    .kpi-val { font-size: 1.15rem; font-weight: 700; color: var(--primary-navy); }
     .kpi-lbl { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
-
-    .concept-chip {
-      display: inline-block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 4px;
-      margin: 2px 4px 2px 0;
-    }
-    .chip-covered { background: var(--success-bg); color: #065F46; border: 1px solid #A7F3D0; }
-    .chip-missed { background: var(--danger-bg); color: #991B1B; border: 1px solid #FECDD3; }
 
     .comparison-grid {
       display: grid;
@@ -297,7 +279,7 @@
 
     @media print {
       body { background: #FFF; padding: 0; }
-      .btn, .tab-switch, #btn-print-dossier, .meter-container { display: none !important; }
+      .btn, .tab-switch, #btn-print-dossier, .meter-container, .ai-box-container { display: none !important; }
       .card { border: none; box-shadow: none; padding: 0; }
       #view-candidate-blueprint, #view-evaluator-briefing { display: block !important; }
     }
@@ -312,9 +294,29 @@
   <!-- ================= 1. SETUP SCREEN ================= -->
   <div id="screen-setup" class="card">
     <h1>Executive Interview Practice</h1>
-    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 6px 0 24px;">
-      Interactive Interview Practice with Spontaneous Real-Time Follow-Ups
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 6px 0 20px;">
+      Realistic Placement Practice with Real-Time AI Socratic Evaluation
     </p>
+
+    <!-- LIVE AI INTEGRATION PANEL -->
+    <div class="ai-box-container">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h3 style="margin: 0; color: #0F766E;">⚡ Live AI Model Engine Integration</h3>
+        <span style="font-size: 0.75rem; font-weight: 700; color: #0D9488; background: #E6FFFA; padding: 2px 8px; border-radius: 4px;">Real-Time AI</span>
+      </div>
+      
+      <label for="select-ai-provider">AI Provider</label>
+      <select id="select-ai-provider" style="margin-bottom: 12px;">
+        <option value="openai">OpenAI (gpt-4o-mini / gpt-4o)</option>
+        <option value="gemini">Google Gemini (gemini-2.5-flash)</option>
+      </select>
+
+      <label for="input-api-key">API Key</label>
+      <input type="password" id="input-api-key" placeholder="Enter API Key (e.g. sk-... or AIzaSy...)" style="margin-bottom: 8px;">
+      <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0;">
+        🔒 Stored locally in your browser. Enables real-time speech evaluation and contextual follow-ups.
+      </p>
+    </div>
 
     <label for="select-field">Interview Domain</label>
     <select id="select-field">
@@ -417,7 +419,7 @@
       <div>
         <h2>Executive Placement Diagnostic Dossier</h2>
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
-          Grounded in Spoken Transcripts, Concept Alignment & Spontaneous Interaction
+          Grounded in Verbatim Transcripts, AI Substance Evaluation & Strategic Re-Framing
         </p>
       </div>
       <button class="btn btn-secondary" id="btn-print-dossier" style="width: auto; height: 36px; padding: 0 14px; font-size: 0.82rem; margin: 0;" onclick="window.print();">
@@ -431,8 +433,8 @@
         <div class="kpi-lbl">Readiness Tier</div>
       </div>
       <div class="kpi-tile">
-        <div class="kpi-val" id="kpi-concept-coverage">0%</div>
-        <div class="kpi-lbl">Concept Alignment</div>
+        <div class="kpi-val" id="kpi-answered-count">0/0</div>
+        <div class="kpi-lbl">Questions Answered</div>
       </div>
       <div class="kpi-tile">
         <div class="kpi-val" id="kpi-wpm">0</div>
@@ -440,7 +442,7 @@
       </div>
       <div class="kpi-tile">
         <div class="kpi-val" id="kpi-probes-count">0</div>
-        <div class="kpi-lbl">Spontaneous Probes</div>
+        <div class="kpi-lbl">AI Contextual Follow-ups</div>
       </div>
     </div>
 
@@ -516,8 +518,6 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "Suppose you're managing a new product launch. How would you explain the difference between running a long-term brand campaign versus a short-term sales promotion?",
-    thinkingTimeSec: 0,
-    keywords: ["campaign", "promotion", "brand", "discount", "long-term", "short-term", "awareness", "sales"],
     idealModelAnswer: "A long-term brand campaign focuses on establishing brand equity, emotional connection, and trust—building equity that compounds over time. In contrast, a sales promotion is a targeted, short-term incentive like a weekend discount or promotional offer designed to boost immediate sales volume."
   },
   {
@@ -525,8 +525,6 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "If our team posts regularly on social media, how would you determine whether those posts are actually driving real business value rather than just vanity likes?",
-    thinkingTimeSec: 0,
-    keywords: ["engagement", "reach", "clicks", "ctr", "conversion", "sales", "saves", "shares", "roi"],
     idealModelAnswer: "I look beyond surface-level likes and passive views. I focus on high-intent engagement like post shares, saves, and outbound link clicks. Most importantly, I track the conversion rate from those clicks to see if followers are taking real actions, like signing up or purchasing."
   },
   {
@@ -534,8 +532,6 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "✦ Campus Placement Standard",
     text: "How do you go about defining a realistic target audience for a product when starting from scratch?",
-    thinkingTimeSec: 0,
-    keywords: ["demographics", "psychographics", "pain point", "behavior", "segmentation", "audience", "income"],
     idealModelAnswer: "I start by mapping out who experiences the sharpest friction that our product solves. I analyze demographics like age and income alongside psychographics like daily habits and lifestyle values. Then I refine this profile by observing who buys competing solutions."
   },
   {
@@ -543,8 +539,6 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "What is the practical difference between organic and paid marketing reach, and when should a brand lean on each?",
-    thinkingTimeSec: 0,
-    keywords: ["organic", "paid", "ads", "budget", "sustainable", "speed", "trust", "algorithm"],
     idealModelAnswer: "Organic reach builds sustainable, long-term trust through valuable content and search visibility without ongoing ad spend. Paid reach uses ad spend to instantly put your message in front of a targeted audience. A strong brand uses paid reach for quick customer acquisition while building organic reach for long-term margins."
   },
   {
@@ -552,8 +546,6 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "If a brand's follower count is growing steadily on social media, but product sales stay flat, where would you look to fix the problem?",
-    thinkingTimeSec: 0,
-    keywords: ["funnel", "landing page", "conversion", "call to action", "audience", "friction", "checkout"],
     idealModelAnswer: "First, I check if our new followers actually match our target buyer persona or if we're attracting passive viewers. Second, I audit the user journey from the profile link to the landing page and checkout process to find and remove technical or design friction."
   },
 
@@ -563,8 +555,6 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "Walk me through a campaign you managed in the past. How did you structure the budget across channels, and what was the measurable outcome?",
-    thinkingTimeSec: 10,
-    keywords: ["budget", "cac", "roas", "channels", "audience", "result", "roi", "attribution"],
     idealModelAnswer: "In a previous campaign, I allocated 60% of our budget to high-intent search channels and 40% to social media for top-of-funnel awareness. By optimizing high-performing ad variations weekly, we reduced our Customer Acquisition Cost by 18% and achieved a 3.2x Return on Ad Spend."
   },
   {
@@ -572,18 +562,7 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "When scaling an established product, how do you balance spending on paid performance marketing versus investing in SEO and organic content?",
-    thinkingTimeSec: 0,
-    keywords: ["seo", "content", "paid", "cac", "payback", "blended", "margin", "scale"],
     idealModelAnswer: "I look at our immediate revenue targets and blended Customer Acquisition Cost. Paid performance marketing gives predictable immediate scale, but ad costs tend to rise over time. To protect our profit margins, I allocate about 25% of the marketing budget into SEO and content to build a steady organic pipeline."
-  },
-  {
-    field: "Marketing",
-    level: "Experienced",
-    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "How do you evaluate whether your brand's messaging is still resonating when customer habits or market conditions shift quickly?",
-    thinkingTimeSec: 10,
-    keywords: ["sentiment", "feedback", "conversion", "velocity", "testing", "sales", "resonance"],
-    idealModelAnswer: "I track conversion rates and sales cycle length. When messaging loses touch with customer priorities, prospects take longer to decide and conversion rates drop. I stay aligned by gathering feedback from frontline sales calls and running weekly A/B tests on ad copy to see what pain points resonate best."
   },
 
   // ================= FINANCE =================
@@ -592,8 +571,6 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by CA Bhargav Pandya • Financial Head",
     text: "How would you explain the difference between being profitable on paper and having positive cash flow? Why do companies with profits still go bankrupt?",
-    thinkingTimeSec: 0,
-    keywords: ["profit", "cash flow", "accrual", "receivables", "liquidity", "bankrupt", "timing"],
     idealModelAnswer: "Profit is recorded on paper when an invoice is issued, regardless of when payment is received. Cash flow is the actual money in bank accounts available to pay expenses. A profitable business can run out of money if customers delay payments for months while payroll and vendor bills are due immediately."
   },
   {
@@ -601,8 +578,6 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by CA Bhargav Pandya • Financial Head",
     text: "If you open a company's balance sheet, what three major sections are you looking at, and how do they balance each other out?",
-    thinkingTimeSec: 0,
-    keywords: ["balance sheet", "assets", "liabilities", "equity", "equation", "snapshot", "capital"],
     idealModelAnswer: "The three main sections are Assets, Liabilities, and Shareholders' Equity. Assets represent what the business owns, Liabilities are what it owes to creditors, and Equity is the remaining value belonging to owners. They are connected by the foundational accounting rule: Assets equal Liabilities plus Equity."
   },
 
@@ -612,8 +587,6 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
     text: "How would you explain the operational difference between recruitment and selection to a hiring manager?",
-    thinkingTimeSec: 0,
-    keywords: ["recruitment", "selection", "attract", "filter", "pool", "positive", "hiring", "screening"],
     idealModelAnswer: "Recruitment is about sourcing and encouraging qualified people to apply for a role. Selection is the evaluation process—using interviews, tests, and background checks to choose the best candidate from that applicant pool."
   },
   {
@@ -621,8 +594,6 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
     text: "If a newly hired employee is struggling to keep up with team expectations in their first 30 days, how would you support them?",
-    thinkingTimeSec: 0,
-    keywords: ["check-in", "mentor", "buddy", "expectations", "coaching", "training", "empathy"],
     idealModelAnswer: "I schedule a supportive 1-on-1 meeting to see if they're facing training gaps, unclear instructions, or tool issues. I pair them with a peer mentor and break their goals down into manageable weekly milestones so they build confidence."
   }
 ];
@@ -650,6 +621,69 @@ let analyserNode = null;
 let volumeCheckInterval = null;
 let speechRecognizer = null;
 let isRecognizerExplicitlyStopped = false;
+
+// LOCAL STORAGE FOR API KEY
+const storedApiKey = localStorage.getItem("placement_sim_api_key") || "";
+if (storedApiKey) {
+  document.getElementById("input-api-key").value = storedApiKey;
+}
+
+document.getElementById("input-api-key").addEventListener("change", (e) => {
+  localStorage.setItem("placement_sim_api_key", e.target.value.trim());
+});
+
+// LIVE AI CALL ROUTER
+async function callAI(systemPrompt, userPrompt) {
+  const provider = document.getElementById("select-ai-provider").value;
+  const apiKey = document.getElementById("input-api-key").value.trim() || localStorage.getItem("placement_sim_api_key") || "";
+
+  if (!apiKey) {
+    throw new Error("NO_API_KEY");
+  }
+
+  if (provider === "openai") {
+    const res = await fetch("[suspicious link removed]", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
+        temperature: 0.7
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `OpenAI Error (${res.status})`);
+    }
+    const data = await res.json();
+    return data.choices[0].message.content.trim();
+  } else {
+    // Gemini API
+    const url = `[suspicious link removed]{apiKey}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{
+          role: "user",
+          parts: [{ text: `${systemPrompt}\n\nCandidate Input:\n${userPrompt}` }]
+        }]
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `Gemini Error (${res.status})`);
+    }
+    const data = await res.json();
+    return data.candidates[0].content.parts[0].text.trim();
+  }
+}
 
 async function getOrInitMicrophone() {
   if (!activeStream) {
@@ -721,7 +755,7 @@ function initVoices() {
     voiceSelect.appendChild(opt);
   });
 
-  selectedVoice = displayList[0] || voices[0];
+  selectedVoice = displayList || voices;
 }
 
 window.speechSynthesis.onvoiceschanged = initVoices;
@@ -790,7 +824,7 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
       let spoken = "";
       for (let i = 0; i < e.results.length; i++) {
         const item = e.results[i];
-        const text = (item[0] && item[0].transcript) ? item[0].transcript : (item.transcript || "");
+        const text = (item && item.transcript) ? item.transcript : (item.transcript || "");
         spoken += text + " ";
       }
       spoken = normalizeSpokenText(spoken.trim());
@@ -881,59 +915,32 @@ function loadCurrentQuestion() {
   window.speechSynthesis.speak(utter);
 }
 
-// REAL-TIME SPONTANEOUS PROBE GENERATOR
-// Analyzes what the candidate actually spoke in real-time and asks a direct, natural follow-up
-function generateSpontaneousFollowUp(transcript, qData) {
-  const words = transcript.trim().split(/\s+/).filter(Boolean).length;
-  const lower = transcript.toLowerCase();
+// REAL-TIME AI SOCRATIC FOLLOW-UP GENERATOR
+async function requestAIFollowUp(transcript, qData) {
+  const systemPrompt = `You are a senior executive interviewer (e.g. Head of Marketing, Finance, or HR) conducting a campus placement interview.
+Question asked: "${qData.text}"
+Model answer guidelines: "${qData.idealModelAnswer}"
 
-  // If candidate gave a very short/vague response (< 18 words)
-  if (words > 0 && words < 18) {
-    return {
-      trigger: true,
-      prompt: `You touched on the surface there, but can you walk me through the practical steps or specific metrics you'd use to execute that in real life?`
-    };
+Your Task:
+Analyze the candidate's verbatim spoken response: "${transcript}"
+
+1. If their answer is vague, incomplete, misses crucial operational logic, or makes a claim that needs backing up, ask ONE sharp, highly specific follow-up question (1-2 sentences) directly challenging or probing what they just said. Sound like a real interviewer listening in the room.
+2. If their answer is thorough, complete, and well-reasoned, reply STRICTLY with the exact word "NO_FOLLOWUP". Do not add punctuation or extra words if no follow-up is needed.`;
+
+  try {
+    const aiResponse = await callAI(systemPrompt, transcript);
+    if (aiResponse.includes("NO_FOLLOWUP")) {
+      return { trigger: false, prompt: "" };
+    }
+    return { trigger: true, prompt: aiResponse.replace(/["']/g, "") };
+  } catch (err) {
+    if (err.message === "NO_API_KEY") {
+      console.log("No API Key configured; skipping AI follow-up.");
+    } else {
+      console.warn("AI API Error:", err);
+    }
+    return { trigger: false, prompt: "" };
   }
-
-  // Real-time contextual keyword matching from spoken speech
-  if (lower.includes("budget") || lower.includes("cost") || lower.includes("spend") || lower.includes("money")) {
-    return {
-      trigger: true,
-      prompt: `You brought up managing costs and budget—if senior management suddenly cut that budget by 30% mid-way through, how would you pivot without losing impact?`
-    };
-  }
-
-  if (lower.includes("team") || lower.includes("people") || lower.includes("manager") || lower.includes("employee")) {
-    return {
-      trigger: true,
-      prompt: `You mentioned working with the team on this—how do you handle pushback if key stakeholders or senior team members disagree with your approach?`
-    };
-  }
-
-  if (lower.includes("customer") || lower.includes("client") || lower.includes("audience") || lower.includes("user")) {
-    return {
-      trigger: true,
-      prompt: `That's a good point about the customer perspective—what specific feedback or data signal would tell you that customer priorities are starting to shift?`
-    };
-  }
-
-  if (lower.includes("metric") || lower.includes("kpi") || lower.includes("conversion") || lower.includes("track") || lower.includes("sales")) {
-    return {
-      trigger: true,
-      prompt: `You mentioned tracking performance metrics—how do you make sure you aren't fooled by vanity numbers that look good on paper but don't drive real bottom-line value?`
-    };
-  }
-
-  // If candidate gave a solid answer (20+ words), occasionally ask a natural trade-off question
-  if (words >= 18 && words < 45) {
-    return {
-      trigger: true,
-      prompt: `Fair perspective. From an operational standpoint, what do you see as the single biggest trade-off or risk in that approach?`
-    };
-  }
-
-  // Thorough, well-structured answer (45+ words) -> No probe needed, acknowledge and move forward
-  return { trigger: false, prompt: "" };
 }
 
 function triggerSpontaneousProbe(probePrompt) {
@@ -944,7 +951,7 @@ function triggerSpontaneousProbe(probePrompt) {
   document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length} (Panel Follow-Up)`;
 
   const questionBox = document.getElementById("spoken-question-text");
-  questionBox.innerHTML = `"${probePrompt}" <span class="probe-tag-inline">⚡ Spontaneous Follow-Up</span>`;
+  questionBox.innerHTML = `"${probePrompt}" <span class="probe-tag-inline">⚡ Contextual AI Follow-Up</span>`;
 
   const flowStatus = document.getElementById("flow-status-text");
   flowStatus.innerHTML = `<strong>Interviewer Follow-Up:</strong> Listening to your response...`;
@@ -1010,7 +1017,7 @@ async function startVoiceRecording() {
         let full = "";
         for (let i = 0; i < event.results.length; i++) {
           const item = event.results[i];
-          const text = (item[0] && item[0].transcript) ? item[0].transcript : (item.transcript || "");
+          const text = (item && item.transcript) ? item.transcript : (item.transcript || "");
           full += text + " ";
         }
         const cleaned = normalizeSpokenText(full.trim());
@@ -1104,15 +1111,18 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
   if (!inSpontaneousMode) {
     recordPrimaryAnswer(currentText, audioBlob, false, "", durationSec);
 
-    // Spontaneous Follow-Up Decision based on real-time transcript
+    const flowStatus = document.getElementById("flow-status-text");
+    flowStatus.innerHTML = `<strong>Interviewer Evaluating:</strong> Analyzing your response...`;
+
+    // Real-Time AI Socratic Evaluation
     const qData = sessionQuestions[currentQIndex];
-    const probeDecision = generateSpontaneousFollowUp(currentText, qData);
+    const probeDecision = await requestAIFollowUp(currentText, qData);
 
     if (probeDecision.trigger) {
       triggerSpontaneousProbe(probeDecision.prompt);
     } else {
       window.speechSynthesis.cancel();
-      const ackUtter = new SpeechSynthesisUtterance("Understood, clear point. Let's move to the next topic.");
+      const ackUtter = new SpeechSynthesisUtterance("Understood, clear point. Let's move to the next question.");
       if (selectedVoice) ackUtter.voice = selectedVoice;
       ackUtter.rate = 1.0;
       activeUtterance = ackUtter;
@@ -1197,63 +1207,79 @@ function advanceToNextQuestion() {
   }
 }
 
-// GENERATE DYNAMIC EXECUTIVE REWRITE
-function generateExecutiveRewrite(transcript, qData) {
-  if (!transcript || transcript.trim().length === 0) {
-    return qData.idealModelAnswer;
-  }
+// AI REPORT EVALUATION
+async function generateAIReport() {
+  const apiKey = document.getElementById("input-api-key").value.trim() || localStorage.getItem("placement_sim_api_key") || "";
+  if (!apiKey) return null;
 
-  let cleanSpoken = transcript.replace(/\b(um|uh|basically|you know|like)\b/gi, "").trim();
-  if (cleanSpoken.length < 15) {
-    return qData.idealModelAnswer;
+  const summaryPayload = sessionResults.map((r, i) => ({
+    questionIndex: i + 1,
+    question: r.questionData.text,
+    verbatimAnswer: r.transcript || "[PASSED]",
+    followUpQuestion: r.probeText || "[NONE]",
+    followUpAnswer: r.probeTranscript || "[NONE]"
+  }));
+
+  const systemPrompt = `You are an Executive Hiring Committee Chair. Analyze this candidate's placement interview transcripts.
+Return a clean JSON object with this exact structure:
+{
+  "readinessTier": "Tier 1 (Placement Ready)" or "Tier 2 (Developing)" or "Needs Practice",
+  "overallSummary": "A concise 2-3 sentence executive evaluation of their overall performance, depth, and communication.",
+  "evaluations": [
+    {
+      "questionIndex": 1,
+      "strengths": "Key business arguments they articulated well.",
+      "gaps": "Specific missing business logic or operational flaws.",
+      "executiveRewrite": "An elevated, C-suite level 2-sentence re-frame of their specific answer."
+    }
+  ]
+}`;
+
+  try {
+    const jsonText = await callAI(systemPrompt, JSON.stringify(summaryPayload));
+    const cleanJson = jsonText.replace(/```json/g, "").replace(/```/g, "").trim();
+    return JSON.parse(cleanJson);
+  } catch (err) {
+    console.warn("AI Report Evaluation Error:", err);
+    return null;
   }
-  return `To structure this strategically: While ${cleanSpoken.toLowerCase().slice(0, 90)}..., our core operational priority is anchoring the approach to key fundamentals. By executing systematically, we safeguard business margins and ensure cross-functional alignment.`;
 }
 
 // PERSONALIZED EXECUTIVE DIAGNOSTIC DOSSIER
-function renderTruthfulReport() {
+async function renderTruthfulReport() {
   document.getElementById("screen-interview").classList.add("hidden");
   document.getElementById("screen-report").classList.remove("hidden");
 
-  const answeredRounds = sessionResults.filter(r => !r.wasSkipped && (r.wordCount > 0 || r.audioUrl !== null));
-  const totalWordsSpoken = sessionResults.reduce((acc, r) => acc + r.wordCount, 0);
+  const answeredRounds = sessionResults.filter(r => !r.wasSkipped && r.wordCount > 0);
   const spontaneousProbesTriggered = sessionResults.filter(r => r.probeText && r.probeText.length > 0).length;
-
-  let totalKeywords = 0;
-  let hitKeywords = 0;
-  sessionResults.forEach(r => {
-    const kws = r.questionData.keywords;
-    totalKeywords += kws.length;
-    const spokenLower = (r.transcript + " " + r.probeTranscript).toLowerCase();
-    kws.forEach(kw => {
-      if (spokenLower.includes(kw.toLowerCase())) hitKeywords++;
-    });
-  });
-  const conceptCoveragePct = totalKeywords > 0 ? Math.round((hitKeywords / totalKeywords) * 100) : 0;
-
   const avgWPM = answeredRounds.length > 0 ? Math.round(answeredRounds.reduce((acc, r) => acc + r.wpm, 0) / answeredRounds.length) : 0;
 
-  document.getElementById("kpi-concept-coverage").textContent = `${conceptCoveragePct}%`;
+  document.getElementById("kpi-answered-count").textContent = `${answeredRounds.length}/${sessionResults.length}`;
   document.getElementById("kpi-wpm").textContent = avgWPM;
   document.getElementById("kpi-probes-count").textContent = `${spontaneousProbesTriggered}`;
 
+  const summaryBox = document.getElementById("report-summary-text");
+  summaryBox.innerHTML = `<em>Generating AI Evaluation...</em>`;
+
+  // Attempt Live AI Report Generation
+  const aiReport = await generateAIReport();
+
   const kpiScore = document.getElementById("kpi-score");
-  if (answeredRounds.length === sessionResults.length && conceptCoveragePct >= 50) {
-    kpiScore.textContent = "Tier 1 (Placement Ready)";
-    kpiScore.style.color = "var(--success-green)";
-  } else if (answeredRounds.length >= 1) {
-    kpiScore.textContent = "Tier 2 (Developing)";
-    kpiScore.style.color = "var(--primary-blue)";
+  if (aiReport && aiReport.readinessTier) {
+    kpiScore.textContent = aiReport.readinessTier;
+    if (aiReport.readinessTier.includes("Tier 1")) kpiScore.style.color = "var(--success-green)";
+    else if (aiReport.readinessTier.includes("Tier 2")) kpiScore.style.color = "var(--primary-blue)";
+    else kpiScore.style.color = "var(--danger-red)";
   } else {
-    kpiScore.textContent = "Needs Practice";
-    kpiScore.style.color = "var(--danger-red)";
+    kpiScore.textContent = answeredRounds.length === sessionResults.length ? "Tier 1 (Complete)" : "Developing";
+    kpiScore.style.color = "var(--primary-blue)";
   }
 
-  // SUMMARY AUDIT
-  const summaryBox = document.getElementById("report-summary-text");
-  summaryBox.innerHTML = `
-    <strong>Diagnostic Summary:</strong> Answered <strong>${answeredRounds.length} of ${sessionResults.length}</strong> prompts with <strong>${conceptCoveragePct}% key concept alignment</strong>.
-    <br>The interviewer engaged with <strong>${spontaneousProbesTriggered} spontaneous real-time follow-up(s)</strong> based directly on your spoken answers. Average speaking pace: <strong>${avgWPM} WPM</strong>.
+  summaryBox.innerHTML = aiReport ? `
+    <strong>AI Executive Evaluation:</strong> ${aiReport.overallSummary}
+    <br><span style="font-size: 0.85rem; color: var(--text-muted);">Answered ${answeredRounds.length} of ${sessionResults.length} prompts with ${spontaneousProbesTriggered} contextual AI follow-up(s). Average pace: ${avgWPM} WPM.</span>
+  ` : `
+    <strong>Diagnostic Summary:</strong> Answered <strong>${answeredRounds.length} of ${sessionResults.length}</strong> prompts with <strong>${spontaneousProbesTriggered} contextual AI follow-up(s)</strong>. Average speaking pace: <strong>${avgWPM} WPM</strong>.
   `;
 
   // CANDIDATE BLUEPRINT
@@ -1264,17 +1290,7 @@ function renderTruthfulReport() {
     const card = document.createElement("div");
     card.className = "report-card";
 
-    const spokenLower = (r.transcript + " " + r.probeTranscript).toLowerCase();
-    let coveredChips = "";
-    let missedChips = "";
-
-    r.questionData.keywords.forEach(kw => {
-      if (spokenLower.includes(kw.toLowerCase())) {
-        coveredChips += `<span class="concept-chip chip-covered">✓ ${kw}</span>`;
-      } else {
-        missedChips += `<span class="concept-chip chip-missed">✕ ${kw}</span>`;
-      }
-    });
+    const aiEval = aiReport?.evaluations?.find(e => e.questionIndex === idx + 1);
 
     let answerSection = "";
     if (r.wasSkipped) {
@@ -1306,16 +1322,18 @@ function renderTruthfulReport() {
     if (r.probeText) {
       probeSection = `
         <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px; padding: 12px; margin: 12px 0;">
-          <p style="font-size: 0.78rem; font-weight: 700; color: #B45309; text-transform: uppercase;">⚡ Spontaneous Real-Time Follow-Up:</p>
+          <p style="font-size: 0.78rem; font-weight: 700; color: #B45309; text-transform: uppercase;">⚡ Contextual AI Follow-Up:</p>
           <p style="font-size: 0.9rem; font-weight: 600; color: var(--primary-navy); margin: 4px 0;">"${r.probeText}"</p>
           <p style="font-size: 0.85rem; color: var(--text-main); font-style: italic;">
-            <strong>Your Spoken Response:</strong> ${r.probeTranscript ? `"${r.probeTranscript}"` : '<span style="color:var(--text-muted);">(No response spoken / Passed)</span>'}
+            <strong>Your Response:</strong> ${r.probeTranscript ? `"${r.probeTranscript}"` : '<span style="color:var(--text-muted);">(Passed)</span>'}
           </p>
         </div>
       `;
     }
 
-    const executiveRewrite = generateExecutiveRewrite(r.transcript, r.questionData);
+    const strengthsText = aiEval ? aiEval.strengths : "Answer recorded successfully.";
+    const gapsText = aiEval ? aiEval.gaps : "Refine operational depth for maximum impact.";
+    const executiveRewrite = aiEval ? aiEval.executiveRewrite : r.questionData.idealModelAnswer;
 
     card.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -1328,13 +1346,13 @@ function renderTruthfulReport() {
       ${probeSection}
 
       <div style="margin: 12px 0;">
-        <label>Concept Diagnostic (Key Terms Detected):</label>
-        <div>${coveredChips || '<span style="font-size:0.8rem; color:var(--text-muted);">None detected</span>'}</div>
-        <div style="margin-top: 4px;">${missedChips}</div>
+        <label>AI Strategic Evaluation:</label>
+        <p style="font-size: 0.88rem; color: #065F46; margin-bottom: 4px;"><strong>✓ Strengths:</strong> ${strengthsText}</p>
+        <p style="font-size: 0.88rem; color: #991B1B;"><strong>✕ Critical Gaps:</strong> ${gapsText}</p>
       </div>
 
       <div style="border-top: 1px solid var(--border-subtle); padding-top: 12px; margin-top: 12px;">
-        <label>Executive Polish: Recommended Re-framing</label>
+        <label>Executive Polish: Recommended Re-Framing</label>
         <div class="comparison-grid">
           <div class="comp-box comp-candidate">
             <strong>What You Articulated:</strong><br>
@@ -1357,15 +1375,12 @@ function renderTruthfulReport() {
   const evalTitle = document.getElementById("evaluator-tier-title");
   const evalSummary = document.getElementById("evaluator-tier-summary");
 
-  if (answeredRounds.length === 0) {
-    evalTitle.textContent = "High Risk Candidate (Zero Spoken Audio)";
-    evalSummary.textContent = "Candidate passed all technical questions. Coaching required before placement drives.";
-  } else if (conceptCoveragePct < 30) {
-    evalTitle.textContent = "Vocabulary & Concept Gaps Identified";
-    evalSummary.textContent = `Candidate attempted prompts but missed key domain terms (${conceptCoveragePct}% alignment). Recommend reviewing technical terminology.`;
+  if (aiReport) {
+    evalTitle.textContent = aiReport.readinessTier;
+    evalSummary.textContent = aiReport.overallSummary;
   } else {
-    evalTitle.textContent = "Placement Competitive (Verbal Engagement Verified)";
-    evalSummary.textContent = `Demonstrated solid domain familiarity (${conceptCoveragePct}% concept alignment) with ${spontaneousProbesTriggered} real-time follow-up interactions.`;
+    evalTitle.textContent = "Placement Evaluation Summary";
+    evalSummary.textContent = "Candidate transcript review complete. Configure an API key for live AI scoring.";
   }
 
   sessionResults.forEach((r, idx) => {
@@ -1381,8 +1396,8 @@ function renderTruthfulReport() {
 
     let probeStatus = r.probeText ? `
       <div style="background: #FFFBEB; border: 1px solid #FDE68A; padding: 10px; border-radius: 6px; font-size: 0.88rem; margin-top: 8px;">
-        <strong>Spontaneous Probe:</strong> "${r.probeText}"<br>
-        <span style="color:var(--primary-blue);"><strong>Candidate Defense:</strong> ${r.probeTranscript ? `"${r.probeTranscript}"` : 'Did not defend.'}</span>
+        <strong>Contextual Follow-Up:</strong> "${r.probeText}"<br>
+        <span style="color:var(--primary-blue);"><strong>Candidate Response:</strong> ${r.probeTranscript ? `"${r.probeTranscript}"` : 'Passed.'}</span>
       </div>
     ` : '';
 
