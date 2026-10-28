@@ -1,0 +1,148 @@
+// api/interview.js - Vercel Serverless Function
+export default async function handler(req, res) {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-Type, Date'
+  );
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const { action, transcript, questionText, idealAnswer, sessionResults } = req.body;
+
+  // Read secure API keys from Vercel Environment Variables
+  const OPENAI_KEY = process.env.OPENAI_API_KEY;
+  const GEMINI_KEY = process.env.GEMINI_API_KEY;
+  const GROQ_KEY = process.env.GROQ_API_KEY;
+
+  if (!OPENAI_KEY && !GEMINI_KEY && !GROQ_KEY) {
+    return res.status(500).json({ error: 'No API key configured on Vercel Environment Variables.' });
+  }
+
+  try {
+    // 1. REAL-TIME SOCRATIC FOLLOW-UP ACTION
+    if (action === 'followup') {
+      const systemPrompt = `You are a senior executive interviewer (e.g. Head of Marketing, Finance, or HR) conducting a campus placement interview.
+Question asked: "${questionText}"
+Model answer guidelines: "${idealAnswer}"
+
+Your Task:
+Analyze the candidate's verbatim spoken response: "${transcript}"
+
+1. If their answer is vague, incomplete, misses key operational logic, or makes an unbacked claim, ask ONE sharp, highly specific follow-up question (1-2 sentences) directly challenging or probing what they just said. Sound like a real interviewer in the room.
+2. If their answer is clear, thorough, and well-reasoned, reply STRICTLY with the exact string "NO_FOLLOWUP".`;
+
+      const aiReply = await callLLM(systemPrompt, transcript, { OPENAI_KEY, GEMINI_KEY, GROQ_KEY });
+      
+      if (aiReply.includes("NO_FOLLOWUP")) {
+        return res.status(200).json({ trigger: false, prompt: "" });
+      }
+      return res.status(200).json({ trigger: true, prompt: aiReply.replace(/["']/g, "").trim() });
+    }
+
+    // 2. DIAGNOSTIC REPORT EVALUATION ACTION
+    if (action === 'report') {
+      const systemPrompt = `You are an Executive Hiring Committee Chair. Analyze this candidate's placement interview transcripts.
+Return ONLY a valid, raw JSON object (no markdown wrappers) with this exact schema:
+{
+  "readinessTier": "Tier 1 (Placement Ready)" OR "Tier 2 (Developing)" OR "Needs Practice",
+  "overallSummary": "A concise 2-3 sentence executive evaluation of their overall performance, depth, and communication.",
+  "evaluations": [
+    {
+      "questionIndex": 1,
+      "strengths": "Key business arguments they articulated well.",
+      "gaps": "Specific missing business logic or operational flaws.",
+      "executiveRewrite": "An elevated, C-suite level 2-sentence re-frame of their specific answer."
+    }
+  ]
+}`;
+
+      const jsonText = await callLLM(systemPrompt, JSON.stringify(sessionResults), { OPENAI_KEY, GEMINI_KEY, GROQ_KEY });
+      const cleanJson = jsonText.replace(/```json/g, "").replace(/```/g, "").trim();
+      const parsed = JSON.parse(cleanJson);
+
+      return res.status(200).json(parsed);
+    }
+
+    return res.status(400).json({ error: 'Invalid action requested' });
+  } catch (err) {
+    console.error("Vercel AI Endpoint Error:", err);
+    return res.status(500).json({ error: err.message || 'Internal Server Error' });
+  }
+}
+
+async function callLLM(systemPrompt, userPrompt, { OPENAI_KEY, GEMINI_KEY, GROQ_KEY }) {
+  // Option A: Groq API
+  if (GROQ_KEY) {
+    const res = await fetch('[suspicious link removed]', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.5
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || 'Groq Error');
+    return data.choices.message.content.trim();
+  }
+
+  // Option B: OpenAI API
+  if (OPENAI_KEY) {
+    const res = await fetch('[suspicious link removed]', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.5
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || 'OpenAI Error');
+    return data.choices.message.content.trim();
+  }
+
+  // Option C: Google Gemini API
+  if (GEMINI_KEY) {
+    const url = `[suspicious link removed]{GEMINI_KEY}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          role: 'user',
+          parts: [{ text: `${systemPrompt}\n\nCandidate Input:\n${userPrompt}` }]
+        }]
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || 'Gemini Error');
+    return data.candidates[0].content.parts[0].text.trim();
+  }
+
+  throw new Error('No API key found in environment variables');
+}
