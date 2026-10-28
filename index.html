@@ -144,6 +144,13 @@
       margin-bottom: 18px;
     }
 
+    .status-error {
+      background-color: var(--danger-bg);
+      border-color: #FECDD3;
+      border-left-color: var(--danger-red);
+      color: var(--danger-red);
+    }
+
     .meter-container {
       display: flex;
       align-items: center;
@@ -592,7 +599,7 @@ let volumeCheckInterval = null;
 let speechRecognizer = null;
 let isRecognizerExplicitlyStopped = false;
 
-// CALL VERCEL SERVERLESS BACKEND
+// CALL VERCEL SERVERLESS BACKEND (WITH ON-SCREEN ERROR REPORTING)
 async function fetchVercelAI(payload) {
   try {
     const res = await fetch('/api/interview', {
@@ -600,14 +607,26 @@ async function fetchVercelAI(payload) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+    const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error || `Server Error (${res.status})`);
+      const msg = data.error || `HTTP ${res.status}`;
+      showAPIError(msg);
+      return { error: msg };
     }
-    return await res.json();
+    return data;
   } catch (err) {
-    console.warn("Backend API call failed:", err);
-    return null;
+    const msg = err.message || "Network Error connecting to /api/interview";
+    showAPIError(msg);
+    return { error: msg };
+  }
+}
+
+function showAPIError(msg) {
+  console.error("Vercel AI Endpoint Error:", msg);
+  const banner = document.getElementById("interview-flow-status");
+  if (banner) {
+    banner.className = "status-banner status-error";
+    banner.innerHTML = `<strong>⚠️ AI Connection Alert:</strong> ${msg}. Check your Vercel Environment Variables and hit "Redeploy".`;
   }
 }
 
@@ -654,7 +673,7 @@ function bindVolumeMeter(stream, barId, pctId) {
   }, 60);
 }
 
-// SETUP VOICES
+// SETUP VOICES (HIGH QUALITY FILTER)
 function initVoices() {
   const voiceSelect = document.getElementById("select-voice");
   const voices = window.speechSynthesis.getVoices();
@@ -668,12 +687,13 @@ function initVoices() {
     return;
   }
 
-  const preferred = voices.filter(v => 
+  // Filter for clean, natural English voices
+  const naturalVoices = voices.filter(v => 
     v.lang.startsWith("en") && 
-    (v.name.includes("Natural") || v.name.includes("Google") || v.name.includes("Premium") || v.name.includes("India") || v.name.includes("United Kingdom"))
+    (v.name.includes("Natural") || v.name.includes("Google") || v.name.includes("Premium") || v.name.includes("Samantha") || v.name.includes("Daniel") || v.name.includes("Karen") || v.name.includes("Rishi") || v.name.includes("United States") || v.name.includes("United Kingdom"))
   );
 
-  const displayList = preferred.length > 0 ? preferred : voices.filter(v => v.lang.startsWith("en"));
+  const displayList = naturalVoices.length > 0 ? naturalVoices : voices.filter(v => v.lang.startsWith("en"));
   displayList.forEach((v) => {
     const opt = document.createElement("option");
     opt.value = v.name;
@@ -695,6 +715,7 @@ document.getElementById("btn-test-voice").addEventListener("click", () => {
   window.speechSynthesis.cancel();
   const testUtter = new SpeechSynthesisUtterance("Good morning. I will be conducting your placement interview today.");
   if (chosen) testUtter.voice = chosen;
+  testUtter.pitch = 1.0;
   testUtter.rate = 0.95;
   activeUtterance = testUtter;
   window.speechSynthesis.speak(testUtter);
@@ -797,7 +818,6 @@ function loadCurrentQuestion() {
   answerStartTime = null;
   questionActiveTimestamp = null;
   audioChunks = [];
-  if (countdownInterval) clearInterval(countdownInterval);
 
   document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length}`;
   
@@ -805,15 +825,16 @@ function loadCurrentQuestion() {
   const authorBadgeHtml = `<span class="author-tag-inline">${qData.author}</span>`;
   questionBox.innerHTML = `${qData.text} ${authorBadgeHtml}`;
 
-  const flowStatus = document.getElementById("flow-status-text");
-  const transcriptBox = document.getElementById("live-transcript");
-  flowStatus.textContent = "Interviewer speaking the question...";
-  transcriptBox.innerHTML = `<span style="color: var(--text-muted); font-style: italic;">Awaiting question delivery...</span>`;
+  const flowStatus = document.getElementById("interview-flow-status");
+  flowStatus.className = "status-banner";
+  document.getElementById("flow-status-text").textContent = "Interviewer speaking the question...";
+  document.getElementById("live-transcript").innerHTML = `<span style="color: var(--text-muted); font-style: italic;">Awaiting question delivery...</span>`;
   setMicStatus("Interviewer Speaking...", false);
 
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(qData.text);
   if (selectedVoice) utter.voice = selectedVoice;
+  utter.pitch = 1.0;
   utter.rate = 0.95;
   activeUtterance = utter;
 
@@ -824,7 +845,7 @@ function loadCurrentQuestion() {
 
     questionActiveTimestamp = Date.now();
     setTimeout(() => {
-      flowStatus.innerHTML = `<strong>Microphone Live:</strong> Speak your response naturally into the microphone.`;
+      document.getElementById("flow-status-text").innerHTML = `<strong>Microphone Live:</strong> Speak your response naturally into the microphone.`;
       startVoiceRecording();
     }, 300);
   }
@@ -851,22 +872,24 @@ function triggerSpontaneousProbe(probePrompt) {
   const questionBox = document.getElementById("spoken-question-text");
   questionBox.innerHTML = `"${probePrompt}" <span class="probe-tag-inline">⚡ Contextual AI Follow-Up</span>`;
 
-  const flowStatus = document.getElementById("flow-status-text");
-  flowStatus.innerHTML = `<strong>Interviewer Follow-Up:</strong> Listening to your response...`;
+  const flowStatus = document.getElementById("interview-flow-status");
+  flowStatus.className = "status-banner";
+  document.getElementById("flow-status-text").innerHTML = `<strong>Interviewer Follow-Up:</strong> Listening to your response...`;
   setMicStatus("Interviewer Speaking...", false);
 
   window.speechSynthesis.cancel();
   const utter = new SpeechSynthesisUtterance(probePrompt);
   if (selectedVoice) utter.voice = selectedVoice;
+  utter.pitch = 1.0;
   utter.rate = 0.95;
   activeUtterance = utter;
 
   utter.onend = () => {
-    flowStatus.innerHTML = `<strong>Microphone Live:</strong> Respond to the interviewer's follow-up.`;
+    document.getElementById("flow-status-text").innerHTML = `<strong>Microphone Live:</strong> Respond to the interviewer's follow-up.`;
     startVoiceRecording();
   };
   utter.onerror = () => {
-    flowStatus.innerHTML = `<strong>Microphone Live:</strong> Respond to the interviewer's follow-up.`;
+    document.getElementById("flow-status-text").innerHTML = `<strong>Microphone Live:</strong> Respond to the interviewer's follow-up.`;
     startVoiceRecording();
   };
 
@@ -1004,13 +1027,11 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
   }
 
   const audioBlob = await stopVoiceRecording();
-  if (countdownInterval) clearInterval(countdownInterval);
 
   if (!inSpontaneousMode) {
     recordPrimaryAnswer(currentText, audioBlob, false, "", durationSec);
 
-    const flowStatus = document.getElementById("flow-status-text");
-    flowStatus.innerHTML = `<strong>Interviewer Evaluating:</strong> Analyzing your response...`;
+    document.getElementById("flow-status-text").innerHTML = `<strong>Interviewer Evaluating:</strong> Contacting Vercel AI Engine...`;
 
     // Real-Time AI Socratic Evaluation via Vercel Backend
     const qData = sessionQuestions[currentQIndex];
@@ -1042,8 +1063,6 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
 // PASS QUESTION HANDLER
 document.getElementById("btn-idk-skip").addEventListener("click", async () => {
   const audioBlob = await stopVoiceRecording();
-  if (countdownInterval) clearInterval(countdownInterval);
-
   const durationSec = questionActiveTimestamp ? ((Date.now() - questionActiveTimestamp) / 1000).toFixed(1) : 0;
 
   if (!inSpontaneousMode) {
@@ -1124,7 +1143,7 @@ async function renderTruthfulReport() {
   document.getElementById("kpi-probes-count").textContent = `${spontaneousProbesTriggered}`;
 
   const summaryBox = document.getElementById("report-summary-text");
-  summaryBox.innerHTML = `<em>Generating AI Evaluation...</em>`;
+  summaryBox.innerHTML = `<em>Generating AI Executive Evaluation via Vercel...</em>`;
 
   // Request AI Report via Vercel Backend
   const payload = sessionResults.map((r, i) => ({
@@ -1148,7 +1167,7 @@ async function renderTruthfulReport() {
     kpiScore.style.color = "var(--primary-blue)";
   }
 
-  summaryBox.innerHTML = aiReport ? `
+  summaryBox.innerHTML = (aiReport && aiReport.overallSummary) ? `
     <strong>AI Executive Evaluation:</strong> ${aiReport.overallSummary}
     <br><span style="font-size: 0.85rem; color: var(--text-muted);">Answered ${answeredRounds.length} of ${sessionResults.length} prompts with ${spontaneousProbesTriggered} contextual AI follow-up(s). Average pace: ${avgWPM} WPM.</span>
   ` : `
@@ -1248,8 +1267,8 @@ async function renderTruthfulReport() {
   const evalTitle = document.getElementById("evaluator-tier-title");
   const evalSummary = document.getElementById("evaluator-tier-summary");
 
-  if (aiReport) {
-    evalTitle.textContent = aiReport.readinessTier;
+  if (aiReport && aiReport.overallSummary) {
+    evalTitle.textContent = aiReport.readinessTier || "Evaluation Baseline";
     evalSummary.textContent = aiReport.overallSummary;
   } else {
     evalTitle.textContent = "Placement Evaluation Summary";
