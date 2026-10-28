@@ -18,8 +18,6 @@
       --text-muted: #64748B;
       --danger-red: #BE123C;
       --danger-bg: #FFF1F2;
-      --warning-amber: #D97706;
-      --warning-bg: #FEF3C7;
       --badge-bg: #F1F5F9;
       --success-green: #10B981;
       --success-bg: #ECFDF5;
@@ -89,7 +87,7 @@
     }
 
     label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
-    select, input[type="text"], input[type="password"] {
+    select {
       width: 100%;
       height: 46px;
       border: 1px solid var(--border-subtle);
@@ -101,15 +99,7 @@
       margin-bottom: 18px;
       outline: none;
     }
-    select:focus, input:focus { border-color: var(--accent-teal); }
-
-    .ai-box-container {
-      background: #F0FDFA;
-      border: 1px solid #99F6E4;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 20px;
-    }
+    select:focus { border-color: var(--accent-teal); }
 
     .btn {
       display: inline-flex;
@@ -279,7 +269,7 @@
 
     @media print {
       body { background: #FFF; padding: 0; }
-      .btn, .tab-switch, #btn-print-dossier, .meter-container, .ai-box-container { display: none !important; }
+      .btn, .tab-switch, #btn-print-dossier, .meter-container { display: none !important; }
       .card { border: none; box-shadow: none; padding: 0; }
       #view-candidate-blueprint, #view-evaluator-briefing { display: block !important; }
     }
@@ -294,29 +284,9 @@
   <!-- ================= 1. SETUP SCREEN ================= -->
   <div id="screen-setup" class="card">
     <h1>Executive Interview Practice</h1>
-    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 6px 0 20px;">
-      Realistic Placement Practice with Real-Time AI Socratic Evaluation
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 6px 0 24px;">
+      Realistic Executive Placement Practice with Real-Time AI Socratic Evaluation
     </p>
-
-    <!-- LIVE AI INTEGRATION PANEL -->
-    <div class="ai-box-container">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <h3 style="margin: 0; color: #0F766E;">⚡ Live AI Model Engine Integration</h3>
-        <span style="font-size: 0.75rem; font-weight: 700; color: #0D9488; background: #E6FFFA; padding: 2px 8px; border-radius: 4px;">Real-Time AI</span>
-      </div>
-      
-      <label for="select-ai-provider">AI Provider</label>
-      <select id="select-ai-provider" style="margin-bottom: 12px;">
-        <option value="openai">OpenAI (gpt-4o-mini / gpt-4o)</option>
-        <option value="gemini">Google Gemini (gemini-2.5-flash)</option>
-      </select>
-
-      <label for="input-api-key">API Key</label>
-      <input type="password" id="input-api-key" placeholder="Enter API Key (e.g. sk-... or AIzaSy...)" style="margin-bottom: 8px;">
-      <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0;">
-        🔒 Stored locally in your browser. Enables real-time speech evaluation and contextual follow-ups.
-      </p>
-    </div>
 
     <label for="select-field">Interview Domain</label>
     <select id="select-field">
@@ -622,66 +592,22 @@ let volumeCheckInterval = null;
 let speechRecognizer = null;
 let isRecognizerExplicitlyStopped = false;
 
-// LOCAL STORAGE FOR API KEY
-const storedApiKey = localStorage.getItem("placement_sim_api_key") || "";
-if (storedApiKey) {
-  document.getElementById("input-api-key").value = storedApiKey;
-}
-
-document.getElementById("input-api-key").addEventListener("change", (e) => {
-  localStorage.setItem("placement_sim_api_key", e.target.value.trim());
-});
-
-// LIVE AI CALL ROUTER
-async function callAI(systemPrompt, userPrompt) {
-  const provider = document.getElementById("select-ai-provider").value;
-  const apiKey = document.getElementById("input-api-key").value.trim() || localStorage.getItem("placement_sim_api_key") || "";
-
-  if (!apiKey) {
-    throw new Error("NO_API_KEY");
-  }
-
-  if (provider === "openai") {
-    const res = await fetch("[suspicious link removed]", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt }
-        ],
-        temperature: 0.7
-      })
+// CALL VERCEL SERVERLESS BACKEND
+async function fetchVercelAI(payload) {
+  try {
+    const res = await fetch('/api/interview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || `OpenAI Error (${res.status})`);
+      throw new Error(err.error || `Server Error (${res.status})`);
     }
-    const data = await res.json();
-    return data.choices[0].message.content.trim();
-  } else {
-    // Gemini API
-    const url = `[suspicious link removed]{apiKey}`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{
-          role: "user",
-          parts: [{ text: `${systemPrompt}\n\nCandidate Input:\n${userPrompt}` }]
-        }]
-      })
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || `Gemini Error (${res.status})`);
-    }
-    const data = await res.json();
-    return data.candidates[0].content.parts[0].text.trim();
+    return await res.json();
+  } catch (err) {
+    console.warn("Backend API call failed:", err);
+    return null;
   }
 }
 
@@ -755,7 +681,7 @@ function initVoices() {
     voiceSelect.appendChild(opt);
   });
 
-  selectedVoice = displayList || voices;
+  selectedVoice = displayList[0] || voices[0];
 }
 
 window.speechSynthesis.onvoiceschanged = initVoices;
@@ -824,7 +750,7 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
       let spoken = "";
       for (let i = 0; i < e.results.length; i++) {
         const item = e.results[i];
-        const text = (item && item.transcript) ? item.transcript : (item.transcript || "");
+        const text = (item && item[0]) ? item[0].transcript : (item.transcript || "");
         spoken += text + " ";
       }
       spoken = normalizeSpokenText(spoken.trim());
@@ -915,34 +841,6 @@ function loadCurrentQuestion() {
   window.speechSynthesis.speak(utter);
 }
 
-// REAL-TIME AI SOCRATIC FOLLOW-UP GENERATOR
-async function requestAIFollowUp(transcript, qData) {
-  const systemPrompt = `You are a senior executive interviewer (e.g. Head of Marketing, Finance, or HR) conducting a campus placement interview.
-Question asked: "${qData.text}"
-Model answer guidelines: "${qData.idealModelAnswer}"
-
-Your Task:
-Analyze the candidate's verbatim spoken response: "${transcript}"
-
-1. If their answer is vague, incomplete, misses crucial operational logic, or makes a claim that needs backing up, ask ONE sharp, highly specific follow-up question (1-2 sentences) directly challenging or probing what they just said. Sound like a real interviewer listening in the room.
-2. If their answer is thorough, complete, and well-reasoned, reply STRICTLY with the exact word "NO_FOLLOWUP". Do not add punctuation or extra words if no follow-up is needed.`;
-
-  try {
-    const aiResponse = await callAI(systemPrompt, transcript);
-    if (aiResponse.includes("NO_FOLLOWUP")) {
-      return { trigger: false, prompt: "" };
-    }
-    return { trigger: true, prompt: aiResponse.replace(/["']/g, "") };
-  } catch (err) {
-    if (err.message === "NO_API_KEY") {
-      console.log("No API Key configured; skipping AI follow-up.");
-    } else {
-      console.warn("AI API Error:", err);
-    }
-    return { trigger: false, prompt: "" };
-  }
-}
-
 function triggerSpontaneousProbe(probePrompt) {
   inSpontaneousMode = true;
   currentProbeText = probePrompt;
@@ -1017,7 +915,7 @@ async function startVoiceRecording() {
         let full = "";
         for (let i = 0; i < event.results.length; i++) {
           const item = event.results[i];
-          const text = (item && item.transcript) ? item.transcript : (item.transcript || "");
+          const text = (item && item[0]) ? item[0].transcript : (item.transcript || "");
           full += text + " ";
         }
         const cleaned = normalizeSpokenText(full.trim());
@@ -1114,11 +1012,16 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
     const flowStatus = document.getElementById("flow-status-text");
     flowStatus.innerHTML = `<strong>Interviewer Evaluating:</strong> Analyzing your response...`;
 
-    // Real-Time AI Socratic Evaluation
+    // Real-Time AI Socratic Evaluation via Vercel Backend
     const qData = sessionQuestions[currentQIndex];
-    const probeDecision = await requestAIFollowUp(currentText, qData);
+    const probeDecision = await fetchVercelAI({
+      action: 'followup',
+      transcript: currentText,
+      questionText: qData.text,
+      idealAnswer: qData.idealModelAnswer
+    });
 
-    if (probeDecision.trigger) {
+    if (probeDecision && probeDecision.trigger) {
       triggerSpontaneousProbe(probeDecision.prompt);
     } else {
       window.speechSynthesis.cancel();
@@ -1207,44 +1110,6 @@ function advanceToNextQuestion() {
   }
 }
 
-// AI REPORT EVALUATION
-async function generateAIReport() {
-  const apiKey = document.getElementById("input-api-key").value.trim() || localStorage.getItem("placement_sim_api_key") || "";
-  if (!apiKey) return null;
-
-  const summaryPayload = sessionResults.map((r, i) => ({
-    questionIndex: i + 1,
-    question: r.questionData.text,
-    verbatimAnswer: r.transcript || "[PASSED]",
-    followUpQuestion: r.probeText || "[NONE]",
-    followUpAnswer: r.probeTranscript || "[NONE]"
-  }));
-
-  const systemPrompt = `You are an Executive Hiring Committee Chair. Analyze this candidate's placement interview transcripts.
-Return a clean JSON object with this exact structure:
-{
-  "readinessTier": "Tier 1 (Placement Ready)" or "Tier 2 (Developing)" or "Needs Practice",
-  "overallSummary": "A concise 2-3 sentence executive evaluation of their overall performance, depth, and communication.",
-  "evaluations": [
-    {
-      "questionIndex": 1,
-      "strengths": "Key business arguments they articulated well.",
-      "gaps": "Specific missing business logic or operational flaws.",
-      "executiveRewrite": "An elevated, C-suite level 2-sentence re-frame of their specific answer."
-    }
-  ]
-}`;
-
-  try {
-    const jsonText = await callAI(systemPrompt, JSON.stringify(summaryPayload));
-    const cleanJson = jsonText.replace(/```json/g, "").replace(/```/g, "").trim();
-    return JSON.parse(cleanJson);
-  } catch (err) {
-    console.warn("AI Report Evaluation Error:", err);
-    return null;
-  }
-}
-
 // PERSONALIZED EXECUTIVE DIAGNOSTIC DOSSIER
 async function renderTruthfulReport() {
   document.getElementById("screen-interview").classList.add("hidden");
@@ -1261,8 +1126,16 @@ async function renderTruthfulReport() {
   const summaryBox = document.getElementById("report-summary-text");
   summaryBox.innerHTML = `<em>Generating AI Evaluation...</em>`;
 
-  // Attempt Live AI Report Generation
-  const aiReport = await generateAIReport();
+  // Request AI Report via Vercel Backend
+  const payload = sessionResults.map((r, i) => ({
+    questionIndex: i + 1,
+    question: r.questionData.text,
+    verbatimAnswer: r.transcript || "[PASSED]",
+    followUpQuestion: r.probeText || "[NONE]",
+    followUpAnswer: r.probeTranscript || "[NONE]"
+  }));
+
+  const aiReport = await fetchVercelAI({ action: 'report', sessionResults: payload });
 
   const kpiScore = document.getElementById("kpi-score");
   if (aiReport && aiReport.readinessTier) {
@@ -1324,7 +1197,7 @@ async function renderTruthfulReport() {
         <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px; padding: 12px; margin: 12px 0;">
           <p style="font-size: 0.78rem; font-weight: 700; color: #B45309; text-transform: uppercase;">⚡ Contextual AI Follow-Up:</p>
           <p style="font-size: 0.9rem; font-weight: 600; color: var(--primary-navy); margin: 4px 0;">"${r.probeText}"</p>
-          <p style="font-size: 0.85rem; color: var(--text-main); font-style: italic;">
+          <p style="font-size: 0.85rem; font-style: italic; color: var(--text-main);">
             <strong>Your Response:</strong> ${r.probeTranscript ? `"${r.probeTranscript}"` : '<span style="color:var(--text-muted);">(Passed)</span>'}
           </p>
         </div>
@@ -1380,7 +1253,7 @@ async function renderTruthfulReport() {
     evalSummary.textContent = aiReport.overallSummary;
   } else {
     evalTitle.textContent = "Placement Evaluation Summary";
-    evalSummary.textContent = "Candidate transcript review complete. Configure an API key for live AI scoring.";
+    evalSummary.textContent = "Candidate transcript review complete.";
   }
 
   sessionResults.forEach((r, idx) => {
