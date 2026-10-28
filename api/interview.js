@@ -1,4 +1,4 @@
-// api/interview.js - Bulletproof Vercel Serverless Function
+// api/interview.js - Fixed Vercel Serverless Function
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -20,14 +20,19 @@ export default async function handler(req, res) {
 
   const { action, transcript, questionText, idealAnswer, sessionResults } = req.body;
 
-  // Read and clean API keys from Vercel Environment Variables (supports multiple key names)
-  const OPENAI_KEY = (process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || '').trim();
-  const GEMINI_KEY = (process.env.GEMINI_API_KEY || process.env.GEMINI_KEY || '').trim();
-  const GROQ_KEY = (process.env.GROQ_API_KEY || process.env.GROQ_KEY || '').trim();
+  // Read and clean API keys (strips quotes, brackets, spaces, and linebreaks)
+  const rawGemini = process.env.GEMINI_API_KEY || process.env.GEMINI_KEY || '';
+  const GEMINI_KEY = rawGemini.replace(/["'\{\}\$\s]/g, '').trim();
+
+  const rawOpenAI = process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || '';
+  const OPENAI_KEY = rawOpenAI.replace(/["'\{\}\$\s]/g, '').trim();
+
+  const rawGroq = process.env.GROQ_API_KEY || process.env.GROQ_KEY || '';
+  const GROQ_KEY = rawGroq.replace(/["'\{\}\$\s]/g, '').trim();
 
   if (!OPENAI_KEY && !GEMINI_KEY && !GROQ_KEY) {
     return res.status(500).json({ 
-      error: 'No API key found in Vercel Environment Variables. Please set GEMINI_API_KEY or GEMINI_KEY in Vercel Settings.' 
+      error: 'No valid API key found in Vercel Environment Variables. Please set GEMINI_API_KEY in Vercel Settings.' 
     });
   }
 
@@ -84,14 +89,16 @@ Return ONLY a valid, raw JSON object (no markdown wrappers) with this exact sche
 }
 
 async function callLLM(systemPrompt, userPrompt, { OPENAI_KEY, GEMINI_KEY, GROQ_KEY }) {
-  // Option A: Google Gemini API
+  // Option A: Google Gemini API (Key passed securely in x-goog-api-key header)
   if (GEMINI_KEY) {
-    const cleanKey = encodeURIComponent(GEMINI_KEY);
-    const url = "[suspicious link removed]" + cleanKey;
+    const url = "[suspicious link removed]";
     
     const res = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-goog-api-key': GEMINI_KEY
+      },
       body: JSON.stringify({
         contents: [{
           role: 'user',
@@ -99,8 +106,11 @@ async function callLLM(systemPrompt, userPrompt, { OPENAI_KEY, GEMINI_KEY, GROQ_
         }]
       })
     });
+    
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || `Gemini API Error (${res.status})`);
+    if (!res.ok) {
+      throw new Error(data.error?.message || `Gemini API Error (${res.status})`);
+    }
     return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
   }
 
