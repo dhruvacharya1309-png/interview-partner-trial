@@ -1,4 +1,4 @@
-// api/interview.js - Vercel Serverless Function
+// api/interview.js - Bulletproof Vercel Serverless Function
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -20,19 +20,21 @@ export default async function handler(req, res) {
 
   const { action, transcript, questionText, idealAnswer, sessionResults } = req.body;
 
-  // Read secure API keys from Vercel Environment Variables
-  const OPENAI_KEY = process.env.OPENAI_API_KEY;
-  const GEMINI_KEY = process.env.GEMINI_API_KEY;
-  const GROQ_KEY = process.env.GROQ_API_KEY;
+  // Read and clean API keys from Vercel Environment Variables (supports multiple key names)
+  const OPENAI_KEY = (process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || '').trim();
+  const GEMINI_KEY = (process.env.GEMINI_API_KEY || process.env.GEMINI_KEY || '').trim();
+  const GROQ_KEY = (process.env.GROQ_API_KEY || process.env.GROQ_KEY || '').trim();
 
   if (!OPENAI_KEY && !GEMINI_KEY && !GROQ_KEY) {
-    return res.status(500).json({ error: 'No API key configured on Vercel Environment Variables.' });
+    return res.status(500).json({ 
+      error: 'No API key found in Vercel Environment Variables. Please set GEMINI_API_KEY or GEMINI_KEY in Vercel Settings.' 
+    });
   }
 
   try {
     // 1. REAL-TIME SOCRATIC FOLLOW-UP ACTION
     if (action === 'followup') {
-      const systemPrompt = `You are a senior executive interviewer (e.g. Head of Marketing, Finance, or HR) conducting a campus placement interview.
+      const systemPrompt = `You are a senior executive interviewer conducting a campus placement interview.
 Question asked: "${questionText}"
 Model answer guidelines: "${idealAnswer}"
 
@@ -44,7 +46,7 @@ Analyze the candidate's verbatim spoken response: "${transcript}"
 
       const aiReply = await callLLM(systemPrompt, transcript, { OPENAI_KEY, GEMINI_KEY, GROQ_KEY });
       
-      if (aiReply.includes("NO_FOLLOWUP")) {
+      if (!aiReply || aiReply.includes("NO_FOLLOWUP")) {
         return res.status(200).json({ trigger: false, prompt: "" });
       }
       return res.status(200).json({ trigger: true, prompt: aiReply.replace(/["']/g, "").trim() });
@@ -55,7 +57,7 @@ Analyze the candidate's verbatim spoken response: "${transcript}"
       const systemPrompt = `You are an Executive Hiring Committee Chair. Analyze this candidate's placement interview transcripts.
 Return ONLY a valid, raw JSON object (no markdown wrappers) with this exact schema:
 {
-  "readinessTier": "Tier 1 (Placement Ready)" OR "Tier 2 (Developing)" OR "Needs Practice",
+  "readinessTier": "Tier 1 (Placement Ready)",
   "overallSummary": "A concise 2-3 sentence executive evaluation of their overall performance, depth, and communication.",
   "evaluations": [
     {
@@ -82,7 +84,27 @@ Return ONLY a valid, raw JSON object (no markdown wrappers) with this exact sche
 }
 
 async function callLLM(systemPrompt, userPrompt, { OPENAI_KEY, GEMINI_KEY, GROQ_KEY }) {
-  // Option A: Groq API
+  // Option A: Google Gemini API
+  if (GEMINI_KEY) {
+    const cleanKey = encodeURIComponent(GEMINI_KEY);
+    const url = "[suspicious link removed]" + cleanKey;
+    
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          role: 'user',
+          parts: [{ text: `${systemPrompt}\n\nCandidate Input:\n${userPrompt}` }]
+        }]
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || `Gemini API Error (${res.status})`);
+    return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
+  }
+
+  // Option B: Groq API
   if (GROQ_KEY) {
     const res = await fetch('[suspicious link removed]', {
       method: 'POST',
@@ -100,11 +122,11 @@ async function callLLM(systemPrompt, userPrompt, { OPENAI_KEY, GEMINI_KEY, GROQ_
       })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || 'Groq Error');
-    return data.choices.message.content.trim();
+    if (!res.ok) throw new Error(data.error?.message || `Groq API Error (${res.status})`);
+    return data.choices?.[0]?.message?.content?.trim() || "";
   }
 
-  // Option B: OpenAI API
+  // Option C: OpenAI API
   if (OPENAI_KEY) {
     const res = await fetch('[suspicious link removed]', {
       method: 'POST',
@@ -122,27 +144,9 @@ async function callLLM(systemPrompt, userPrompt, { OPENAI_KEY, GEMINI_KEY, GROQ_
       })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || 'OpenAI Error');
-    return data.choices.message.content.trim();
+    if (!res.ok) throw new Error(data.error?.message || `OpenAI API Error (${res.status})`);
+    return data.choices?.[0]?.message?.content?.trim() || "";
   }
 
-  // Option C: Google Gemini API
-  if (GEMINI_KEY) {
-    const url = `[suspicious link removed]{GEMINI_KEY}`;
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          role: 'user',
-          parts: [{ text: `${systemPrompt}\n\nCandidate Input:\n${userPrompt}` }]
-        }]
-      })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || 'Gemini Error');
-    return data.candidates[0].content.parts[0].text.trim();
-  }
-
-  throw new Error('No API key found in environment variables');
+  throw new Error('No API key configured in Vercel Environment Variables.');
 }
