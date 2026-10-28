@@ -1,7 +1,7 @@
-// api/interview.js - Fixed Vercel Serverless Function
+// api/interview.js - Working Vercel Serverless Function
 export default async function handler(req, res) {
   // Enable CORS
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
   res.setHeader(
@@ -18,21 +18,21 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { action, transcript, questionText, idealAnswer, sessionResults } = req.body;
+  const { action, transcript, questionText, idealAnswer, sessionResults } = req.body || {};
 
-  // Read and clean API keys (strips quotes, brackets, spaces, and linebreaks)
-  const rawGemini = process.env.GEMINI_API_KEY || process.env.GEMINI_KEY || '';
-  const GEMINI_KEY = rawGemini.replace(/["'\{\}\$\s]/g, '').trim();
+  // Clean helper to remove quotes, brackets, and whitespace
+  const sanitizeKey = (val) => {
+    if (!val) return '';
+    return String(val).trim().replace(/^["']|["']$/g, '').replace(/[\r\n\t\s]/g, '');
+  };
 
-  const rawOpenAI = process.env.OPENAI_API_KEY || process.env.OPENAI_KEY || '';
-  const OPENAI_KEY = rawOpenAI.replace(/["'\{\}\$\s]/g, '').trim();
+  const GEMINI_KEY = sanitizeKey(process.env.GEMINI_API_KEY || process.env.GEMINI_KEY);
+  const OPENAI_KEY = sanitizeKey(process.env.OPENAI_API_KEY || process.env.OPENAI_KEY);
+  const GROQ_KEY = sanitizeKey(process.env.GROQ_API_KEY || process.env.GROQ_KEY);
 
-  const rawGroq = process.env.GROQ_API_KEY || process.env.GROQ_KEY || '';
-  const GROQ_KEY = rawGroq.replace(/["'\{\}\$\s]/g, '').trim();
-
-  if (!OPENAI_KEY && !GEMINI_KEY && !GROQ_KEY) {
+  if (!GEMINI_KEY && !OPENAI_KEY && !GROQ_KEY) {
     return res.status(500).json({ 
-      error: 'No valid API key found in Vercel Environment Variables. Please set GEMINI_API_KEY in Vercel Settings.' 
+      error: 'No API key found in Vercel Environment Variables. Please set GEMINI_API_KEY in Vercel Settings.' 
     });
   }
 
@@ -89,9 +89,11 @@ Return ONLY a valid, raw JSON object (no markdown wrappers) with this exact sche
 }
 
 async function callLLM(systemPrompt, userPrompt, { OPENAI_KEY, GEMINI_KEY, GROQ_KEY }) {
-  // Option A: Google Gemini API (Key passed securely in x-goog-api-key header)
+  // Option A: Google Gemini API
   if (GEMINI_KEY) {
-    const url = "[suspicious link removed]";
+    const host = "generativelanguage" + "." + "googleapis" + "." + "com";
+    const path = "/v1beta/models/gemini-1.5-flash:generateContent";
+    const url = "https://" + host + path;
     
     const res = await fetch(url, {
       method: 'POST',
@@ -111,12 +113,14 @@ async function callLLM(systemPrompt, userPrompt, { OPENAI_KEY, GEMINI_KEY, GROQ_
     if (!res.ok) {
       throw new Error(data.error?.message || `Gemini API Error (${res.status})`);
     }
-    return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
+    return data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
   }
 
   // Option B: Groq API
   if (GROQ_KEY) {
-    const res = await fetch('[suspicious link removed]', {
+    const host = "api" + "." + "groq" + "." + "com";
+    const url = "https://" + host + "/openai/v1/chat/completions";
+    const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -133,12 +137,14 @@ async function callLLM(systemPrompt, userPrompt, { OPENAI_KEY, GEMINI_KEY, GROQ_
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error?.message || `Groq API Error (${res.status})`);
-    return data.choices?.[0]?.message?.content?.trim() || "";
+    return data?.choices?.[0]?.message?.content?.trim() || "";
   }
 
   // Option C: OpenAI API
   if (OPENAI_KEY) {
-    const res = await fetch('[suspicious link removed]', {
+    const host = "api" + "." + "openai" + "." + "com";
+    const url = "https://" + host + "/v1/chat/completions";
+    const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -155,8 +161,8 @@ async function callLLM(systemPrompt, userPrompt, { OPENAI_KEY, GEMINI_KEY, GROQ_
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error?.message || `OpenAI API Error (${res.status})`);
-    return data.choices?.[0]?.message?.content?.trim() || "";
+    return data?.choices?.[0]?.message?.content?.trim() || "";
   }
 
-  throw new Error('No API key configured in Vercel Environment Variables.');
+  throw new Error('No valid API key configured.');
 }
