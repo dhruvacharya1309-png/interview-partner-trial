@@ -1,4 +1,4 @@
-// api/interview.js - Working Vercel Serverless Function
+// api/interview.js - Stage 1 Serverless Function
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -33,6 +33,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    // 1. SOCRATIC REAL-TIME FOLLOW-UP
     if (action === 'followup') {
       const systemPrompt = `You are a senior executive interviewer conducting a campus placement interview.
 Question asked: "${questionText}"
@@ -42,7 +43,7 @@ Your Task:
 Analyze the candidate's verbatim spoken response: "${transcript}"
 
 1. If their answer is vague, incomplete, misses key operational logic, or makes an unbacked claim, ask ONE sharp, highly specific follow-up question (1-2 sentences) directly challenging what they said.
-2. If their answer is thorough and clear, reply STRICTLY with the exact string "NO_FOLLOWUP".`;
+2. If their answer is thorough and well-reasoned, reply STRICTLY with the exact string "NO_FOLLOWUP".`;
 
       const aiReply = await callGemini(systemPrompt, transcript, GEMINI_KEY);
       
@@ -52,18 +53,40 @@ Analyze the candidate's verbatim spoken response: "${transcript}"
       return res.status(200).json({ trigger: true, prompt: aiReply.replace(/["']/g, "").trim() });
     }
 
+    // 2. DIAGNOSTIC REPORT EVALUATION (TIER 1 / 2 / 3 RUBRIC)
     if (action === 'report') {
-      const systemPrompt = `You are an Executive Hiring Committee Chair. Analyze this candidate's placement interview transcripts.
-Return ONLY a valid, raw JSON object (no markdown wrappers) with this exact schema:
+      const systemPrompt = `You are an Executive Hiring Committee Chair evaluating a placement candidate.
+
+EVALUATION RUBRIC:
+Categorize the candidate into EXACTLY one of these 3 Readiness Tiers based on their verbatim spoken responses:
+
+- "Tier 1: Placement Ready"
+  • Demonstrates structured, multi-dimensional business logic (explains what, how, and why).
+  • Uses precise domain terminology and frameworks naturally without fluff.
+  • Successfully defends or expands their reasoning when faced with follow-up challenges.
+
+- "Tier 2: Developing"
+  • Has correct basic theoretical knowledge, but responses stay generic or high-level.
+  • Relies on informal diction or occasional filler phrases.
+  • Needs follow-up questions to uncover complete operational details.
+
+- "Tier 3: Needs Practice"
+  • Demonstrates conceptual misunderstandings, relies entirely on surface buzzwords, or skips questions.
+  • Spoken answers are extremely brief (under 10 seconds) or lack logical structure.
+  • Fails or struggles to address Socratic follow-up challenges.
+
+YOUR TASK:
+Analyze the provided transcript array. Return ONLY a valid, raw JSON object (no markdown wrappers) matching this exact schema:
 {
-  "readinessTier": "Tier 1 (Placement Ready)",
-  "overallSummary": "A concise 2-3 sentence executive evaluation of their overall performance, depth, and communication.",
+  "readinessTier": "Tier 1: Placement Ready | Tier 2: Developing | Tier 3: Needs Practice",
+  "tierColor": "green | blue | red",
+  "overallSummary": "A 2-3 sentence executive evaluation explaining why they received this tier, highlighting analytical depth, trade-off reasoning, and communication clarity.",
   "evaluations": [
     {
       "questionIndex": 1,
-      "strengths": "Key business arguments they articulated well.",
-      "gaps": "Specific missing business logic or operational flaws.",
-      "executiveRewrite": "An elevated, C-suite level 2-sentence re-frame of their specific answer."
+      "strengths": "Specific business arguments or frameworks articulated well.",
+      "gaps": "Missing operational logic, unbacked assertions, or missing metrics.",
+      "executiveRewrite": "An elevated 2-sentence C-suite reframing of their exact response."
     }
   ]
 }`;
@@ -83,7 +106,6 @@ Return ONLY a valid, raw JSON object (no markdown wrappers) with this exact sche
 }
 
 async function callGemini(systemPrompt, userPrompt, apiKey) {
-  // Assembles the target endpoint dynamically to prevent text filter redaction
   const hostParts = ['generative' + 'language', 'google' + 'apis', 'com'];
   const domain = hostParts.join('.');
   const path = '/v1beta/models/gemini-1.5-flash:generateContent';
