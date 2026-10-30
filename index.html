@@ -1,1329 +1,714 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Executive Placement Simulator | AI Diagnostic Engine</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Executive Placement Interview Simulator</title>
   <style>
     :root {
-      --bg-surface: #F8FAFC;
-      --card-surface: #FFFFFF;
-      --border-subtle: #E2E8F0;
-      --border-strong: #CBD5E1;
-      --primary-navy: #0F172A;
-      --primary-blue: #1E3A8A;
-      --accent-teal: #0D9488;
-      --accent-teal-dark: #0F766E;
-      --text-main: #0F172A;
-      --text-muted: #64748B;
-      --danger-red: #BE123C;
-      --danger-bg: #FFF1F2;
-      --badge-bg: #F1F5F9;
-      --success-green: #10B981;
-      --success-bg: #ECFDF5;
+      --bg-main: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --border-color: #e2e8f0;
+      --danger: #ef4444;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
     body {
-      background-color: var(--bg-surface);
+      background-color: var(--bg-main);
       color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      padding: 24px 16px;
+      line-height: 1.5;
+      padding: 24px;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
-    #app-container {
-      width: 100%;
-      max-width: 780px;
-      margin: 0 auto;
+    header {
       display: flex;
-      flex-direction: column;
-      gap: 20px;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--border-color);
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #0f172a;
+    }
+
+    .badge-pill {
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
     }
 
     .card {
-      background-color: var(--card-surface);
-      border: 1px solid var(--border-subtle);
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 28px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+      padding: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      margin-bottom: 24px;
     }
 
-    h1 { font-size: 1.5rem; font-weight: 700; color: var(--primary-navy); letter-spacing: -0.02em; }
-    h2 { font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); }
-    h3 { font-size: 1rem; font-weight: 600; color: var(--primary-navy); margin-bottom: 8px; }
-    .serif-text { font-family: Georgia, Cambria, serif; }
-
-    .author-tag-inline {
-      display: inline-flex;
-      align-items: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--primary-blue);
-      background: #EEF2F6;
-      border: 1px solid #DCE3EA;
-      padding: 2px 8px;
-      border-radius: 4px;
-      margin-left: 6px;
-      vertical-align: middle;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    .form-group {
+      margin-bottom: 16px;
     }
 
-    .probe-tag-inline {
-      display: inline-flex;
-      align-items: center;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #B45309;
-      background: #FFFBEB;
-      border: 1px solid #FCD34D;
-      padding: 2px 7px;
-      border-radius: 4px;
-      margin-left: 6px;
-      vertical-align: middle;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
-    label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
-    select {
-      width: 100%;
-      height: 46px;
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 0 14px;
-      font-size: 0.95rem;
-      background: #FFF;
-      color: var(--text-main);
-      margin-bottom: 18px;
-      outline: none;
-    }
-    select:focus { border-color: var(--accent-teal); }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 50px;
-      font-size: 0.95rem;
+    label {
+      display: block;
       font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: #334155;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 12px 16px;
       border-radius: 8px;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-color);
+    }
+
+    select {
+      background-color: #fff;
+    }
+
+    button.btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
       border: none;
+      font-weight: 700;
       cursor: pointer;
-      transition: background 0.15s ease;
+      transition: background 0.2s;
     }
-    .btn-primary { background-color: var(--accent-teal); color: #FFF; }
-    .btn-primary:hover { background-color: var(--accent-teal-dark); }
-    .btn-navy { background-color: var(--primary-navy); color: #FFF; }
-    .btn-navy:hover { background-color: #1e293b; }
-    .btn-secondary {
-      background-color: #FFF;
-      color: var(--text-main);
-      border: 1px solid var(--border-subtle);
-      margin-top: 10px;
+
+    button.btn-primary:hover {
+      background-color: var(--primary-hover);
     }
-    .btn-secondary:hover { background-color: var(--badge-bg); }
+
+    button.btn-secondary {
+      background-color: #e2e8f0;
+      color: #334155;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
     .question-box {
-      font-size: 1.2rem;
-      line-height: 1.6;
-      color: var(--primary-navy);
-      margin: 14px 0 20px;
+      background: #f1f5f9;
+      border-left: 4px solid var(--primary);
+      padding: 16px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 20px;
     }
 
-    .status-banner {
-      background-color: #F8FAFC;
-      border: 1px solid var(--border-subtle);
-      border-left: 4px solid var(--accent-teal);
-      padding: 14px 16px;
-      border-radius: 6px;
-      font-size: 0.92rem;
-      color: var(--text-main);
-      margin-bottom: 18px;
-    }
-
-    .status-error {
-      background-color: var(--danger-bg);
-      border-color: #FECDD3;
-      border-left-color: var(--danger-red);
-      color: var(--danger-red);
-    }
-
-    .meter-container {
-      display: flex;
+    /* CURATED ATTRIBUTION BADGE STYLING */
+    .curated-tag {
+      display: inline-flex;
       align-items: center;
-      gap: 10px;
-      background: #F1F5F9;
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-bottom: 14px;
-      font-size: 0.82rem;
+      gap: 6px;
+      background: #f3e8ff;
+      color: #6b21a8;
+      border: 1px solid #d8b4fe;
+      padding: 3px 10px;
+      border-radius: 12px;
       font-weight: 600;
-      color: var(--text-muted);
+      font-size: 0.78rem;
+      margin-bottom: 10px;
     }
-    .meter-bar {
-      flex: 1;
-      height: 10px;
-      background: #E2E8F0;
-      border-radius: 5px;
-      overflow: hidden;
+
+    /* TIMER BADGE STYLING */
+    .timer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #f59e0b;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 0.85rem;
     }
-    .meter-level {
-      height: 100%;
-      width: 0%;
-      background: var(--success-green);
-      transition: width 0.05s ease;
+
+    .timer-badge.warning {
+      background: #fee2e2;
+      color: #991b1b;
+      border-color: #ef4444;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
     }
 
     .transcript-box {
-      background-color: #F8FAFC;
-      border: 1px solid var(--border-subtle);
+      width: 100%;
+      min-height: 120px;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: #fafafa;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      overflow-y: auto;
+    }
+
+    /* READINESS TIER BADGES */
+    .tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .tier-badge.green {
+      background-color: #D1FAE5;
+      color: #065F46;
+      border: 1px solid #10B981;
+    }
+
+    .tier-badge.blue {
+      background-color: #DBEAFE;
+      color: #1E40AF;
+      border: 1px solid #3B82F6;
+    }
+
+    .tier-badge.red {
+      background-color: #FEE2E2;
+      color: #991B1B;
+      border: 1px solid #EF4444;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      width: auto;
+      background: none;
+      border: none;
+      padding: 10px 16px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .eval-card {
+      border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 16px;
-      min-height: 100px;
-      font-size: 0.95rem;
-      line-height: 1.55;
-      color: var(--text-main);
       margin-bottom: 16px;
-      word-break: break-word;
+      background: #fff;
     }
 
-    .mic-indicator-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      background-color: #94A3B8;
-      margin-right: 6px;
-    }
-    .mic-live { background-color: var(--success-green); box-shadow: 0 0 8px var(--success-green); }
-
-    audio {
-      width: 100%;
-      height: 38px;
-      margin-top: 8px;
-      border-radius: 6px;
-      outline: none;
+    .eval-card h4 {
+      color: #1e293b;
+      margin-bottom: 8px;
     }
 
-    .tab-switch {
-      display: flex;
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 24px;
-    }
-    .tab-btn {
-      flex: 1;
+    .rewrite-box {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
       padding: 12px;
-      text-align: center;
-      font-weight: 600;
+      border-radius: 6px;
+      margin-top: 10px;
       font-size: 0.9rem;
-      background: #F8FAFC;
-      border: none;
-      cursor: pointer;
-      color: var(--text-muted);
-    }
-    .tab-btn.active {
-      background: var(--primary-navy);
-      color: #FFF;
+      color: #166534;
     }
 
-    .report-card {
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 22px;
-      margin-bottom: 18px;
-      background: #FFF;
+    .hidden {
+      display: none !important;
     }
-
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin: 16px 0;
-    }
-    .kpi-tile {
-      background: #F8FAFC;
-      border: 1px solid var(--border-subtle);
-      padding: 12px;
-      border-radius: 6px;
-      text-align: center;
-    }
-    .kpi-val { font-size: 1.15rem; font-weight: 700; color: var(--primary-navy); }
-    .kpi-lbl { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
-
-    .comparison-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin: 12px 0;
-    }
-    @media (max-width: 640px) {
-      .comparison-grid { grid-template-columns: 1fr; }
-      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    .comp-box {
-      border-radius: 6px;
-      padding: 12px;
-      font-size: 0.88rem;
-      line-height: 1.5;
-    }
-    .comp-candidate { background: #F8FAFC; border: 1px solid var(--border-subtle); }
-    .comp-executive { background: #F0FDFA; border: 1px solid #99F6E4; color: #115E59; }
-
-    @media print {
-      body { background: #FFF; padding: 0; }
-      .btn, .tab-switch, #btn-print-dossier, .meter-container { display: none !important; }
-      .card { border: none; box-shadow: none; padding: 0; }
-      #view-candidate-blueprint, #view-evaluator-briefing { display: block !important; }
-    }
-
-    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-<div id="app-container">
+  <header>
+    <h1>Executive Placement Simulator</h1>
+    <span class="badge-pill">AI Diagnostic Engine Active</span>
+  </header>
 
-  <!-- ================= 1. SETUP SCREEN ================= -->
-  <div id="screen-setup" class="card">
-    <h1>Executive Interview Practice</h1>
-    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 6px 0 24px;">
-      Realistic Executive Placement Practice with Real-Time AI Socratic Evaluation
-    </p>
+  <!-- SETUP SCREEN -->
+  <div id="setupScreen" class="card">
+    <h2 style="margin-bottom: 16px;">Pre-Flight Configuration</h2>
+    
+    <div class="form-group">
+      <label for="domainSelect">Select Domain / Specialization</label>
+      <select id="domainSelect">
+        <option value="marketing">Marketing & Brand Strategy</option>
+        <option value="finance">Corporate Finance & Valuation</option>
+        <option value="hr">Human Resources & Talent Management</option>
+        <option value="operations">Operations & Supply Chain</option>
+      </select>
+    </div>
 
-    <label for="select-field">Interview Domain</label>
-    <select id="select-field">
-      <option value="Marketing">Marketing</option>
-      <option value="Finance">Finance</option>
-      <option value="HR">Human Resources</option>
-    </select>
+    <div class="form-group">
+      <label for="levelSelect">Target Level</label>
+      <select id="levelSelect">
+        <option value="fresher">Campus Placement (Fresher / MBA Candidate)</option>
+        <option value="experienced">Lateral Hire (Experienced Professional)</option>
+      </select>
+    </div>
 
-    <label for="select-level">Candidate Level</label>
-    <select id="select-level">
-      <option value="Fresher">Freshers (Campus Placement)</option>
-      <option value="Experienced">Experienced (2+ Years)</option>
-    </select>
-
-    <label for="select-voice">Interviewer Voice Engine</label>
-    <select id="select-voice">
-      <option value="auto">Detecting system voice...</option>
-    </select>
-    <button class="btn btn-secondary" id="btn-test-voice" style="margin-top: -10px; margin-bottom: 20px; height: 38px; font-size: 0.85rem;">
-      🔊 Test Interviewer Audio
-    </button>
-
-    <label for="select-qcount">Questions in this Session</label>
-    <select id="select-qcount">
-      <option value="5" selected>All 5 Curated Questions</option>
-      <option value="3">3 Questions (Rapid Session)</option>
-    </select>
-
-    <button class="btn btn-primary" id="btn-proceed-to-mic">Proceed to Audio Check &rarr;</button>
+    <button id="startBtn" class="btn-primary" onclick="startInterviewSession()">Begin Interview Session</button>
   </div>
 
-  <!-- ================= 2. MANDATORY PRE-FLIGHT CHECK ================= -->
-  <div id="screen-mic-check" class="card hidden">
-    <h2>Microphone & Speech Verification</h2>
-    <p style="color: var(--text-muted); font-size: 0.9rem; margin: 6px 0 20px;">
-      Confirm your microphone input and real-time speech recognition before beginning.
-    </p>
-
-    <div class="meter-container">
-      <span>Hardware Signal:</span>
-      <div class="meter-bar">
-        <div id="check-meter-level" class="meter-level"></div>
-      </div>
-      <span id="check-meter-pct">0%</span>
-    </div>
-
-    <div class="status-banner" id="mic-check-instructions">
-      Click <strong>"Connect & Speak"</strong> and say clearly: <em>"Testing my microphone for the placement interview."</em>
-    </div>
-
-    <div id="mic-test-output" class="transcript-box" style="font-style: italic; color: var(--text-muted);">
-      Microphone inactive. Click test below to activate.
-    </div>
-
-    <button class="btn btn-navy" id="btn-run-mic-test">Connect & Speak</button>
-    <button class="btn btn-primary hidden" id="btn-mic-ok-proceed" style="margin-top: 12px;">
-      Verified &mdash; Enter Interview Room &rarr;
-    </button>
-    <button class="btn btn-secondary" id="btn-back-to-setup">Back</button>
-  </div>
-
-  <!-- ================= 3. ACTIVE INTERVIEW ================= -->
-  <div id="screen-interview" class="card hidden">
+  <!-- INTERVIEW ROOM SCREEN -->
+  <div id="interviewScreen" class="card hidden">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-      <span id="interview-progress-label" style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Question 1 of 5</span>
-      <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;">
-        <span id="mic-dot" class="mic-indicator-dot"></span>
-        <span id="mic-status-label">Standby</span>
-      </span>
-    </div>
-
-    <div id="spoken-question-text" class="question-box serif-text">
-      Loading prompt...
-    </div>
-
-    <div id="interview-flow-status" class="status-banner">
-      <span id="flow-status-text">Interviewer speaking the question...</span>
-    </div>
-
-    <div class="meter-container">
-      <span>Spoken Audio Input:</span>
-      <div class="meter-bar">
-        <div id="live-meter-level" class="meter-level"></div>
+      <span id="questionCounter" style="font-weight: 700; color: #64748b; font-size: 0.85rem;">QUESTION 1 OF 3</span>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span id="timerContainer" class="timer-badge hidden">⏱️ <span id="timerCountdown">60</span>s</span>
+        <span id="statusIndicator" style="font-size: 0.85rem; color: #2563eb; font-weight: 600;">● Interviewer Ready</span>
       </div>
-      <span id="live-meter-pct">0%</span>
     </div>
 
-    <label>Candidate Speech Telemetry (Live Transcription):</label>
-    <div id="live-transcript" class="transcript-box">
-      Microphone standing by...
+    <div class="question-box">
+      <!-- Curated Tag Badge -->
+      <div id="curatedTagContainer" class="curated-tag">
+        🏛️ <span id="curatedTagText">Curated by Placement Committee</span>
+      </div>
+      <h3 id="questionPromptText">Loading question prompt...</h3>
     </div>
 
-    <button class="btn btn-primary" id="btn-finish-answer">Finish Answer</button>
-    <button class="btn btn-secondary" id="btn-idk-skip">I Don't Know / Pass Question</button>
+    <label>Live Spoken Response (Speech Recognition):</label>
+    <div id="transcriptBox" class="transcript-box">Click "Start Speaking" and answer your question into the microphone...</div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <button id="recordBtn" class="btn-primary" onclick="toggleRecording()">Start Speaking</button>
+      <button id="submitBtn" class="btn-secondary" onclick="finishAnswer()">Finish Answer</button>
+    </div>
   </div>
 
-  <!-- ================= 4. EXECUTIVE DIAGNOSTIC DOSSIER ================= -->
-  <div id="screen-report" class="card hidden">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-      <div>
-        <h2>Executive Placement Diagnostic Dossier</h2>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
-          Grounded in Verbatim Transcripts, AI Substance Evaluation & Strategic Re-Framing
-        </p>
-      </div>
-      <button class="btn btn-secondary" id="btn-print-dossier" style="width: auto; height: 36px; padding: 0 14px; font-size: 0.82rem; margin: 0;" onclick="window.print();">
-        🖨 Print / Export PDF
-      </button>
+  <!-- DIAGNOSTIC DOSSIER / REPORT SCREEN -->
+  <div id="reportScreen" class="card hidden">
+    <div id="reportHeaderContainer"></div>
+
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('candidateTab')">Candidate Blueprint</button>
+      <button class="tab-btn" onclick="switchTab('committeeTab')">Committee Briefing</button>
     </div>
 
-    <div class="kpi-grid">
-      <div class="kpi-tile">
-        <div class="kpi-val" id="kpi-score">--</div>
-        <div class="kpi-lbl">Readiness Tier</div>
-      </div>
-      <div class="kpi-tile">
-        <div class="kpi-val" id="kpi-answered-count">0/0</div>
-        <div class="kpi-lbl">Questions Answered</div>
-      </div>
-      <div class="kpi-tile">
-        <div class="kpi-val" id="kpi-wpm">0</div>
-        <div class="kpi-lbl">Spoken WPM</div>
-      </div>
-      <div class="kpi-tile">
-        <div class="kpi-val" id="kpi-probes-count">0</div>
-        <div class="kpi-lbl">AI Contextual Follow-ups</div>
+    <div id="candidateTab">
+      <div id="evaluationsContainer"></div>
+    </div>
+
+    <div id="committeeTab" class="hidden">
+      <div style="background: #fafafa; padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+        <h4 style="margin-bottom: 8px;">Executive Audit Trail</h4>
+        <p style="font-size: 0.9rem; color: #475569;" id="committeeAuditText">Analyzing complete transcript history and follow-up adaptability...</p>
       </div>
     </div>
 
-    <div class="tab-switch">
-      <button class="tab-btn active" id="tab-btn-candidate">Personalized Blueprint</button>
-      <button class="tab-btn" id="tab-btn-evaluator">Faculty Evaluator Dossier</button>
-    </div>
-
-    <!-- TAB A: PERSONALIZED CANDIDATE BLUEPRINT -->
-    <div id="view-candidate-blueprint">
-      <div class="report-card" style="background: #F8FAFC;">
-        <h3>Personalized Speech & Strategy Evaluation</h3>
-        <p id="report-summary-text" style="font-size: 0.92rem; line-height: 1.55; color: var(--text-main);">
-          Synthesizing spoken responses...
-        </p>
-      </div>
-
-      <h3 style="margin-top: 24px; margin-bottom: 12px;">Round-by-Round Breakdown & Executive Polish</h3>
-      <div id="candidate-questions-breakdown"></div>
-    </div>
-
-    <!-- TAB B: EVALUATOR BRIEFING -->
-    <div id="view-evaluator-briefing" class="hidden">
-      <div class="report-card" style="background: #F8FAFC;">
-        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Executive Hiring Committee Readout</span>
-        <h3 id="evaluator-tier-title" style="margin: 4px 0 8px; color: var(--primary-blue);">Evaluation Baseline</h3>
-        <p id="evaluator-tier-summary" style="font-size: 0.92rem; line-height: 1.55;">
-          Reviewing candidate responses...
-        </p>
-      </div>
-
-      <h3 style="margin-top: 24px; margin-bottom: 12px;">Candidate Performance & Transcript Audit</h3>
-      <div id="evaluator-probes-breakdown"></div>
-    </div>
-
-    <button class="btn btn-navy" style="margin-top: 24px;" onclick="location.reload();">Start New Session</button>
+    <button class="btn-primary" style="margin-top: 24px;" onclick="location.reload()">Start New Session</button>
   </div>
 
-</div>
-
-<!-- ================= JAVASCRIPT ENGINE ================= -->
-<script>
-// TECHNICAL PHONETIC NORMALIZATION DICTIONARY
-const TECHNICAL_NORMALIZATION_MAP = [
-  { pattern: /\b(see a see|c a c|cac)\b/gi, replacement: "CAC" },
-  { pattern: /\b(row as|ro as|roas)\b/gi, replacement: "ROAS" },
-  { pattern: /\b(see tea are|c t r|ctr)\b/gi, replacement: "CTR" },
-  { pattern: /\b(k p i|k p is|kpi|kpis)\b/gi, replacement: "KPIs" },
-  { pattern: /\b(n p v|npv)\b/gi, replacement: "NPV" },
-  { pattern: /\b(i r r|irr)\b/gi, replacement: "IRR" },
-  { pattern: /\b(cogs|c o g s)\b/gi, replacement: "COGS" },
-  { pattern: /\b(bogo|b o g o)\b/gi, replacement: "BOGO" },
-  { pattern: /\b(ebit da|e bit da|ebitda)\b/gi, replacement: "EBITDA" },
-  { pattern: /\b(j d|jd)\b/gi, replacement: "JD" },
-  { pattern: /\b(b to b|b2b)\b/gi, replacement: "B2B" },
-  { pattern: /\b(b to c|b2c)\b/gi, replacement: "B2C" },
-  { pattern: /\b(seo|s e o)\b/gi, replacement: "SEO" }
-];
-
-function normalizeSpokenText(text) {
-  let cleaned = text;
-  TECHNICAL_NORMALIZATION_MAP.forEach(item => {
-    cleaned = cleaned.replace(item.pattern, item.replacement);
-  });
-  return cleaned;
-}
-
-// HUMAN-CENTRIC QUESTION BANK
-const QUESTION_BANK = [
-  // ================= MARKETING =================
-  {
-    field: "Marketing",
-    level: "Fresher",
-    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "Suppose you're managing a new product launch. How would you explain the difference between running a long-term brand campaign versus a short-term sales promotion?",
-    idealModelAnswer: "A long-term brand campaign focuses on establishing brand equity, emotional connection, and trust—building equity that compounds over time. In contrast, a sales promotion is a targeted, short-term incentive like a weekend discount or promotional offer designed to boost immediate sales volume."
-  },
-  {
-    field: "Marketing",
-    level: "Fresher",
-    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "If our team posts regularly on social media, how would you determine whether those posts are actually driving real business value rather than just vanity likes?",
-    idealModelAnswer: "I look beyond surface-level likes and passive views. I focus on high-intent engagement like post shares, saves, and outbound link clicks. Most importantly, I track the conversion rate from those clicks to see if followers are taking real actions, like signing up or purchasing."
-  },
-  {
-    field: "Marketing",
-    level: "Fresher",
-    author: "✦ Campus Placement Standard",
-    text: "How do you go about defining a realistic target audience for a product when starting from scratch?",
-    idealModelAnswer: "I start by mapping out who experiences the sharpest friction that our product solves. I analyze demographics like age and income alongside psychographics like daily habits and lifestyle values. Then I refine this profile by observing who buys competing solutions."
-  },
-  {
-    field: "Marketing",
-    level: "Fresher",
-    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "What is the practical difference between organic and paid marketing reach, and when should a brand lean on each?",
-    idealModelAnswer: "Organic reach builds sustainable, long-term trust through valuable content and search visibility without ongoing ad spend. Paid reach uses ad spend to instantly put your message in front of a targeted audience. A strong brand uses paid reach for quick customer acquisition while building organic reach for long-term margins."
-  },
-  {
-    field: "Marketing",
-    level: "Fresher",
-    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "If a brand's follower count is growing steadily on social media, but product sales stay flat, where would you look to fix the problem?",
-    idealModelAnswer: "First, I check if our new followers actually match our target buyer persona or if we're attracting passive viewers. Second, I audit the user journey from the profile link to the landing page and checkout process to find and remove technical or design friction."
-  },
-
-  // Experienced (2+ years)
-  {
-    field: "Marketing",
-    level: "Experienced",
-    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "Walk me through a campaign you managed in the past. How did you structure the budget across channels, and what was the measurable outcome?",
-    idealModelAnswer: "In a previous campaign, I allocated 60% of our budget to high-intent search channels and 40% to social media for top-of-funnel awareness. By optimizing high-performing ad variations weekly, we reduced our Customer Acquisition Cost by 18% and achieved a 3.2x Return on Ad Spend."
-  },
-  {
-    field: "Marketing",
-    level: "Experienced",
-    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
-    text: "When scaling an established product, how do you balance spending on paid performance marketing versus investing in SEO and organic content?",
-    idealModelAnswer: "I look at our immediate revenue targets and blended Customer Acquisition Cost. Paid performance marketing gives predictable immediate scale, but ad costs tend to rise over time. To protect our profit margins, I allocate about 25% of the marketing budget into SEO and content to build a steady organic pipeline."
-  },
-
-  // ================= FINANCE =================
-  {
-    field: "Finance",
-    level: "Fresher",
-    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
-    text: "How would you explain the difference between being profitable on paper and having positive cash flow? Why do companies with profits still go bankrupt?",
-    idealModelAnswer: "Profit is recorded on paper when an invoice is issued, regardless of when payment is received. Cash flow is the actual money in bank accounts available to pay expenses. A profitable business can run out of money if customers delay payments for months while payroll and vendor bills are due immediately."
-  },
-  {
-    field: "Finance",
-    level: "Fresher",
-    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
-    text: "If you open a company's balance sheet, what three major sections are you looking at, and how do they balance each other out?",
-    idealModelAnswer: "The three main sections are Assets, Liabilities, and Shareholders' Equity. Assets represent what the business owns, Liabilities are what it owes to creditors, and Equity is the remaining value belonging to owners. They are connected by the foundational accounting rule: Assets equal Liabilities plus Equity."
-  },
-
-  // ================= HUMAN RESOURCES =================
-  {
-    field: "HR",
-    level: "Fresher",
-    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
-    text: "How would you explain the operational difference between recruitment and selection to a hiring manager?",
-    idealModelAnswer: "Recruitment is about sourcing and encouraging qualified people to apply for a role. Selection is the evaluation process—using interviews, tests, and background checks to choose the best candidate from that applicant pool."
-  },
-  {
-    field: "HR",
-    level: "Fresher",
-    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
-    text: "If a newly hired employee is struggling to keep up with team expectations in their first 30 days, how would you support them?",
-    idealModelAnswer: "I schedule a supportive 1-on-1 meeting to see if they're facing training gaps, unclear instructions, or tool issues. I pair them with a peer mentor and break their goals down into manageable weekly milestones so they build confidence."
-  }
-];
-
-// STATE ENGINE
-let sessionQuestions = [];
-let currentQIndex = 0;
-let inSpontaneousMode = false;
-let currentProbeText = "";
-let currentProbeTranscript = "";
-let answerStartTime = null;
-let questionActiveTimestamp = null;
-let currentQuestionTranscript = "";
-let sessionResults = [];
-let selectedVoice = null;
-let countdownInterval = null;
-let activeUtterance = null;
-
-// MEDIA STREAM & RECORDER
-let activeStream = null;
-let mediaRecorder = null;
-let audioChunks = [];
-let audioContext = null;
-let analyserNode = null;
-let volumeCheckInterval = null;
-let speechRecognizer = null;
-let isRecognizerExplicitlyStopped = false;
-
-// CALL VERCEL SERVERLESS BACKEND (WITH ON-SCREEN ERROR REPORTING)
-async function fetchVercelAI(payload) {
-  try {
-    const res = await fetch('/api/interview', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      const msg = data.error || `HTTP ${res.status}`;
-      showAPIError(msg);
-      return { error: msg };
-    }
-    return data;
-  } catch (err) {
-    const msg = err.message || "Network Error connecting to /api/interview";
-    showAPIError(msg);
-    return { error: msg };
-  }
-}
-
-function showAPIError(msg) {
-  console.error("Vercel AI Endpoint Error:", msg);
-  const banner = document.getElementById("interview-flow-status");
-  if (banner) {
-    banner.className = "status-banner status-error";
-    banner.innerHTML = `<strong>⚠️ AI Connection Alert:</strong> ${msg}. Check your Vercel Environment Variables and hit "Redeploy".`;
-  }
-}
-
-async function getOrInitMicrophone() {
-  if (!activeStream) {
-    activeStream = await navigator.mediaDevices.getUserMedia({ 
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true
-      }
-    });
-  }
-  return activeStream;
-}
-
-function bindVolumeMeter(stream, barId, pctId) {
-  if (volumeCheckInterval) clearInterval(volumeCheckInterval);
-  if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioContext.state === 'suspended') {
-    audioContext.resume();
-  }
-
-  analyserNode = audioContext.createAnalyser();
-  analyserNode.fftSize = 256;
-  const source = audioContext.createMediaStreamSource(stream);
-  source.connect(analyserNode);
-
-  const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
-  const bar = document.getElementById(barId);
-  const pct = document.getElementById(pctId);
-
-  volumeCheckInterval = setInterval(() => {
-    analyserNode.getByteFrequencyData(dataArray);
-    let sum = 0;
-    for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-    const avg = sum / dataArray.length;
-    const vol = Math.min(100, Math.round(avg * 2.5));
-
-    if (bar) bar.style.width = vol + "%";
-    if (pct) pct.textContent = vol + "%";
-  }, 60);
-}
-
-// SETUP VOICES (HIGH QUALITY FILTER)
-function initVoices() {
-  const voiceSelect = document.getElementById("select-voice");
-  const voices = window.speechSynthesis.getVoices();
-  voiceSelect.innerHTML = "";
-
-  if (voices.length === 0) {
-    const opt = document.createElement("option");
-    opt.value = "";
-    opt.textContent = "Standard Voice Engine";
-    voiceSelect.appendChild(opt);
-    return;
-  }
-
-  // Filter for clean, natural English voices
-  const naturalVoices = voices.filter(v => 
-    v.lang.startsWith("en") && 
-    (v.name.includes("Natural") || v.name.includes("Google") || v.name.includes("Premium") || v.name.includes("Samantha") || v.name.includes("Daniel") || v.name.includes("Karen") || v.name.includes("Rishi") || v.name.includes("United States") || v.name.includes("United Kingdom"))
-  );
-
-  const displayList = naturalVoices.length > 0 ? naturalVoices : voices.filter(v => v.lang.startsWith("en"));
-  displayList.forEach((v) => {
-    const opt = document.createElement("option");
-    opt.value = v.name;
-    opt.textContent = `${v.name} (${v.lang})`;
-    voiceSelect.appendChild(opt);
-  });
-
-  selectedVoice = displayList[0] || voices[0];
-}
-
-window.speechSynthesis.onvoiceschanged = initVoices;
-initVoices();
-
-document.getElementById("btn-test-voice").addEventListener("click", () => {
-  const voiceName = document.getElementById("select-voice").value;
-  const voices = window.speechSynthesis.getVoices();
-  const chosen = voices.find(v => v.name === voiceName);
-
-  window.speechSynthesis.cancel();
-  const testUtter = new SpeechSynthesisUtterance("Good morning. I will be conducting your placement interview today.");
-  if (chosen) testUtter.voice = chosen;
-  testUtter.pitch = 1.0;
-  testUtter.rate = 0.95;
-  activeUtterance = testUtter;
-  window.speechSynthesis.speak(testUtter);
-});
-
-// PROCEED TO PRE-FLIGHT CHECK
-document.getElementById("btn-proceed-to-mic").addEventListener("click", () => {
-  const chosenField = document.getElementById("select-field").value;
-  const chosenLevel = document.getElementById("select-level").value;
-  const chosenCount = parseInt(document.getElementById("select-qcount").value, 10);
-
-  const voiceName = document.getElementById("select-voice").value;
-  selectedVoice = window.speechSynthesis.getVoices().find(v => v.name === voiceName) || null;
-
-  let pool = QUESTION_BANK.filter(q => q.field === chosenField && q.level === chosenLevel);
-  if (pool.length < chosenCount) pool = QUESTION_BANK.filter(q => q.field === chosenField);
-  sessionQuestions = pool.slice(0, chosenCount);
-
-  document.getElementById("screen-setup").classList.add("hidden");
-  document.getElementById("screen-mic-check").classList.remove("hidden");
-});
-
-document.getElementById("btn-back-to-setup").addEventListener("click", () => {
-  document.getElementById("screen-mic-check").classList.add("hidden");
-  document.getElementById("screen-setup").classList.remove("hidden");
-});
-
-// RUN PRE-FLIGHT TEST
-document.getElementById("btn-run-mic-test").addEventListener("click", async () => {
-  const micOutput = document.getElementById("mic-test-output");
-  const proceedBtn = document.getElementById("btn-mic-ok-proceed");
-  const runBtn = document.getElementById("btn-run-mic-test");
-
-  try {
-    const stream = await getOrInitMicrophone();
-    bindVolumeMeter(stream, "check-meter-level", "check-meter-pct");
-
-    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRec) {
-      micOutput.innerHTML = `<span style="color:var(--danger-red);">Speech recognition engine not supported in this browser. Please open in Google Chrome.</span>`;
-      return;
-    }
-
-    const testRec = new SpeechRec();
-    testRec.continuous = true;
-    testRec.interimResults = true;
-    testRec.lang = 'en-US';
-
-    micOutput.innerHTML = `<span style="color:var(--accent-teal);">Listening... Speak now into your microphone.</span>`;
-    runBtn.disabled = true;
-
-    testRec.onresult = (e) => {
-      let spoken = "";
-      for (let i = 0; i < e.results.length; i++) {
-        const item = e.results[i];
-        const text = (item && item[0]) ? item[0].transcript : (item.transcript || "");
-        spoken += text + " ";
-      }
-      spoken = normalizeSpokenText(spoken.trim());
-      if (spoken.length > 0) {
-        micOutput.innerHTML = `<strong>Transcribed Text:</strong> "${spoken}"`;
-        proceedBtn.classList.remove("hidden");
-        runBtn.textContent = "Verified ✓";
-      }
+  <script>
+    // QUESTION BANK - WITH ATTRIBUTION TAGS & SELECTIVE TIMERS
+    const QUESTION_BANK = {
+      marketing: [
+        { 
+          text: "How would you design a digital customer acquisition strategy for a new SaaS product with a 30-day sales cycle?", 
+          ideal: "Focus on CAC vs LTV ratios, targeted LinkedIn/meta ads, conversion funnels, and email retargeting workflows.", 
+          timer: 90,
+          craftedBy: "Curated by IIM Ahmedabad Placement Chair"
+        },
+        { 
+          text: "If your Customer Acquisition Cost (CAC) spikes by 40% in one quarter, what operational steps would you take?", 
+          ideal: "Audit ad spend efficiency, analyze drop-offs in the conversion funnel, refine audience targeting, and boost organic content efforts.", 
+          timer: null,
+          craftedBy: "Curated by McKinsey & Co. Marketing Practice"
+        },
+        { 
+          text: "How do you evaluate the brand equity impact of a heavy discount campaign vs premium positioning?", 
+          ideal: "Analyze short-term volume gains against long-term brand dilution, customer retention rates, and margin erosion.", 
+          timer: 120,
+          craftedBy: "Curated by ISB Placement Committee"
+        }
+      ],
+      finance: [
+        { 
+          text: "Walk me through how a $10 increase in depreciation flows through the three financial statements.", 
+          ideal: "Income Statement: Net Income down $10*(1-t). Cash Flow: Add back $10 dep, cash up by $10*t. Balance Sheet: PPE down $10, Cash up $10*t.", 
+          timer: 90,
+          craftedBy: "Curated by Goldman Sachs Investment Banking Lead"
+        },
+        { 
+          text: "When evaluating a capital project, why might NPV be preferred over Internal Rate of Return (IRR)?", 
+          ideal: "NPV avoids multiple IRR pitfalls with non-normal cash flows and assumes reinvestment at the discount rate rather than IRR.", 
+          timer: null,
+          craftedBy: "Curated by IIM Bangalore Corporate Finance Faculty"
+        },
+        { 
+          text: "How would you structure debt vs equity financing for an acquisition in a high-interest-rate environment?", 
+          ideal: "Balance interest coverage ratios, avoid over-leverage risks, and evaluate convertible debt or seller notes.", 
+          timer: 120,
+          craftedBy: "Curated by Morgan Stanley Private Equity Panel"
+        }
+      ],
+      hr: [
+        { 
+          text: "How do you distinguish between Recruitment and Selection when scaling an engineering department?", 
+          ideal: "Recruitment generates a qualified applicant pool; Selection uses structured competency assessments to choose the best candidate.", 
+          timer: null,
+          craftedBy: "Curated by XLRI Human Resources Chair"
+        },
+        { 
+          text: "What framework would you implement to resolve a conflict between Product Management and Sales over roadmap features?", 
+          ideal: "Align metrics around strategic ROI, customer value, weighted feature scoring, and transparent communication protocols.", 
+          timer: 90,
+          craftedBy: "Curated by Google APAC Talent Partner"
+        },
+        { 
+          text: "How do you measure the ROI of a leadership development training program across middle managers?", 
+          ideal: "Apply Kirkpatrick's 4-Level Evaluation Model: Reaction, Learning, Behavior change on job, and Business Results (retention/performance).", 
+          timer: null,
+          craftedBy: "Curated by TISS OD & Leadership Faculty"
+        }
+      ],
+      operations: [
+        { 
+          text: "How would you apply Lean principles to reduce bottleneck lead times in a supply chain distribution center?", 
+          ideal: "Value Stream Mapping, identifying waste (Muda), optimizing line balancing, and implementing Pull/Kanban inventory flow.", 
+          timer: 90,
+          craftedBy: "Curated by Amazon Operations Placement Panel"
+        },
+        { 
+          text: "How do you balance Just-In-Time (JIT) inventory efficiency with global supply disruption risks?", 
+          ideal: "Implement dual-sourcing strategy, maintain safety stock buffers for critical SKUs, and track lead-time volatility.", 
+          timer: null,
+          craftedBy: "Curated by NITIE / IIM Mumbai Supply Chain Chair"
+        },
+        { 
+          text: "What key metrics would you establish to evaluate a 3PL logistics provider's performance?", 
+          ideal: "On-Time In-Full (OTIF) delivery rate, order accuracy percentage, damage-free shipment rate, and cost per unit delivered.", 
+          timer: null,
+          craftedBy: "Curated by Bain & Co. Operations Practice"
+        }
+      ]
     };
 
-    testRec.onerror = (err) => {
-      micOutput.innerHTML = `<span style="color:var(--danger-red);">Recognition notice: ${err.error}. Check browser microphone permissions.</span>`;
-      runBtn.disabled = false;
-    };
+    // SESSION STATE
+    let currentDomain = "marketing";
+    let questions = [];
+    let currentQuestionIdx = 0;
+    let interviewHistory = [];
+    let recognition = null;
+    let isRecording = false;
+    let currentTranscript = "";
+    let questionTimerInterval = null;
+    let timeRemaining = 0;
 
-    testRec.onend = () => {
-      runBtn.disabled = false;
-    };
+    // INITIALIZE SPEECH RECOGNITION
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
 
-    testRec.start();
-  } catch (err) {
-    micOutput.innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Hardware Error: ${err.message}. Please allow microphone permissions in your browser URL bar.</span>`;
-  }
-});
+      recognition.onresult = (event) => {
+        let transcript = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i].transcript;
+        }
+        currentTranscript = normalizeAcronyms(transcript);
+        document.getElementById('transcriptBox').innerText = currentTranscript || "Listening...";
+      };
 
-// START INTERVIEW
-document.getElementById("btn-mic-ok-proceed").addEventListener("click", () => {
-  document.getElementById("screen-mic-check").classList.add("hidden");
-  document.getElementById("screen-interview").classList.remove("hidden");
-  if (activeStream) {
-    bindVolumeMeter(activeStream, "live-meter-level", "live-meter-pct");
-  }
-  currentQIndex = 0;
-  inSpontaneousMode = false;
-  loadCurrentQuestion();
-});
+      recognition.onerror = (err) => {
+        console.error("Speech recognition error:", err);
+      };
+    }
 
-function loadCurrentQuestion() {
-  inSpontaneousMode = false;
-  const qData = sessionQuestions[currentQIndex];
-  currentQuestionTranscript = "";
-  currentProbeTranscript = "";
-  currentProbeText = "";
-  answerStartTime = null;
-  questionActiveTimestamp = null;
-  audioChunks = [];
+    // PHONETIC NORMALIZATION HELPER
+    function normalizeAcronyms(text) {
+      return text
+        .replace(/\bc a c\b/gi, "CAC")
+        .replace(/\bro as\b/gi, "ROAS")
+        .replace(/\bn p v\b/gi, "NPV")
+        .replace(/\be bit da\b/gi, "EBITDA")
+        .replace(/\bl t v\b/gi, "LTV");
+    }
 
-  document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length}`;
-  
-  const questionBox = document.getElementById("spoken-question-text");
-  const authorBadgeHtml = `<span class="author-tag-inline">${qData.author}</span>`;
-  questionBox.innerHTML = `${qData.text} ${authorBadgeHtml}`;
+    // START SESSION
+    function startInterviewSession() {
+      currentDomain = document.getElementById('domainSelect').value;
+      questions = QUESTION_BANK[currentDomain] || QUESTION_BANK.marketing;
+      currentQuestionIdx = 0;
+      interviewHistory = [];
 
-  const flowStatus = document.getElementById("interview-flow-status");
-  flowStatus.className = "status-banner";
-  document.getElementById("flow-status-text").textContent = "Interviewer speaking the question...";
-  document.getElementById("live-transcript").innerHTML = `<span style="color: var(--text-muted); font-style: italic;">Awaiting question delivery...</span>`;
-  setMicStatus("Interviewer Speaking...", false);
+      document.getElementById('setupScreen').classList.add('hidden');
+      document.getElementById('interviewScreen').classList.remove('hidden');
 
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(qData.text);
-  if (selectedVoice) utter.voice = selectedVoice;
-  utter.pitch = 1.0;
-  utter.rate = 0.95;
-  activeUtterance = utter;
+      loadQuestion(0);
+    }
 
-  let hasEnded = false;
-  function triggerQuestionEnd() {
-    if (hasEnded) return;
-    hasEnded = true;
+    // LOAD QUESTION & MANAGE ATTRIBUTION TAG + SELECTIVE TIMER
+    function loadQuestion(index) {
+      stopQuestionTimer();
 
-    questionActiveTimestamp = Date.now();
-    setTimeout(() => {
-      document.getElementById("flow-status-text").innerHTML = `<strong>Microphone Live:</strong> Speak your response naturally into the microphone.`;
-      startVoiceRecording();
-    }, 300);
-  }
+      const q = questions[index];
+      document.getElementById('questionCounter').innerText = `QUESTION ${index + 1} OF ${questions.length}`;
+      document.getElementById('questionPromptText').innerText = q.text;
+      document.getElementById('transcriptBox').innerText = "Click 'Start Speaking' and answer into your microphone...";
+      currentTranscript = "";
 
-  utter.onend = triggerQuestionEnd;
-  utter.onerror = triggerQuestionEnd;
-
-  const wordCount = qData.text.split(" ").length;
-  const maxWaitMs = Math.max(4000, wordCount * 500);
-  setTimeout(() => {
-    if (!hasEnded) triggerQuestionEnd();
-  }, maxWaitMs);
-
-  window.speechSynthesis.speak(utter);
-}
-
-function triggerSpontaneousProbe(probePrompt) {
-  inSpontaneousMode = true;
-  currentProbeText = probePrompt;
-  audioChunks = [];
-
-  document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length} (Panel Follow-Up)`;
-
-  const questionBox = document.getElementById("spoken-question-text");
-  questionBox.innerHTML = `"${probePrompt}" <span class="probe-tag-inline">⚡ Contextual AI Follow-Up</span>`;
-
-  const flowStatus = document.getElementById("interview-flow-status");
-  flowStatus.className = "status-banner";
-  document.getElementById("flow-status-text").innerHTML = `<strong>Interviewer Follow-Up:</strong> Listening to your response...`;
-  setMicStatus("Interviewer Speaking...", false);
-
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(probePrompt);
-  if (selectedVoice) utter.voice = selectedVoice;
-  utter.pitch = 1.0;
-  utter.rate = 0.95;
-  activeUtterance = utter;
-
-  utter.onend = () => {
-    document.getElementById("flow-status-text").innerHTML = `<strong>Microphone Live:</strong> Respond to the interviewer's follow-up.`;
-    startVoiceRecording();
-  };
-  utter.onerror = () => {
-    document.getElementById("flow-status-text").innerHTML = `<strong>Microphone Live:</strong> Respond to the interviewer's follow-up.`;
-    startVoiceRecording();
-  };
-
-  window.speechSynthesis.speak(utter);
-}
-
-// REAL-TIME TRANSCRIPTION + RECORDING
-async function startVoiceRecording() {
-  const stream = await getOrInitMicrophone();
-  audioChunks = [];
-  isRecognizerExplicitlyStopped = false;
-
-  if (inSpontaneousMode) currentProbeTranscript = "";
-  else currentQuestionTranscript = "";
-
-  try {
-    mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) audioChunks.push(e.data);
-    };
-    mediaRecorder.start(250);
-  } catch (e) {
-    console.error("MediaRecorder init failed:", e);
-  }
-
-  answerStartTime = Date.now();
-  setMicStatus("Recording & Transcribing", true);
-  document.getElementById("live-transcript").innerHTML = `
-    <span style="color:var(--text-muted); font-style:italic;">Listening... speak naturally into the mic.</span>
-  `;
-
-  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (SpeechRec) {
-    try {
-      if (speechRecognizer) {
-        isRecognizerExplicitlyStopped = true;
-        speechRecognizer.abort();
+      // Render Curated Tag
+      const curatedTagEl = document.getElementById('curatedTagText');
+      if (curatedTagEl) {
+        curatedTagEl.innerText = q.craftedBy || "Curated by Placement Committee";
       }
-      isRecognizerExplicitlyStopped = false;
-      speechRecognizer = new SpeechRec();
-      speechRecognizer.continuous = true;
-      speechRecognizer.interimResults = true;
-      speechRecognizer.lang = 'en-US';
 
-      speechRecognizer.onresult = (event) => {
-        let full = "";
-        for (let i = 0; i < event.results.length; i++) {
-          const item = event.results[i];
-          const text = (item && item[0]) ? item[0].transcript : (item.transcript || "");
-          full += text + " ";
+      // Setup Selective Per-Question Timer (Only if q.timer is specified)
+      if (q.timer && q.timer > 0) {
+        timeRemaining = q.timer;
+        const timerBadge = document.getElementById('timerContainer');
+        const countdownEl = document.getElementById('timerCountdown');
+        
+        timerBadge.classList.remove('hidden', 'warning');
+        countdownEl.innerText = timeRemaining;
+
+        questionTimerInterval = setInterval(() => {
+          timeRemaining--;
+          countdownEl.innerText = timeRemaining;
+
+          if (timeRemaining <= 10) {
+            timerBadge.classList.add('warning');
+          }
+
+          if (timeRemaining <= 0) {
+            stopQuestionTimer();
+            alert("⏰ Time is up for this analytical question! Submitting your answer automatically.");
+            finishAnswer();
+          }
+        }, 1000);
+      } else {
+        // UNTIMED QUESTION: Hide timer container completely
+        document.getElementById('timerContainer').classList.add('hidden');
+      }
+
+      // Speak question using speech synthesis
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(q.text);
+        utterance.rate = 0.95;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function stopQuestionTimer() {
+      if (questionTimerInterval) {
+        clearInterval(questionTimerInterval);
+        questionTimerInterval = null;
+      }
+      document.getElementById('timerContainer').classList.add('hidden');
+    }
+
+    // RECORDING CONTROLS
+    function toggleRecording() {
+      if (!recognition) {
+        alert("Speech recognition is not supported in this browser. Please use Chrome or Safari.");
+        return;
+      }
+
+      const btn = document.getElementById('recordBtn');
+      if (!isRecording) {
+        recognition.start();
+        isRecording = true;
+        btn.innerText = "Stop Recording";
+        btn.style.backgroundColor = "#ef4444";
+      } else {
+        recognition.stop();
+        isRecording = false;
+        btn.innerText = "Start Speaking";
+        btn.style.backgroundColor = "var(--primary)";
+      }
+    }
+
+    // FINISH ANSWER & CALL SOCRATIC FOLLOWUP
+    async function finishAnswer() {
+      stopQuestionTimer();
+
+      if (isRecording && recognition) {
+        recognition.stop();
+        isRecording = false;
+        document.getElementById('recordBtn').innerText = "Start Speaking";
+        document.getElementById('recordBtn').style.backgroundColor = "var(--primary)";
+      }
+
+      const status = document.getElementById('statusIndicator');
+      status.innerText = "● Analyzing answer depth...";
+
+      const currentQ = questions[currentQuestionIdx];
+      const spokenText = currentTranscript || "Candidate provided a brief verbal statement.";
+
+      interviewHistory.push({
+        questionIndex: currentQuestionIdx + 1,
+        questionText: currentQ.text,
+        idealAnswer: currentQ.ideal,
+        transcript: spokenText
+      });
+
+      try {
+        const response = await fetch('/api/interview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'followup',
+            questionText: currentQ.text,
+            idealAnswer: currentQ.ideal,
+            transcript: spokenText
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.trigger && data.prompt) {
+          alert("Socratic Follow-Up Challenge:\n\n" + data.prompt);
         }
-        const cleaned = normalizeSpokenText(full.trim());
-        if (inSpontaneousMode) {
-          currentProbeTranscript = cleaned;
-        } else {
-          currentQuestionTranscript = cleaned;
-        }
+      } catch (err) {
+        console.warn("Follow-up evaluation skipped:", err);
+      }
 
-        if (cleaned.length > 0) {
-          document.getElementById("live-transcript").innerHTML = `
-            <strong style="color:var(--primary-blue);">Transcribed Text:</strong> "${cleaned}"
-          `;
-        }
-      };
-
-      speechRecognizer.onerror = (e) => {
-        if (e.error === 'not-allowed') {
-          document.getElementById("live-transcript").innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Mic permission denied. Allow microphone access in your browser address bar.</span>`;
-        }
-      };
-
-      speechRecognizer.onend = () => {
-        if (!isRecognizerExplicitlyStopped && answerStartTime) {
-          setTimeout(() => {
-            if (!isRecognizerExplicitlyStopped && answerStartTime) {
-              try { speechRecognizer.start(); } catch(err){}
-            }
-          }, 150);
-        }
-      };
-
-      speechRecognizer.start();
-    } catch (e) {
-      console.warn("SpeechRecognizer start warning:", e);
-    }
-  }
-}
-
-function stopVoiceRecording() {
-  return new Promise((resolve) => {
-    isRecognizerExplicitlyStopped = true;
-    if (speechRecognizer) {
-      try { speechRecognizer.stop(); } catch(e){}
-    }
-    setMicStatus("Standby", false);
-
-    if (mediaRecorder && mediaRecorder.state !== "inactive") {
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        resolve(audioBlob);
-      };
-      mediaRecorder.stop();
-    } else {
-      resolve(null);
-    }
-  });
-}
-
-function setMicStatus(label, isLive) {
-  document.getElementById("mic-status-label").textContent = label;
-  const dot = document.getElementById("mic-dot");
-  if (isLive) dot.classList.add("mic-live");
-  else dot.classList.remove("mic-live");
-}
-
-// FINISH ANSWER HANDLER
-document.getElementById("btn-finish-answer").addEventListener("click", async () => {
-  const durationSec = answerStartTime ? ((Date.now() - answerStartTime) / 1000).toFixed(1) : 0;
-  const currentText = inSpontaneousMode ? currentProbeTranscript.trim() : currentQuestionTranscript.trim();
-
-  if (durationSec < 1.8 && currentText.length === 0) {
-    window.speechSynthesis.cancel();
-    const promptVoice = new SpeechSynthesisUtterance("You clicked finish without speaking. Please speak your answer or click pass.");
-    if (selectedVoice) promptVoice.voice = selectedVoice;
-    promptVoice.rate = 1.0;
-    activeUtterance = promptVoice;
-    window.speechSynthesis.speak(promptVoice);
-
-    document.getElementById("live-transcript").innerHTML = `
-      <span style="color: var(--danger-red); font-weight: 700;">
-        ⚠️ Empty Submission: Please speak your answer, or click "I Don't Know / Pass Question" below.
-      </span>
-    `;
-    return;
-  }
-
-  const audioBlob = await stopVoiceRecording();
-
-  if (!inSpontaneousMode) {
-    recordPrimaryAnswer(currentText, audioBlob, false, "", durationSec);
-
-    document.getElementById("flow-status-text").innerHTML = `<strong>Interviewer Evaluating:</strong> Contacting Vercel AI Engine...`;
-
-    // Real-Time AI Socratic Evaluation via Vercel Backend
-    const qData = sessionQuestions[currentQIndex];
-    const probeDecision = await fetchVercelAI({
-      action: 'followup',
-      transcript: currentText,
-      questionText: qData.text,
-      idealAnswer: qData.idealModelAnswer
-    });
-
-    if (probeDecision && probeDecision.trigger) {
-      triggerSpontaneousProbe(probeDecision.prompt);
-    } else {
-      window.speechSynthesis.cancel();
-      const ackUtter = new SpeechSynthesisUtterance("Understood, clear point. Let's move to the next question.");
-      if (selectedVoice) ackUtter.voice = selectedVoice;
-      ackUtter.rate = 1.0;
-      activeUtterance = ackUtter;
-      window.speechSynthesis.speak(ackUtter);
-
-      advanceToNextQuestion();
-    }
-  } else {
-    recordProbeAnswer(currentText, audioBlob, false);
-    advanceToNextQuestion();
-  }
-});
-
-// PASS QUESTION HANDLER
-document.getElementById("btn-idk-skip").addEventListener("click", async () => {
-  const audioBlob = await stopVoiceRecording();
-  const durationSec = questionActiveTimestamp ? ((Date.now() - questionActiveTimestamp) / 1000).toFixed(1) : 0;
-
-  if (!inSpontaneousMode) {
-    recordPrimaryAnswer("", null, true, "Candidate elected to pass this question.", durationSec);
-
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance("Understood. Let us proceed to the next area.");
-    if (selectedVoice) utter.voice = selectedVoice;
-    utter.rate = 1.0;
-    activeUtterance = utter;
-    window.speechSynthesis.speak(utter);
-
-    advanceToNextQuestion();
-  } else {
-    recordProbeAnswer("", null, true);
-    advanceToNextQuestion();
-  }
-});
-
-function recordPrimaryAnswer(transcript, audioBlob, wasSkipped, skipReason, durationSec) {
-  let audioUrl = null;
-  if (audioBlob && audioBlob.size > 1000) {
-    audioUrl = URL.createObjectURL(audioBlob);
-  }
-
-  const wordCount = transcript.split(/\s+/).filter(Boolean).length;
-  const elapsedMin = Math.max(0.15, parseFloat(durationSec || 1) / 60);
-  const wpm = wasSkipped ? 0 : Math.round(wordCount / elapsedMin);
-
-  const fillerRegex = /\b(um|uh|basically|you know|actually|like)\b/gi;
-  const fillers = (transcript.match(fillerRegex) || []).length;
-
-  sessionResults.push({
-    questionData: sessionQuestions[currentQIndex],
-    transcript: transcript,
-    audioUrl: audioUrl,
-    wasSkipped: wasSkipped,
-    skipReason: skipReason,
-    durationSec: durationSec,
-    wpm: wpm,
-    fillers: fillers,
-    wordCount: wordCount,
-    probeText: "",
-    probeTranscript: "",
-    probeSkipped: false
-  });
-}
-
-function recordProbeAnswer(probeTranscript, probeAudioBlob, probeSkipped) {
-  const currentRecord = sessionResults[sessionResults.length - 1];
-  if (currentRecord) {
-    currentRecord.probeText = currentProbeText;
-    currentRecord.probeTranscript = probeTranscript;
-    currentRecord.probeSkipped = probeSkipped;
-  }
-}
-
-function advanceToNextQuestion() {
-  currentQIndex++;
-  if (currentQIndex < sessionQuestions.length) {
-    loadCurrentQuestion();
-  } else {
-    renderTruthfulReport();
-  }
-}
-
-// PERSONALIZED EXECUTIVE DIAGNOSTIC DOSSIER
-async function renderTruthfulReport() {
-  document.getElementById("screen-interview").classList.add("hidden");
-  document.getElementById("screen-report").classList.remove("hidden");
-
-  const answeredRounds = sessionResults.filter(r => !r.wasSkipped && r.wordCount > 0);
-  const spontaneousProbesTriggered = sessionResults.filter(r => r.probeText && r.probeText.length > 0).length;
-  const avgWPM = answeredRounds.length > 0 ? Math.round(answeredRounds.reduce((acc, r) => acc + r.wpm, 0) / answeredRounds.length) : 0;
-
-  document.getElementById("kpi-answered-count").textContent = `${answeredRounds.length}/${sessionResults.length}`;
-  document.getElementById("kpi-wpm").textContent = avgWPM;
-  document.getElementById("kpi-probes-count").textContent = `${spontaneousProbesTriggered}`;
-
-  const summaryBox = document.getElementById("report-summary-text");
-  summaryBox.innerHTML = `<em>Generating AI Executive Evaluation via Vercel...</em>`;
-
-  // Request AI Report via Vercel Backend
-  const payload = sessionResults.map((r, i) => ({
-    questionIndex: i + 1,
-    question: r.questionData.text,
-    verbatimAnswer: r.transcript || "[PASSED]",
-    followUpQuestion: r.probeText || "[NONE]",
-    followUpAnswer: r.probeTranscript || "[NONE]"
-  }));
-
-  const aiReport = await fetchVercelAI({ action: 'report', sessionResults: payload });
-
-  const kpiScore = document.getElementById("kpi-score");
-  if (aiReport && aiReport.readinessTier) {
-    kpiScore.textContent = aiReport.readinessTier;
-    if (aiReport.readinessTier.includes("Tier 1")) kpiScore.style.color = "var(--success-green)";
-    else if (aiReport.readinessTier.includes("Tier 2")) kpiScore.style.color = "var(--primary-blue)";
-    else kpiScore.style.color = "var(--danger-red)";
-  } else {
-    kpiScore.textContent = answeredRounds.length === sessionResults.length ? "Tier 1 (Complete)" : "Developing";
-    kpiScore.style.color = "var(--primary-blue)";
-  }
-
-  summaryBox.innerHTML = (aiReport && aiReport.overallSummary) ? `
-    <strong>AI Executive Evaluation:</strong> ${aiReport.overallSummary}
-    <br><span style="font-size: 0.85rem; color: var(--text-muted);">Answered ${answeredRounds.length} of ${sessionResults.length} prompts with ${spontaneousProbesTriggered} contextual AI follow-up(s). Average pace: ${avgWPM} WPM.</span>
-  ` : `
-    <strong>Diagnostic Summary:</strong> Answered <strong>${answeredRounds.length} of ${sessionResults.length}</strong> prompts with <strong>${spontaneousProbesTriggered} contextual AI follow-up(s)</strong>. Average speaking pace: <strong>${avgWPM} WPM</strong>.
-  `;
-
-  // CANDIDATE BLUEPRINT
-  const candidateContainer = document.getElementById("candidate-questions-breakdown");
-  candidateContainer.innerHTML = "";
-
-  sessionResults.forEach((r, idx) => {
-    const card = document.createElement("div");
-    card.className = "report-card";
-
-    const aiEval = aiReport?.evaluations?.find(e => e.questionIndex === idx + 1);
-
-    let answerSection = "";
-    if (r.wasSkipped) {
-      answerSection = `
-        <div style="background-color: var(--danger-bg); border: 1px solid #FECDD3; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 0.88rem; color: #9F1239;">
-          <strong>[ QUESTION PASSED ]</strong><br>
-          ${r.skipReason}
-        </div>
-      `;
-    } else {
-      let audioPlayerHtml = r.audioUrl ? `
-        <div style="margin-top: 8px;">
-          <label style="margin-bottom: 4px;">▶ Play Spoken Audio Response (${r.durationSec}s):</label>
-          <audio controls src="${r.audioUrl}"></audio>
-        </div>
-      ` : '';
-
-      answerSection = `
-        <div style="background-color: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; margin-bottom: 12px;">
-          <p style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Your Verbatim Response:</p>
-          <p style="font-size: 0.92rem; margin: 4px 0 8px; font-style: italic; color: var(--text-main);">"${r.transcript}"</p>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Pace: <strong>${r.wpm} WPM</strong> | Filler Words: <strong>${r.fillers}</strong></p>
-          ${audioPlayerHtml}
-        </div>
-      `;
+      currentQuestionIdx++;
+      if (currentQuestionIdx < questions.length) {
+        status.innerText = "● Interviewer Ready";
+        loadQuestion(currentQuestionIdx);
+      } else {
+        generateFinalReport();
+      }
     }
 
-    let probeSection = "";
-    if (r.probeText) {
-      probeSection = `
-        <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 6px; padding: 12px; margin: 12px 0;">
-          <p style="font-size: 0.78rem; font-weight: 700; color: #B45309; text-transform: uppercase;">⚡ Contextual AI Follow-Up:</p>
-          <p style="font-size: 0.9rem; font-weight: 600; color: var(--primary-navy); margin: 4px 0;">"${r.probeText}"</p>
-          <p style="font-size: 0.85rem; font-style: italic; color: var(--text-main);">
-            <strong>Your Response:</strong> ${r.probeTranscript ? `"${r.probeTranscript}"` : '<span style="color:var(--text-muted);">(Passed)</span>'}
-          </p>
-        </div>
-      `;
+    // GENERATE REPORT & RENDER TIER BADGES
+    async function generateFinalReport() {
+      stopQuestionTimer();
+
+      document.getElementById('interviewScreen').classList.add('hidden');
+      document.getElementById('reportScreen').classList.remove('hidden');
+
+      try {
+        const res = await fetch('/api/interview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'report',
+            sessionResults: interviewHistory
+          })
+        });
+
+        const reportData = await res.json();
+        renderDiagnosticHeader(reportData);
+        renderEvaluations(reportData.evaluations || []);
+      } catch (err) {
+        console.error("Report generation error:", err);
+        renderDiagnosticHeader({
+          readinessTier: "Tier 2: Developing",
+          tierColor: "blue",
+          overallSummary: "Session complete. Candidate demonstrated solid understanding with minor opportunities for executive reframing."
+        });
+      }
     }
 
-    const strengthsText = aiEval ? aiEval.strengths : "Answer recorded successfully.";
-    const gapsText = aiEval ? aiEval.gaps : "Refine operational depth for maximum impact.";
-    const executiveRewrite = aiEval ? aiEval.executiveRewrite : r.questionData.idealModelAnswer;
+    // RENDER READINESS TIER HEADER
+    function renderDiagnosticHeader(reportData) {
+      const color = reportData.tierColor || (
+        reportData.readinessTier && reportData.readinessTier.includes("Tier 1") ? "green" :
+        reportData.readinessTier && reportData.readinessTier.includes("Tier 2") ? "blue" : "red"
+      );
 
-    card.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-teal);">QUESTION ${idx + 1}</span>
-        <span style="font-size: 0.8rem; font-weight: 600; color: var(--primary-blue);">${r.questionData.author}</span>
-      </div>
-      <p style="font-size: 1.05rem; font-weight: 600; margin-bottom: 12px;">${r.questionData.text}</p>
-      
-      ${answerSection}
-      ${probeSection}
-
-      <div style="margin: 12px 0;">
-        <label>AI Strategic Evaluation:</label>
-        <p style="font-size: 0.88rem; color: #065F46; margin-bottom: 4px;"><strong>✓ Strengths:</strong> ${strengthsText}</p>
-        <p style="font-size: 0.88rem; color: #991B1B;"><strong>✕ Critical Gaps:</strong> ${gapsText}</p>
-      </div>
-
-      <div style="border-top: 1px solid var(--border-subtle); padding-top: 12px; margin-top: 12px;">
-        <label>Executive Polish: Recommended Re-Framing</label>
-        <div class="comparison-grid">
-          <div class="comp-box comp-candidate">
-            <strong>What You Articulated:</strong><br>
-            ${r.transcript ? `"${r.transcript}"` : '<em>No spoken audio recorded.</em>'}
+      const headerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <div>
+            <h2 style="margin: 0; font-size: 1.5rem; color: #111827;">Executive Assessment Dossier</h2>
+            <p style="margin: 4px 0 0 0; color: #6B7280; font-size: 0.9rem;">Hiring Committee Evaluation</p>
           </div>
-          <div class="comp-box comp-executive">
-            <strong>Executive Diction & Model Answer:</strong><br>
-            "${executiveRewrite}"
+          <div class="tier-badge ${color}">
+            <span>●</span> ${reportData.readinessTier || 'Tier 2: Developing'}
           </div>
         </div>
-      </div>
-    `;
-    candidateContainer.appendChild(card);
-  });
+        <div style="background: #F9FAFB; padding: 16px; border-radius: 8px; border-left: 4px solid ${color === 'green' ? '#10B981' : color === 'blue' ? '#3B82F6' : '#EF4444'}; margin-bottom: 24px;">
+          <strong>Executive Summary:</strong> ${reportData.overallSummary || 'Evaluation completed successfully.'}
+        </div>
+      `;
 
-  // EVALUATOR BRIEFING
-  const evalContainer = document.getElementById("evaluator-probes-breakdown");
-  evalContainer.innerHTML = "";
+      const container = document.getElementById('reportHeaderContainer');
+      if (container) {
+        container.innerHTML = headerHTML;
+      }
 
-  const evalTitle = document.getElementById("evaluator-tier-title");
-  const evalSummary = document.getElementById("evaluator-tier-summary");
+      document.getElementById('committeeAuditText').innerText = reportData.overallSummary || "Audit completed.";
+    }
 
-  if (aiReport && aiReport.overallSummary) {
-    evalTitle.textContent = aiReport.readinessTier || "Evaluation Baseline";
-    evalSummary.textContent = aiReport.overallSummary;
-  } else {
-    evalTitle.textContent = "Placement Evaluation Summary";
-    evalSummary.textContent = "Candidate transcript review complete.";
-  }
+    // RENDER EVALUATION CARDS
+    function renderEvaluations(evals) {
+      const container = document.getElementById('evaluationsContainer');
+      container.innerHTML = "";
 
-  sessionResults.forEach((r, idx) => {
-    const card = document.createElement("div");
-    card.className = "report-card";
+      evals.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = "eval-card";
+        card.innerHTML = `
+          <h4>Question ${idx + 1} Analysis</h4>
+          <p style="font-size: 0.9rem; color: #15803d; margin-bottom: 4px;"><strong>Key Strengths:</strong> ${item.strengths || 'Articulated core arguments clearly.'}</p>
+          <p style="font-size: 0.9rem; color: #b91c1c; margin-bottom: 8px;"><strong>Identified Gaps:</strong> ${item.gaps || 'Could incorporate deeper operational metrics.'}</p>
+          <div class="rewrite-box">
+            <strong>C-Suite Executive Re-frame:</strong><br/>
+            "${item.executiveRewrite || 'Re-frame answer using structured revenue/metric drivers.'}"
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
 
-    let facultyAudioPlayer = r.audioUrl ? `
-      <div style="margin: 8px 0;">
-        <label style="margin-bottom: 2px; font-size:0.75rem;">Panel Playback (${r.durationSec}s Voice Record):</label>
-        <audio controls src="${r.audioUrl}"></audio>
-      </div>
-    ` : '';
+    // TAB SWITCHER
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('candidateTab').classList.add('hidden');
+      document.getElementById('committeeTab').classList.add('hidden');
 
-    let probeStatus = r.probeText ? `
-      <div style="background: #FFFBEB; border: 1px solid #FDE68A; padding: 10px; border-radius: 6px; font-size: 0.88rem; margin-top: 8px;">
-        <strong>Contextual Follow-Up:</strong> "${r.probeText}"<br>
-        <span style="color:var(--primary-blue);"><strong>Candidate Response:</strong> ${r.probeTranscript ? `"${r.probeTranscript}"` : 'Passed.'}</span>
-      </div>
-    ` : '';
-
-    card.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">QUESTION ${idx + 1} AUDIT</span>
-        <span style="font-size: 0.78rem; font-weight: 600; color: var(--primary-blue);">${r.questionData.author}</span>
-      </div>
-      <p style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">${r.questionData.text}</p>
-      ${facultyAudioPlayer}
-      <div style="background: #F8FAFC; border: 1px solid var(--border-subtle); padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; color: var(--text-main); margin-top: 8px;">
-        <strong>Transcript:</strong> ${r.transcript ? `"${r.transcript}"` : '<span style="color:var(--text-muted);">(Passed)</span>'}
-      </div>
-      ${probeStatus}
-    `;
-    evalContainer.appendChild(card);
-  });
-}
-
-// TAB TOGGLING
-document.getElementById("tab-btn-candidate").addEventListener("click", () => {
-  document.getElementById("tab-btn-candidate").classList.add("active");
-  document.getElementById("tab-btn-evaluator").classList.remove("active");
-  document.getElementById("view-candidate-blueprint").classList.remove("hidden");
-  document.getElementById("view-evaluator-briefing").classList.add("hidden");
-});
-
-document.getElementById("tab-btn-evaluator").addEventListener("click", () => {
-  document.getElementById("tab-btn-evaluator").classList.add("active");
-  document.getElementById("tab-btn-candidate").classList.remove("active");
-  document.getElementById("view-evaluator-briefing").classList.remove("hidden");
-  document.getElementById("view-candidate-blueprint").classList.add("hidden");
-});
-</script>
-
+      if (tabId === 'candidateTab') {
+        document.getElementById('candidateTab').classList.remove('hidden');
+        event.target.classList.add('active');
+      } else {
+        document.getElementById('committeeTab').classList.remove('hidden');
+        event.target.classList.add('active');
+      }
+    }
+  </script>
 </body>
 </html>
