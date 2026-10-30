@@ -119,7 +119,7 @@
       margin-bottom: 20px;
     }
 
-    /* CURATED ATTRIBUTION BADGE STYLING */
+    /* CURATED ATTRIBUTION TAG STYLING */
     .curated-tag {
       display: inline-flex;
       align-items: center;
@@ -260,7 +260,7 @@
 
   <header>
     <h1>Executive Placement Simulator</h1>
-    <span class="badge-pill">AI Diagnostic Engine Active</span>
+    <span class="badge-pill">Groq Whisper & Socratic Engine Active</span>
   </header>
 
   <!-- SETUP SCREEN -->
@@ -299,15 +299,15 @@
     </div>
 
     <div class="question-box">
-      <!-- Curated Tag Badge -->
+      <!-- Curated Attribution Tag -->
       <div id="curatedTagContainer" class="curated-tag">
         🏛️ <span id="curatedTagText">Curated by Placement Committee</span>
       </div>
       <h3 id="questionPromptText">Loading question prompt...</h3>
     </div>
 
-    <label>Live Spoken Response (Speech Recognition):</label>
-    <div id="transcriptBox" class="transcript-box">Click "Start Speaking" and answer your question into the microphone...</div>
+    <label>Spoken Answer (Captured via Groq Whisper):</label>
+    <div id="transcriptBox" class="transcript-box">Click "Start Speaking" and speak your answer into the microphone...</div>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
       <button id="recordBtn" class="btn-primary" onclick="toggleRecording()">Start Speaking</button>
@@ -339,7 +339,7 @@
   </div>
 
   <script>
-    // QUESTION BANK - WITH ATTRIBUTION TAGS & SELECTIVE TIMERS
+    // QUESTION BANK WITH ATTRIBUTION TAGS & SELECTIVE TIMERS
     const QUESTION_BANK = {
       marketing: [
         { 
@@ -423,40 +423,21 @@
       ]
     };
 
-    // SESSION STATE
+    // SESSION STATE & AUDIO RECORDING STATE
     let currentDomain = "marketing";
     let questions = [];
     let currentQuestionIdx = 0;
     let interviewHistory = [];
-    let recognition = null;
+    let mediaRecorder = null;
+    let audioChunks = [];
     let isRecording = false;
     let currentTranscript = "";
     let questionTimerInterval = null;
     let timeRemaining = 0;
 
-    // INITIALIZE SPEECH RECOGNITION
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-
-      recognition.onresult = (event) => {
-        let transcript = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript += event.results[i].transcript;
-        }
-        currentTranscript = normalizeAcronyms(transcript);
-        document.getElementById('transcriptBox').innerText = currentTranscript || "Listening...";
-      };
-
-      recognition.onerror = (err) => {
-        console.error("Speech recognition error:", err);
-      };
-    }
-
     // PHONETIC NORMALIZATION HELPER
     function normalizeAcronyms(text) {
+      if (!text) return "";
       return text
         .replace(/\bc a c\b/gi, "CAC")
         .replace(/\bro as\b/gi, "ROAS")
@@ -465,7 +446,7 @@
         .replace(/\bl t v\b/gi, "LTV");
     }
 
-    // START SESSION
+    // START INTERVIEW SESSION
     function startInterviewSession() {
       currentDomain = document.getElementById('domainSelect').value;
       questions = QUESTION_BANK[currentDomain] || QUESTION_BANK.marketing;
@@ -478,14 +459,14 @@
       loadQuestion(0);
     }
 
-    // LOAD QUESTION & MANAGE ATTRIBUTION TAG + SELECTIVE TIMER
+    // LOAD QUESTION, SET ATTRIBUTION TAG & TIMERS
     function loadQuestion(index) {
       stopQuestionTimer();
 
       const q = questions[index];
       document.getElementById('questionCounter').innerText = `QUESTION ${index + 1} OF ${questions.length}`;
       document.getElementById('questionPromptText').innerText = q.text;
-      document.getElementById('transcriptBox').innerText = "Click 'Start Speaking' and answer into your microphone...";
+      document.getElementById('transcriptBox').innerText = "Click 'Start Speaking' and speak into your microphone...";
       currentTranscript = "";
 
       // Render Curated Tag
@@ -494,7 +475,7 @@
         curatedTagEl.innerText = q.craftedBy || "Curated by Placement Committee";
       }
 
-      // Setup Selective Per-Question Timer (Only if q.timer is specified)
+      // Setup Selective Per-Question Timer
       if (q.timer && q.timer > 0) {
         timeRemaining = q.timer;
         const timerBadge = document.getElementById('timerContainer');
@@ -513,12 +494,11 @@
 
           if (timeRemaining <= 0) {
             stopQuestionTimer();
-            alert("⏰ Time is up for this analytical question! Submitting your answer automatically.");
+            alert("⏰ Time is up for this analytical question! Submitting your response.");
             finishAnswer();
           }
         }, 1000);
       } else {
-        // UNTIMED QUESTION: Hide timer container completely
         document.getElementById('timerContainer').classList.add('hidden');
       }
 
@@ -539,24 +519,69 @@
       document.getElementById('timerContainer').classList.add('hidden');
     }
 
-    // RECORDING CONTROLS
-    function toggleRecording() {
-      if (!recognition) {
-        alert("Speech recognition is not supported in this browser. Please use Chrome or Safari.");
-        return;
-      }
-
+    // AUDIO CAPTURE VIA MEDIARECORDER & GROQ WHISPER TRANSCRIPTION
+    async function toggleRecording() {
       const btn = document.getElementById('recordBtn');
+
       if (!isRecording) {
-        recognition.start();
-        isRecording = true;
-        btn.innerText = "Stop Recording";
-        btn.style.backgroundColor = "#ef4444";
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+
+          mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+              audioChunks.push(event.data);
+            }
+          };
+
+          mediaRecorder.start();
+          isRecording = true;
+          btn.innerText = "Stop Recording";
+          btn.style.backgroundColor = "#ef4444";
+          document.getElementById('transcriptBox').innerText = "🎙️ Recording audio...";
+        } catch (err) {
+          alert("Microphone access failed: " + err.message);
+        }
       } else {
-        recognition.stop();
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+          mediaRecorder.stop();
+        }
         isRecording = false;
-        btn.innerText = "Start Speaking";
+        btn.innerText = "Processing Audio...";
         btn.style.backgroundColor = "var(--primary)";
+
+        mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          const reader = new FileReader();
+
+          reader.readAsDataURL(audioBlob);
+          reader.onloadend = async () => {
+            const base64Data = reader.result;
+            document.getElementById('transcriptBox').innerText = "⚡ Transcribing audio with Groq Whisper...";
+
+            try {
+              const response = await fetch('/api/interview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  action: 'transcribe',
+                  audioBase64: base64Data,
+                  mimeType: 'audio/webm'
+                })
+              });
+
+              const data = await response.json();
+              currentTranscript = normalizeAcronyms(data.transcript || "");
+              document.getElementById('transcriptBox').innerText = currentTranscript || "No clear speech detected.";
+              btn.innerText = "Start Speaking";
+            } catch (err) {
+              console.error("Whisper Transcription Error:", err);
+              document.getElementById('transcriptBox').innerText = "Transcription error occurred.";
+              btn.innerText = "Start Speaking";
+            }
+          };
+        };
       }
     }
 
@@ -564,8 +589,8 @@
     async function finishAnswer() {
       stopQuestionTimer();
 
-      if (isRecording && recognition) {
-        recognition.stop();
+      if (isRecording && mediaRecorder) {
+        mediaRecorder.stop();
         isRecording = false;
         document.getElementById('recordBtn').innerText = "Start Speaking";
         document.getElementById('recordBtn').style.backgroundColor = "var(--primary)";
@@ -614,7 +639,7 @@
       }
     }
 
-    // GENERATE REPORT & RENDER TIER BADGES
+    // GENERATE FINAL DIAGNOSTIC DOSSIER
     async function generateFinalReport() {
       stopQuestionTimer();
 
