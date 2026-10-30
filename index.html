@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Executive Placement Interview Simulator</title>
+  <title>Executive Placement Simulator</title>
   <style>
     :root {
       --bg-main: #f8fafc;
@@ -119,7 +119,6 @@
       margin-bottom: 20px;
     }
 
-    /* CURATED ATTRIBUTION TAG STYLING */
     .curated-tag {
       display: inline-flex;
       align-items: center;
@@ -134,7 +133,6 @@
       margin-bottom: 10px;
     }
 
-    /* TIMER BADGE STYLING */
     .timer-badge {
       display: inline-flex;
       align-items: center;
@@ -173,7 +171,6 @@
       overflow-y: auto;
     }
 
-    /* READINESS TIER BADGES */
     .tier-badge {
       display: inline-flex;
       align-items: center;
@@ -260,7 +257,7 @@
 
   <header>
     <h1>Executive Placement Simulator</h1>
-    <span class="badge-pill">Groq Whisper & Socratic Engine Active</span>
+    <span class="badge-pill">Groq Whisper & Socratic Engine</span>
   </header>
 
   <!-- SETUP SCREEN -->
@@ -273,15 +270,21 @@
         <option value="marketing">Marketing & Brand Strategy</option>
         <option value="finance">Corporate Finance & Valuation</option>
         <option value="hr">Human Resources & Talent Management</option>
-        <option value="operations">Operations & Supply Chain</option>
       </select>
     </div>
 
     <div class="form-group">
       <label for="levelSelect">Target Level</label>
       <select id="levelSelect">
-        <option value="fresher">Campus Placement (Fresher / MBA Candidate)</option>
-        <option value="experienced">Lateral Hire (Experienced Professional)</option>
+        <option value="fresher">Freshers</option>
+        <option value="experienced">Experienced (2+ years)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="voiceSelect">Interviewer Voice Selector</label>
+      <select id="voiceSelect">
+        <option value="default">System Executive Voice (Auto)</option>
       </select>
     </div>
 
@@ -291,23 +294,22 @@
   <!-- INTERVIEW ROOM SCREEN -->
   <div id="interviewScreen" class="card hidden">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-      <span id="questionCounter" style="font-weight: 700; color: #64748b; font-size: 0.85rem;">QUESTION 1 OF 3</span>
+      <span id="questionCounter" style="font-weight: 700; color: #64748b; font-size: 0.85rem;">QUESTION 1 OF 5</span>
       <div style="display: flex; align-items: center; gap: 12px;">
-        <span id="timerContainer" class="timer-badge hidden">⏱️ <span id="timerCountdown">60</span>s</span>
+        <span id="timerContainer" class="timer-badge hidden">🧠 Thinking Window: <span id="timerCountdown">10</span>s</span>
         <span id="statusIndicator" style="font-size: 0.85rem; color: #2563eb; font-weight: 600;">● Interviewer Ready</span>
       </div>
     </div>
 
     <div class="question-box">
-      <!-- Curated Attribution Tag -->
       <div id="curatedTagContainer" class="curated-tag">
-        🏛️ <span id="curatedTagText">Curated by Placement Committee</span>
+        🏛️ <span id="curatedTagText">Curated Question</span>
       </div>
       <h3 id="questionPromptText">Loading question prompt...</h3>
     </div>
 
-    <label>Spoken Answer (Captured via Groq Whisper):</label>
-    <div id="transcriptBox" class="transcript-box">Click "Start Speaking" and speak your answer into the microphone...</div>
+    <label>Live Spoken Transcript (Groq Whisper):</label>
+    <div id="transcriptBox" class="transcript-box">Click "Start Speaking" and answer into your microphone...</div>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
       <button id="recordBtn" class="btn-primary" onclick="toggleRecording()">Start Speaking</button>
@@ -331,7 +333,7 @@
     <div id="committeeTab" class="hidden">
       <div style="background: #fafafa; padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
         <h4 style="margin-bottom: 8px;">Executive Audit Trail</h4>
-        <p style="font-size: 0.9rem; color: #475569;" id="committeeAuditText">Analyzing complete transcript history and follow-up adaptability...</p>
+        <p style="font-size: 0.9rem; color: #475569;" id="committeeAuditText">Analyzing transcript history and adaptability...</p>
       </div>
     </div>
 
@@ -339,92 +341,61 @@
   </div>
 
   <script>
-    // QUESTION BANK WITH ATTRIBUTION TAGS & SELECTIVE TIMERS
+    // EXACT QUESTION BANK FROM MR CHETAN PATHAK, MR BHARGAV PANDYA CA, & MR NIMIT GANATRA
     const QUESTION_BANK = {
-      marketing: [
-        { 
-          text: "How would you design a digital customer acquisition strategy for a new SaaS product with a 30-day sales cycle?", 
-          ideal: "Focus on CAC vs LTV ratios, targeted LinkedIn/meta ads, conversion funnels, and email retargeting workflows.", 
-          timer: 90,
-          craftedBy: "Curated by IIM Ahmedabad Placement Chair"
-        },
-        { 
-          text: "If your Customer Acquisition Cost (CAC) spikes by 40% in one quarter, what operational steps would you take?", 
-          ideal: "Audit ad spend efficiency, analyze drop-offs in the conversion funnel, refine audience targeting, and boost organic content efforts.", 
-          timer: null,
-          craftedBy: "Curated by McKinsey & Co. Marketing Practice"
-        },
-        { 
-          text: "How do you evaluate the brand equity impact of a heavy discount campaign vs premium positioning?", 
-          ideal: "Analyze short-term volume gains against long-term brand dilution, customer retention rates, and margin erosion.", 
-          timer: 120,
-          craftedBy: "Curated by ISB Placement Committee"
-        }
-      ],
-      finance: [
-        { 
-          text: "Walk me through how a $10 increase in depreciation flows through the three financial statements.", 
-          ideal: "Income Statement: Net Income down $10*(1-t). Cash Flow: Add back $10 dep, cash up by $10*t. Balance Sheet: PPE down $10, Cash up $10*t.", 
-          timer: 90,
-          craftedBy: "Curated by Goldman Sachs Investment Banking Lead"
-        },
-        { 
-          text: "When evaluating a capital project, why might NPV be preferred over Internal Rate of Return (IRR)?", 
-          ideal: "NPV avoids multiple IRR pitfalls with non-normal cash flows and assumes reinvestment at the discount rate rather than IRR.", 
-          timer: null,
-          craftedBy: "Curated by IIM Bangalore Corporate Finance Faculty"
-        },
-        { 
-          text: "How would you structure debt vs equity financing for an acquisition in a high-interest-rate environment?", 
-          ideal: "Balance interest coverage ratios, avoid over-leverage risks, and evaluate convertible debt or seller notes.", 
-          timer: 120,
-          craftedBy: "Curated by Morgan Stanley Private Equity Panel"
-        }
-      ],
-      hr: [
-        { 
-          text: "How do you distinguish between Recruitment and Selection when scaling an engineering department?", 
-          ideal: "Recruitment generates a qualified applicant pool; Selection uses structured competency assessments to choose the best candidate.", 
-          timer: null,
-          craftedBy: "Curated by XLRI Human Resources Chair"
-        },
-        { 
-          text: "What framework would you implement to resolve a conflict between Product Management and Sales over roadmap features?", 
-          ideal: "Align metrics around strategic ROI, customer value, weighted feature scoring, and transparent communication protocols.", 
-          timer: 90,
-          craftedBy: "Curated by Google APAC Talent Partner"
-        },
-        { 
-          text: "How do you measure the ROI of a leadership development training program across middle managers?", 
-          ideal: "Apply Kirkpatrick's 4-Level Evaluation Model: Reaction, Learning, Behavior change on job, and Business Results (retention/performance).", 
-          timer: null,
-          craftedBy: "Curated by TISS OD & Leadership Faculty"
-        }
-      ],
-      operations: [
-        { 
-          text: "How would you apply Lean principles to reduce bottleneck lead times in a supply chain distribution center?", 
-          ideal: "Value Stream Mapping, identifying waste (Muda), optimizing line balancing, and implementing Pull/Kanban inventory flow.", 
-          timer: 90,
-          craftedBy: "Curated by Amazon Operations Placement Panel"
-        },
-        { 
-          text: "How do you balance Just-In-Time (JIT) inventory efficiency with global supply disruption risks?", 
-          ideal: "Implement dual-sourcing strategy, maintain safety stock buffers for critical SKUs, and track lead-time volatility.", 
-          timer: null,
-          craftedBy: "Curated by NITIE / IIM Mumbai Supply Chain Chair"
-        },
-        { 
-          text: "What key metrics would you establish to evaluate a 3PL logistics provider's performance?", 
-          ideal: "On-Time In-Full (OTIF) delivery rate, order accuracy percentage, damage-free shipment rate, and cost per unit delivered.", 
-          timer: null,
-          craftedBy: "Curated by Bain & Co. Operations Practice"
-        }
-      ]
+      marketing: {
+        fresher: [
+          { text: "What is the difference between a marketing campaign and a promotion? Give an example of each.", ideal: "Campaigns build long-term brand equity; promotions drive immediate short-term sales volume.", timer: null, craftedBy: "Curated by Placement Panel" },
+          { text: "Which metrics would you track to tell whether a social media post worked?", ideal: "Engagement rate, click-through rate (CTR), conversion rate, impressions, and reach.", timer: null, craftedBy: "Curated by Mr. Chetan Pathak" },
+          { text: "What is a target audience, and how would you describe one for a new product?", ideal: "A specific demographic and psychographic group defined by age, income, pain points, and buying behavior.", timer: null, craftedBy: "Curated by Mr. Chetan Pathak" },
+          { text: "What is the difference between organic and paid reach?", ideal: "Organic reach is unpaid audience exposure through algorithms/shares; paid reach uses advertising spend.", timer: null, craftedBy: "Curated by Placement Panel" },
+          { text: "If a brand’s Instagram followers grow but sales don’t, what would you check first?", ideal: "Audience quality, landing page conversion funnel, call-to-action alignment, and offer value.", timer: null, craftedBy: "Curated by Mr. Chetan Pathak" }
+        ],
+        experienced: [
+          { text: "Tell me about a campaign you planned. How did you decide the budget, audience, and channels, and what was the result?", ideal: "Bottom-up budgeting based on CAC targets, channel attribution testing, and ROI tracking.", timer: 10, craftedBy: "Curated by Mr. Chetan Pathak" },
+          { text: "How would you decide whether to spend more on paid ads or on content and SEO for a product that is already selling?", ideal: "Compare short-term CAC on paid channels against long-term compounding organic SEO CAC.", timer: null, craftedBy: "Curated by Mr. Chetan Pathak" },
+          { text: "How do you judge whether a brand’s messaging is working in a market that is changing quickly?", ideal: "Track brand sentiment, customer acquisition velocity, message recall tests, and conversion rates.", timer: 10, craftedBy: "Curated by Mr. Chetan Pathak" },
+          { text: "Describe how you would launch a product in a new city where the brand is unknown.", ideal: "Localized PR, influencer partnerships, targeted geo-fenced digital ads, and experiential pop-ups.", timer: null, craftedBy: "Curated by Placement Panel" },
+          { text: "A campaign’s cost per lead has doubled over three weeks. What would you do?", ideal: "Audit ad fatigue, audience saturation, landing page performance, and bidding strategy.", timer: 10, craftedBy: "Curated by Mr. Chetan Pathak" }
+        ]
+      },
+      finance: {
+        fresher: [
+          { text: "What is the difference between profit and cash flow, and why can a profitable business still run out of money?", ideal: "Profit is accrual revenue minus expenses; cash flow is actual physical cash movement. Working capital timing gaps cause cash outs.", timer: null, craftedBy: "Curated by Placement Panel" },
+          { text: "What does a balance sheet show, and what are its three main parts?", ideal: "A snapshot of financial position showing Assets, Liabilities, and Shareholders' Equity at a specific point in time.", timer: null, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
+          { text: "What is the difference between a debit and a credit?", ideal: "Debits increase assets/expenses and decrease liabilities/equity; credits do the reverse in double-entry bookkeeping.", timer: null, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
+          { text: "What is the difference between fixed costs and variable costs? Give one example of each.", ideal: "Fixed costs stay constant regardless of output (e.g. rent); variable costs scale directly with production (e.g. raw materials).", timer: 10, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
+          { text: "What is working capital, and why does it matter to a business?", ideal: "Current Assets minus Current Liabilities; measures short-term operational liquidity and ability to pay immediate obligations.", timer: null, craftedBy: "Curated by Placement Panel" }
+        ],
+        experienced: [
+          { text: "A department is 15 percent over budget halfway through the year. What steps would you take to find the cause and bring spending back on track?", ideal: "Variance analysis, line-item audit, distinguishing fixed vs discretionary expenses, and cost reallocation controls.", timer: 10, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
+          { text: "How would you build a monthly cash flow forecast for a small business, and what would you watch most closely?", ideal: "Project cash inflows from receivables and outflows for payroll/debts; closely monitor Days Sales Outstanding (DSO).", timer: null, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
+          { text: "What would you look at first if a company’s gross margin dropped five points in one quarter?", ideal: "Cost of Goods Sold (COGS) inflation, raw material price hikes, product mix shifts, and discounting trends.", timer: 10, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
+          { text: "How would you decide whether a new piece of equipment is worth buying?", ideal: "Calculate Capital Expenditure (CapEx) payback period, Net Present Value (NPV), and Internal Rate of Return (IRR).", timer: null, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
+          { text: "Tell me about a time you found an error in financial figures. How did you find it and what did you do?", ideal: "Reconciliation analysis, root-cause investigation, correcting financial statements, and improving internal controls.", timer: 10, craftedBy: "Curated by Mr. Bhargav Pandya CA" }
+        ]
+      },
+      hr: {
+        fresher: [
+          { text: "What is the difference between recruitment and selection?", ideal: "Recruitment attracts a pool of candidates; Selection screens and picks the best candidate.", timer: null, craftedBy: "Curated by Placement Panel" },
+          { text: "How would you handle a new employee who is struggling to keep up with the team in the first month?", ideal: "1-on-1 check-in, identifying skill vs clarity gaps, assigning a peer mentor, and setting 30-day goals.", timer: null, craftedBy: "Curated by Mr. Nimit Ganatra" },
+          { text: "Why do companies run an onboarding programme, and what should it cover?", ideal: "Accelerates time-to-productivity, culture integration, compliance rules, role expectations, and tool access.", timer: null, craftedBy: "Curated by Mr. Nimit Ganatra" },
+          { text: "What makes an interview question fair and legal to ask?", ideal: "Job-related competency focus without discrimination on race, gender, age, religion, marital status, or disability.", timer: null, craftedBy: "Curated by Mr. Nimit Ganatra" },
+          { text: "What is the difference between an employee’s job description and their key performance indicators?", ideal: "Job description outlines ongoing duties and responsibilities; KPIs measure specific quantitative performance targets.", timer: 10, craftedBy: "Curated by Mr. Nimit Ganatra" }
+        ],
+        experienced: [
+          { text: "Describe a time you handled a conflict between two team members. What did you do, and what happened afterwards?", ideal: "Private mediation, focusing on shared objective metrics, agreeing on communication protocols, and follow-up.", timer: null, craftedBy: "Curated by Placement Panel" },
+          { text: "How would you reduce employee turnover in a team where people leave after about a year?", ideal: "Exit interview analysis, reviewing career growth pathways, compensation benchmarking, and manager effectiveness.", timer: 10, craftedBy: "Curated by Mr. Nimit Ganatra" },
+          { text: "How do you run a performance review that is fair and useful to the employee?", ideal: "Objective 360-degree feedback, continuous review documentation, transparent KPI scoring, and forward action plans.", timer: null, craftedBy: "Curated by Mr. Nimit Ganatra" },
+          { text: "How would you handle an employee who is performing well but is disruptive to the team?", ideal: "Address behavioral impact directly in private, set clear professional conduct standards, and decouple culture from performance.", timer: null, craftedBy: "Curated by Mr. Nimit Ganatra" },
+          { text: "A company is planning to cut 10 percent of its staff. How would you plan and communicate it?", ideal: "Legal compliance check, empathetic transparent communication, manager script preparation, and severance support.", timer: 10, craftedBy: "Curated by Mr. Nimit Ganatra" }
+        ]
+      }
     };
 
-    // SESSION STATE & AUDIO RECORDING STATE
+    // SESSION STATE
     let currentDomain = "marketing";
+    let currentLevel = "fresher";
     let questions = [];
     let currentQuestionIdx = 0;
     let interviewHistory = [];
@@ -432,24 +403,37 @@
     let audioChunks = [];
     let isRecording = false;
     let currentTranscript = "";
-    let questionTimerInterval = null;
+    let thinkingTimerInterval = null;
     let timeRemaining = 0;
 
-    // PHONETIC NORMALIZATION HELPER
-    function normalizeAcronyms(text) {
-      if (!text) return "";
-      return text
-        .replace(/\bc a c\b/gi, "CAC")
-        .replace(/\bro as\b/gi, "ROAS")
-        .replace(/\bn p v\b/gi, "NPV")
-        .replace(/\be bit da\b/gi, "EBITDA")
-        .replace(/\bl t v\b/gi, "LTV");
+    // POPULATE SYNTHESIS VOICES
+    function populateVoices() {
+      if ('speechSynthesis' in window) {
+        const voiceSelect = document.getElementById('voiceSelect');
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+          voiceSelect.innerHTML = '<option value="default">System Executive Voice (Auto)</option>';
+          voices.forEach((v, idx) => {
+            const opt = document.createElement('option');
+            opt.value = idx;
+            opt.innerText = `${v.name} (${v.lang})`;
+            voiceSelect.appendChild(opt);
+          });
+        }
+      }
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = populateVoices;
     }
 
     // START INTERVIEW SESSION
     function startInterviewSession() {
       currentDomain = document.getElementById('domainSelect').value;
-      questions = QUESTION_BANK[currentDomain] || QUESTION_BANK.marketing;
+      currentLevel = document.getElementById('levelSelect').value;
+
+      const domainData = QUESTION_BANK[currentDomain] || QUESTION_BANK.marketing;
+      questions = domainData[currentLevel] || domainData.fresher;
       currentQuestionIdx = 0;
       interviewHistory = [];
 
@@ -459,23 +443,20 @@
       loadQuestion(0);
     }
 
-    // LOAD QUESTION, SET ATTRIBUTION TAG & TIMERS
+    // LOAD QUESTION, RENDER TAGS & THINKING WINDOW TIMER
     function loadQuestion(index) {
-      stopQuestionTimer();
+      stopThinkingTimer();
 
       const q = questions[index];
       document.getElementById('questionCounter').innerText = `QUESTION ${index + 1} OF ${questions.length}`;
       document.getElementById('questionPromptText').innerText = q.text;
-      document.getElementById('transcriptBox').innerText = "Click 'Start Speaking' and speak into your microphone...";
+      document.getElementById('transcriptBox').innerText = "Click 'Start Speaking' and state your answer into the microphone...";
       currentTranscript = "";
 
-      // Render Curated Tag
-      const curatedTagEl = document.getElementById('curatedTagText');
-      if (curatedTagEl) {
-        curatedTagEl.innerText = q.craftedBy || "Curated by Placement Committee";
-      }
+      // Curated Tag
+      document.getElementById('curatedTagText').innerText = q.craftedBy || "Curated Question";
 
-      // Setup Selective Per-Question Timer
+      // SELECTIVE THINKING WINDOW TIMER (BEFORE SPEAKING)
       if (q.timer && q.timer > 0) {
         timeRemaining = q.timer;
         const timerBadge = document.getElementById('timerContainer');
@@ -484,43 +465,54 @@
         timerBadge.classList.remove('hidden', 'warning');
         countdownEl.innerText = timeRemaining;
 
-        questionTimerInterval = setInterval(() => {
+        thinkingTimerInterval = setInterval(() => {
           timeRemaining--;
           countdownEl.innerText = timeRemaining;
 
-          if (timeRemaining <= 10) {
+          if (timeRemaining <= 3) {
             timerBadge.classList.add('warning');
           }
 
           if (timeRemaining <= 0) {
-            stopQuestionTimer();
-            alert("⏰ Time is up for this analytical question! Submitting your response.");
-            finishAnswer();
+            stopThinkingTimer();
+            // Thinking window finished notification
           }
         }, 1000);
       } else {
         document.getElementById('timerContainer').classList.add('hidden');
       }
 
-      // Speak question using speech synthesis
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(q.text);
-        utterance.rate = 0.95;
-        window.speechSynthesis.speak(utterance);
-      }
+      // Speak Question using selected voice
+      speakText(q.text);
     }
 
-    function stopQuestionTimer() {
-      if (questionTimerInterval) {
-        clearInterval(questionTimerInterval);
-        questionTimerInterval = null;
+    function stopThinkingTimer() {
+      if (thinkingTimerInterval) {
+        clearInterval(thinkingTimerInterval);
+        thinkingTimerInterval = null;
       }
       document.getElementById('timerContainer').classList.add('hidden');
     }
 
-    // AUDIO CAPTURE VIA MEDIARECORDER & GROQ WHISPER TRANSCRIPTION
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.95;
+
+        const voiceSelect = document.getElementById('voiceSelect');
+        const voices = window.speechSynthesis.getVoices();
+        if (voiceSelect && voiceSelect.value !== "default" && voices[voiceSelect.value]) {
+          utterance.voice = voices[voiceSelect.value];
+        }
+
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    // RECORDING VIA MEDIARECORDER + GROQ WHISPER
     async function toggleRecording() {
+      stopThinkingTimer();
       const btn = document.getElementById('recordBtn');
 
       if (!isRecording) {
@@ -529,17 +521,15 @@
           mediaRecorder = new MediaRecorder(stream);
           audioChunks = [];
 
-          mediaRecorder.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-              audioChunks.push(event.data);
-            }
+          mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) audioChunks.push(e.data);
           };
 
           mediaRecorder.start();
           isRecording = true;
           btn.innerText = "Stop Recording";
           btn.style.backgroundColor = "#ef4444";
-          document.getElementById('transcriptBox').innerText = "🎙️ Recording audio...";
+          document.getElementById('transcriptBox').innerText = "🎙️ Recording spoken answer...";
         } catch (err) {
           alert("Microphone access failed: " + err.message);
         }
@@ -572,12 +562,12 @@
               });
 
               const data = await response.json();
-              currentTranscript = normalizeAcronyms(data.transcript || "");
+              currentTranscript = data.transcript || "";
               document.getElementById('transcriptBox').innerText = currentTranscript || "No clear speech detected.";
               btn.innerText = "Start Speaking";
             } catch (err) {
-              console.error("Whisper Transcription Error:", err);
-              document.getElementById('transcriptBox').innerText = "Transcription error occurred.";
+              console.error("Whisper error:", err);
+              document.getElementById('transcriptBox').innerText = "Transcription failed.";
               btn.innerText = "Start Speaking";
             }
           };
@@ -585,9 +575,9 @@
       }
     }
 
-    // FINISH ANSWER & CALL SOCRATIC FOLLOWUP
+    // FINISH ANSWER & CALL HUMAN CONVERSATIONAL FOLLOWUP
     async function finishAnswer() {
-      stopQuestionTimer();
+      stopThinkingTimer();
 
       if (isRecording && mediaRecorder) {
         mediaRecorder.stop();
@@ -597,7 +587,7 @@
       }
 
       const status = document.getElementById('statusIndicator');
-      status.innerText = "● Analyzing answer depth...";
+      status.innerText = "● Interviewer evaluating...";
 
       const currentQ = questions[currentQuestionIdx];
       const spokenText = currentTranscript || "Candidate provided a brief verbal statement.";
@@ -624,10 +614,11 @@
         const data = await response.json();
 
         if (data.trigger && data.prompt) {
-          alert("Socratic Follow-Up Challenge:\n\n" + data.prompt);
+          speakText(data.prompt);
+          alert("Interviewer Follow-Up:\n\n" + data.prompt);
         }
       } catch (err) {
-        console.warn("Follow-up evaluation skipped:", err);
+        console.warn("Follow-up skipped:", err);
       }
 
       currentQuestionIdx++;
@@ -639,9 +630,9 @@
       }
     }
 
-    // GENERATE FINAL DIAGNOSTIC DOSSIER
+    // GENERATE REPORT & RENDER READINESS BADGES
     async function generateFinalReport() {
-      stopQuestionTimer();
+      stopThinkingTimer();
 
       document.getElementById('interviewScreen').classList.add('hidden');
       document.getElementById('reportScreen').classList.remove('hidden');
@@ -660,7 +651,7 @@
         renderDiagnosticHeader(reportData);
         renderEvaluations(reportData.evaluations || []);
       } catch (err) {
-        console.error("Report generation error:", err);
+        console.error("Report error:", err);
         renderDiagnosticHeader({
           readinessTier: "Tier 2: Developing",
           tierColor: "blue",
@@ -669,7 +660,7 @@
       }
     }
 
-    // RENDER READINESS TIER HEADER
+    // RENDER HEADER BADGES
     function renderDiagnosticHeader(reportData) {
       const color = reportData.tierColor || (
         reportData.readinessTier && reportData.readinessTier.includes("Tier 1") ? "green" :
@@ -734,6 +725,8 @@
         event.target.classList.add('active');
       }
     }
+
+    window.onload = populateVoices;
   </script>
 </body>
 </html>
