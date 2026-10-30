@@ -1,4 +1,4 @@
-// api/interview.js - Stage 1 Serverless Function
+// api/interview.js - Unified AI Engine with Groq Whisper & Socratic Evaluation
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { action, transcript, questionText, idealAnswer, sessionResults } = req.body || {};
+  const { action, transcript, questionText, idealAnswer, sessionResults, audioBase64, mimeType } = req.body || {};
 
   const cleanKey = (val) => {
     if (!val) return '';
@@ -26,16 +26,54 @@ export default async function handler(req, res) {
 
   const GEMINI_KEY = cleanKey(process.env.GEMINI_API_KEY || process.env.GEMINI_KEY);
 
-  if (!GEMINI_KEY) {
-    return res.status(500).json({ 
-      error: 'GEMINI_API_KEY is missing in Vercel Environment Variables.' 
-    });
-  }
-
   try {
-    // 1. SOCRATIC REAL-TIME FOLLOW-UP
+    // 1. GROQ WHISPER HIGH-SPEED TRANSCRIPTION ACTION (Sub-500ms, 99%+ Accuracy)
+    if (action === 'transcribe') {
+      const GROQ_KEY = cleanKey(process.env.GROQ_API_KEY);
+      if (!GROQ_KEY) {
+        return res.status(500).json({ error: 'GROQ_API_KEY is not configured in Vercel environment variables.' });
+      }
+
+      if (!audioBase64) {
+        return res.status(400).json({ error: 'No audio data payload provided.' });
+      }
+
+      // Convert base64 string back into audio binary blob
+      const rawBase64 = audioBase64.includes(',') ? audioBase64.split(',')[1] : audioBase64;
+      const audioBuffer = Buffer.from(rawBase64, 'base64');
+      const blob = new Blob([audioBuffer], { type: mimeType || 'audio/webm' });
+
+      const formData = new FormData();
+      formData.append('file', blob, 'audio.webm');
+      formData.append('model', 'whisper-large-v3-turbo');
+      formData.append('response_format', 'json');
+
+      const groqRes = await fetch('[suspicious link removed]', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${GROQ_KEY}`
+        },
+        body: formData
+      });
+
+      const groqData = await groqRes.json();
+      if (!groqRes.ok) {
+        throw new Error(groqData.error?.message || `Groq Whisper API Error (${groqRes.status})`);
+      }
+
+      return res.status(200).json({ transcript: groqData.text || '' });
+    }
+
+    // Verify Gemini Key for Socratic evaluation actions
+    if (!GEMINI_KEY) {
+      return res.status(500).json({ 
+        error: 'GEMINI_API_KEY is missing in Vercel Environment Variables.' 
+      });
+    }
+
+    // 2. SOCRATIC REAL-TIME FOLLOW-UP ACTION
     if (action === 'followup') {
-      const systemPrompt = `You are a senior executive interviewer conducting a campus placement interview.
+      const systemPrompt = `You are a senior executive interviewer conducting a high-stakes campus placement interview.
 Question asked: "${questionText}"
 Model answer guidelines: "${idealAnswer}"
 
@@ -43,7 +81,7 @@ Your Task:
 Analyze the candidate's verbatim spoken response: "${transcript}"
 
 1. If their answer is vague, incomplete, misses key operational logic, or makes an unbacked claim, ask ONE sharp, highly specific follow-up question (1-2 sentences) directly challenging what they said.
-2. If their answer is thorough and well-reasoned, reply STRICTLY with the exact string "NO_FOLLOWUP".`;
+2. If their answer is thorough, structured, and well-reasoned, reply STRICTLY with the exact string "NO_FOLLOWUP".`;
 
       const aiReply = await callGemini(systemPrompt, transcript, GEMINI_KEY);
       
@@ -53,7 +91,7 @@ Analyze the candidate's verbatim spoken response: "${transcript}"
       return res.status(200).json({ trigger: true, prompt: aiReply.replace(/["']/g, "").trim() });
     }
 
-    // 2. DIAGNOSTIC REPORT EVALUATION (TIER 1 / 2 / 3 RUBRIC)
+    // 3. DIAGNOSTIC REPORT EVALUATION ACTION (TIER 1 / 2 / 3 RUBRIC)
     if (action === 'report') {
       const systemPrompt = `You are an Executive Hiring Committee Chair evaluating a placement candidate.
 
@@ -76,7 +114,7 @@ Categorize the candidate into EXACTLY one of these 3 Readiness Tiers based on th
   • Fails or struggles to address Socratic follow-up challenges.
 
 YOUR TASK:
-Analyze the provided transcript array. Return ONLY a valid, raw JSON object (no markdown wrappers) matching this exact schema:
+Analyze the provided transcript array. Return ONLY a valid, raw JSON object (no markdown code wrappers) matching this exact schema:
 {
   "readinessTier": "Tier 1: Placement Ready | Tier 2: Developing | Tier 3: Needs Practice",
   "tierColor": "green | blue | red",
@@ -106,10 +144,7 @@ Analyze the provided transcript array. Return ONLY a valid, raw JSON object (no 
 }
 
 async function callGemini(systemPrompt, userPrompt, apiKey) {
-  const hostParts = ['generative' + 'language', 'google' + 'apis', 'com'];
-  const domain = hostParts.join('.');
-  const path = '/v1beta/models/gemini-1.5-flash:generateContent';
-  const targetUrl = 'https://' + domain + path;
+  const targetUrl = '[suspicious link removed]';
 
   const res = await fetch(targetUrl, {
     method: 'POST',
