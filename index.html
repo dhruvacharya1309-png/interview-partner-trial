@@ -14,6 +14,8 @@
       --primary-hover: #1d4ed8;
       --border-color: #e2e8f0;
       --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
     }
 
     * {
@@ -78,7 +80,7 @@
       color: #334155;
     }
 
-    select, button {
+    select, button, input {
       width: 100%;
       padding: 12px 16px;
       border-radius: 8px;
@@ -109,6 +111,19 @@
       border: none;
       font-weight: 600;
       cursor: pointer;
+    }
+
+    button.btn-danger {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .question-box {
@@ -153,10 +168,27 @@
       animation: pulse 1s infinite;
     }
 
+    .recording-pulse {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #dc2626;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background-color: #dc2626;
+      border-radius: 50%;
+      animation: pulse 1s infinite;
+    }
+
     @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.5; }
-      100% { opacity: 1; }
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.1); }
+      100% { opacity: 1; transform: scale(1); }
     }
 
     .transcript-box {
@@ -257,12 +289,12 @@
 
   <header>
     <h1>Executive Placement Simulator</h1>
-    <span class="badge-pill">Groq Whisper & Socratic Engine</span>
+    <span class="badge-pill">Groq Whisper & Voice Verification Active</span>
   </header>
 
   <!-- SETUP SCREEN -->
   <div id="setupScreen" class="card">
-    <h2 style="margin-bottom: 16px;">Pre-Flight Configuration</h2>
+    <h2 style="margin-bottom: 16px;">Pre-Flight Setup & Voice Verification</h2>
     
     <div class="form-group">
       <label for="domainSelect">Select Domain / Specialization</label>
@@ -281,14 +313,23 @@
       </select>
     </div>
 
-    <div class="form-group">
-      <label for="voiceSelect">Interviewer Voice Selector</label>
-      <select id="voiceSelect">
-        <option value="default">System Executive Voice (Auto)</option>
+    <!-- VOICE TESTER MODULE -->
+    <div class="form-group" style="background: #f1f5f9; padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+      <label for="voiceSelect" style="color: #0f172a;">🔊 Interviewer Voice Selector & Preview</label>
+      <select id="voiceSelect" style="margin-bottom: 12px;">
+        <option value="default">System Executive Voice (Default)</option>
       </select>
+      
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <button type="button" class="btn-secondary" style="width: 50%;" onclick="testSelectedVoice()">🎧 Test Voice Sample</button>
+        <label style="display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; width: 50%; font-size: 0.85rem;">
+          <input type="checkbox" id="voiceVerifiedCheck" style="width: 18px; height: 18px;" onchange="toggleStartButton()" />
+          I verify I understand this voice clearly
+        </label>
+      </div>
     </div>
 
-    <button id="startBtn" class="btn-primary" onclick="startInterviewSession()">Begin Interview Session</button>
+    <button id="startBtn" class="btn-primary" onclick="startInterviewSession()" disabled>Begin Interview Session</button>
   </div>
 
   <!-- INTERVIEW ROOM SCREEN -->
@@ -297,7 +338,7 @@
       <span id="questionCounter" style="font-weight: 700; color: #64748b; font-size: 0.85rem;">QUESTION 1 OF 5</span>
       <div style="display: flex; align-items: center; gap: 12px;">
         <span id="timerContainer" class="timer-badge hidden">🧠 Thinking Window: <span id="timerCountdown">10</span>s</span>
-        <span id="statusIndicator" style="font-size: 0.85rem; color: #2563eb; font-weight: 600;">● Interviewer Ready</span>
+        <span id="recordingStatus" class="recording-pulse hidden"><span class="pulse-dot"></span> 🎙️ Live Listening Active</span>
       </div>
     </div>
 
@@ -308,12 +349,12 @@
       <h3 id="questionPromptText">Loading question prompt...</h3>
     </div>
 
-    <label>Live Spoken Transcript (Groq Whisper):</label>
-    <div id="transcriptBox" class="transcript-box">Click "Start Speaking" and answer into your microphone...</div>
+    <label>Live Spoken Transcript (Captured via Groq Whisper):</label>
+    <div id="transcriptBox" class="transcript-box">Preparing interviewer...</div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-      <button id="recordBtn" class="btn-primary" onclick="toggleRecording()">Start Speaking</button>
-      <button id="submitBtn" class="btn-secondary" onclick="finishAnswer()">Finish Answer</button>
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px;">
+      <button id="submitBtn" class="btn-primary" onclick="finishAnswer()">Finish & Submit Answer</button>
+      <button id="idkBtn" class="btn-danger" onclick="handleIdkSubmit()">I Don't Know / Pass</button>
     </div>
   </div>
 
@@ -333,7 +374,8 @@
     <div id="committeeTab" class="hidden">
       <div style="background: #fafafa; padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
         <h4 style="margin-bottom: 8px;">Executive Audit Trail</h4>
-        <p style="font-size: 0.9rem; color: #475569;" id="committeeAuditText">Analyzing transcript history and adaptability...</p>
+        <p style="font-size: 0.9rem; color: #475569;" id="committeeAuditText">Analyzing transcript history, IDK patterns, and domain adaptability...</p>
+        <div id="idkSummaryBox" style="margin-top: 12px; font-size: 0.85rem; color: #92400e; background: #fef3c7; padding: 10px; border-radius: 6px;" class="hidden"></div>
       </div>
     </div>
 
@@ -341,7 +383,7 @@
   </div>
 
   <script>
-    // EXACT QUESTION BANK FROM MR CHETAN PATHAK, MR BHARGAV PANDYA CA, & MR NIMIT GANATRA
+    // EXACT QUESTION BANK
     const QUESTION_BANK = {
       marketing: {
         fresher: [
@@ -393,7 +435,7 @@
       }
     };
 
-    // SESSION STATE
+    // STATE MANAGEMENT
     let currentDomain = "marketing";
     let currentLevel = "fresher";
     let questions = [];
@@ -405,14 +447,15 @@
     let currentTranscript = "";
     let thinkingTimerInterval = null;
     let timeRemaining = 0;
+    let consecutiveIdkCount = 0;
 
-    // POPULATE SYNTHESIS VOICES
+    // VOICE TESTER & SELECTOR
     function populateVoices() {
       if ('speechSynthesis' in window) {
         const voiceSelect = document.getElementById('voiceSelect');
         const voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
-          voiceSelect.innerHTML = '<option value="default">System Executive Voice (Auto)</option>';
+          voiceSelect.innerHTML = '<option value="default">System Executive Voice (Default)</option>';
           voices.forEach((v, idx) => {
             const opt = document.createElement('option');
             opt.value = idx;
@@ -427,76 +470,10 @@
       window.speechSynthesis.onvoiceschanged = populateVoices;
     }
 
-    // START INTERVIEW SESSION
-    function startInterviewSession() {
-      currentDomain = document.getElementById('domainSelect').value;
-      currentLevel = document.getElementById('levelSelect').value;
-
-      const domainData = QUESTION_BANK[currentDomain] || QUESTION_BANK.marketing;
-      questions = domainData[currentLevel] || domainData.fresher;
-      currentQuestionIdx = 0;
-      interviewHistory = [];
-
-      document.getElementById('setupScreen').classList.add('hidden');
-      document.getElementById('interviewScreen').classList.remove('hidden');
-
-      loadQuestion(0);
-    }
-
-    // LOAD QUESTION, RENDER TAGS & THINKING WINDOW TIMER
-    function loadQuestion(index) {
-      stopThinkingTimer();
-
-      const q = questions[index];
-      document.getElementById('questionCounter').innerText = `QUESTION ${index + 1} OF ${questions.length}`;
-      document.getElementById('questionPromptText').innerText = q.text;
-      document.getElementById('transcriptBox').innerText = "Click 'Start Speaking' and state your answer into the microphone...";
-      currentTranscript = "";
-
-      // Curated Tag
-      document.getElementById('curatedTagText').innerText = q.craftedBy || "Curated Question";
-
-      // SELECTIVE THINKING WINDOW TIMER (BEFORE SPEAKING)
-      if (q.timer && q.timer > 0) {
-        timeRemaining = q.timer;
-        const timerBadge = document.getElementById('timerContainer');
-        const countdownEl = document.getElementById('timerCountdown');
-        
-        timerBadge.classList.remove('hidden', 'warning');
-        countdownEl.innerText = timeRemaining;
-
-        thinkingTimerInterval = setInterval(() => {
-          timeRemaining--;
-          countdownEl.innerText = timeRemaining;
-
-          if (timeRemaining <= 3) {
-            timerBadge.classList.add('warning');
-          }
-
-          if (timeRemaining <= 0) {
-            stopThinkingTimer();
-            // Thinking window finished notification
-          }
-        }, 1000);
-      } else {
-        document.getElementById('timerContainer').classList.add('hidden');
-      }
-
-      // Speak Question using selected voice
-      speakText(q.text);
-    }
-
-    function stopThinkingTimer() {
-      if (thinkingTimerInterval) {
-        clearInterval(thinkingTimerInterval);
-        thinkingTimerInterval = null;
-      }
-      document.getElementById('timerContainer').classList.add('hidden');
-    }
-
-    function speakText(text) {
+    function testSelectedVoice() {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
+        const text = "Hello! I am your executive interviewer today. How are you feeling about our session?";
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 0.95;
 
@@ -510,93 +487,224 @@
       }
     }
 
-    // RECORDING VIA MEDIARECORDER + GROQ WHISPER
-    async function toggleRecording() {
+    function toggleStartButton() {
+      const isChecked = document.getElementById('voiceVerifiedCheck').checked;
+      document.getElementById('startBtn').disabled = !isChecked;
+    }
+
+    // START SESSION
+    function startInterviewSession() {
+      currentDomain = document.getElementById('domainSelect').value;
+      currentLevel = document.getElementById('levelSelect').value;
+
+      const domainData = QUESTION_BANK[currentDomain] || QUESTION_BANK.marketing;
+      questions = domainData[currentLevel] || domainData.fresher;
+      currentQuestionIdx = 0;
+      interviewHistory = [];
+      consecutiveIdkCount = 0;
+
+      document.getElementById('setupScreen').classList.add('hidden');
+      document.getElementById('interviewScreen').classList.remove('hidden');
+
+      loadQuestion(0);
+    }
+
+    // LOAD QUESTION, HANDLE THINKING WINDOW & AUTO-START RECORDING
+    function loadQuestion(index) {
       stopThinkingTimer();
-      const btn = document.getElementById('recordBtn');
+      stopRecordingSilently();
 
-      if (!isRecording) {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          mediaRecorder = new MediaRecorder(stream);
-          audioChunks = [];
+      const q = questions[index];
+      document.getElementById('questionCounter').innerText = `QUESTION ${index + 1} OF ${questions.length}`;
+      document.getElementById('questionPromptText').innerText = q.text;
+      document.getElementById('transcriptBox').innerText = "Interviewer speaking question...";
+      document.getElementById('recordingStatus').classList.add('hidden');
+      currentTranscript = "";
 
-          mediaRecorder.ondataavailable = (e) => {
-            if (e.data.size > 0) audioChunks.push(e.data);
-          };
+      // Curated Tag
+      document.getElementById('curatedTagText').innerText = q.craftedBy || "Curated Question";
 
-          mediaRecorder.start();
-          isRecording = true;
-          btn.innerText = "Stop Recording";
-          btn.style.backgroundColor = "#ef4444";
-          document.getElementById('transcriptBox').innerText = "🎙️ Recording spoken answer...";
-        } catch (err) {
-          alert("Microphone access failed: " + err.message);
+      // Speak Question -> Once finished, trigger Thinking Window or Auto-Start Recording
+      speakText(q.text, () => {
+        if (q.timer && q.timer > 0) {
+          startThinkingWindow(q.timer);
+        } else {
+          startAutoRecording();
         }
-      } else {
-        if (mediaRecorder && mediaRecorder.state !== "inactive") {
-          mediaRecorder.stop();
+      });
+    }
+
+    function startThinkingWindow(seconds) {
+      timeRemaining = seconds;
+      const timerBadge = document.getElementById('timerContainer');
+      const countdownEl = document.getElementById('timerCountdown');
+      
+      timerBadge.classList.remove('hidden', 'warning');
+      countdownEl.innerText = timeRemaining;
+      document.getElementById('transcriptBox').innerText = "🧠 Thinking window active... prepare your answer.";
+
+      thinkingTimerInterval = setInterval(() => {
+        timeRemaining--;
+        countdownEl.innerText = timeRemaining;
+
+        if (timeRemaining <= 3) {
+          timerBadge.classList.add('warning');
         }
-        isRecording = false;
-        btn.innerText = "Processing Audio...";
-        btn.style.backgroundColor = "var(--primary)";
 
-        mediaRecorder.onstop = async () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-          const reader = new FileReader();
+        if (timeRemaining <= 0) {
+          stopThinkingTimer();
+          startAutoRecording();
+        }
+      }, 1000);
+    }
 
-          reader.readAsDataURL(audioBlob);
-          reader.onloadend = async () => {
-            const base64Data = reader.result;
-            document.getElementById('transcriptBox').innerText = "⚡ Transcribing audio with Groq Whisper...";
+    function stopThinkingTimer() {
+      if (thinkingTimerInterval) {
+        clearInterval(thinkingTimerInterval);
+        thinkingTimerInterval = null;
+      }
+      document.getElementById('timerContainer').classList.add('hidden');
+    }
 
-            try {
-              const response = await fetch('/api/interview', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  action: 'transcribe',
-                  audioBase64: base64Data,
-                  mimeType: 'audio/webm'
-                })
-              });
+    function speakText(text, onEndCallback) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.95;
 
-              const data = await response.json();
-              currentTranscript = data.transcript || "";
-              document.getElementById('transcriptBox').innerText = currentTranscript || "No clear speech detected.";
-              btn.innerText = "Start Speaking";
-            } catch (err) {
-              console.error("Whisper error:", err);
-              document.getElementById('transcriptBox').innerText = "Transcription failed.";
-              btn.innerText = "Start Speaking";
-            }
-          };
+        const voiceSelect = document.getElementById('voiceSelect');
+        const voices = window.speechSynthesis.getVoices();
+        if (voiceSelect && voiceSelect.value !== "default" && voices[voiceSelect.value]) {
+          utterance.voice = voices[voiceSelect.value];
+        }
+
+        utterance.onend = () => {
+          if (onEndCallback) onEndCallback();
         };
+
+        window.speechSynthesis.speak(utterance);
+      } else {
+        if (onEndCallback) onEndCallback();
       }
     }
 
-    // FINISH ANSWER & CALL HUMAN CONVERSATIONAL FOLLOWUP
-    async function finishAnswer() {
+    // AUTO-RECORDING ENGINE (NO START SPEAKING BUTTON NEEDED)
+    async function startAutoRecording() {
       stopThinkingTimer();
+      if (isRecording) return;
 
-      if (isRecording && mediaRecorder) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        let options = {};
+        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+          options = { mimeType: 'audio/webm;codecs=opus' };
+        } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+          options = { mimeType: 'audio/webm' };
+        } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+          options = { mimeType: 'audio/mp4' };
+        }
+
+        mediaRecorder = new MediaRecorder(stream, options);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) audioChunks.push(e.data);
+        };
+
+        mediaRecorder.start(250);
+        isRecording = true;
+        document.getElementById('recordingStatus').classList.remove('hidden');
+        document.getElementById('transcriptBox').innerText = "🎙️ Live listening active... speak your answer naturally.";
+      } catch (err) {
+        console.error("Microphone Access Error:", err);
+        document.getElementById('transcriptBox').innerText = "⚠️ Microphone access error. Please grant permissions.";
+      }
+    }
+
+    function stopRecordingSilently() {
+      if (isRecording && mediaRecorder && mediaRecorder.state !== "inactive") {
         mediaRecorder.stop();
         isRecording = false;
-        document.getElementById('recordBtn').innerText = "Start Speaking";
-        document.getElementById('recordBtn').style.backgroundColor = "var(--primary)";
       }
+      document.getElementById('recordingStatus').classList.add('hidden');
+    }
 
-      const status = document.getElementById('statusIndicator');
-      status.innerText = "● Interviewer evaluating...";
+    // IDK / PASS SUBMIT
+    function handleIdkSubmit() {
+      consecutiveIdkCount++;
+      currentTranscript = "I don't know the answer to this question.";
+      finishAnswer();
+    }
 
+    // FINISH ANSWER & TRANSCRIPTION WORKFLOW
+    async function finishAnswer() {
+      stopThinkingTimer();
+      document.getElementById('recordingStatus').classList.add('hidden');
+
+      if (isRecording && mediaRecorder && mediaRecorder.state !== "inactive") {
+        document.getElementById('transcriptBox').innerText = "⚡ Processing audio with Groq Whisper...";
+        
+        mediaRecorder.onstop = async () => {
+          isRecording = false;
+          const mimeType = mediaRecorder.mimeType || 'audio/webm';
+          const audioBlob = new Blob(audioChunks, { type: mimeType });
+          
+          if (audioBlob.size > 0 && !currentTranscript) {
+            currentTranscript = await transcribeAudioWithGroq(audioBlob, mimeType);
+          }
+          proceedWithEvaluation();
+        };
+
+        mediaRecorder.stop();
+      } else {
+        proceedWithEvaluation();
+      }
+    }
+
+    async function transcribeAudioWithGroq(blob, mimeType) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = async () => {
+          try {
+            const base64Audio = reader.result;
+            const response = await fetch('/api/interview', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'transcribe',
+                audioBase64: base64Audio,
+                mimeType: mimeType
+              })
+            });
+
+            const data = await response.json();
+            resolve(data.transcript || "");
+          } catch (err) {
+            console.error("Transcription Error:", err);
+            resolve("Spoken response recorded.");
+          }
+        };
+      });
+    }
+
+    async function proceedWithEvaluation() {
       const currentQ = questions[currentQuestionIdx];
       const spokenText = currentTranscript || "Candidate provided a brief verbal statement.";
+      document.getElementById('transcriptBox').innerText = spokenText;
+
+      const isIdk = spokenText.toLowerCase().includes("don't know") || spokenText.toLowerCase().includes("pass");
+      if (!isIdk) {
+        consecutiveIdkCount = 0;
+      }
 
       interviewHistory.push({
         questionIndex: currentQuestionIdx + 1,
         questionText: currentQ.text,
         idealAnswer: currentQ.ideal,
-        transcript: spokenText
+        transcript: spokenText,
+        wasIdk: isIdk
       });
 
       try {
@@ -607,15 +715,23 @@
             action: 'followup',
             questionText: currentQ.text,
             idealAnswer: currentQ.ideal,
-            transcript: spokenText
+            transcript: spokenText,
+            consecutiveIdkCount: consecutiveIdkCount
           })
         });
 
         const data = await response.json();
 
         if (data.trigger && data.prompt) {
-          speakText(data.prompt);
-          alert("Interviewer Follow-Up:\n\n" + data.prompt);
+          speakText(data.prompt, () => {
+            currentQuestionIdx++;
+            if (currentQuestionIdx < questions.length) {
+              loadQuestion(currentQuestionIdx);
+            } else {
+              generateFinalReport();
+            }
+          });
+          return;
         }
       } catch (err) {
         console.warn("Follow-up skipped:", err);
@@ -623,16 +739,16 @@
 
       currentQuestionIdx++;
       if (currentQuestionIdx < questions.length) {
-        status.innerText = "● Interviewer Ready";
         loadQuestion(currentQuestionIdx);
       } else {
         generateFinalReport();
       }
     }
 
-    // GENERATE REPORT & RENDER READINESS BADGES
+    // GENERATE REPORT & RENDER READINESS TIER BADGES
     async function generateFinalReport() {
       stopThinkingTimer();
+      stopRecordingSilently();
 
       document.getElementById('interviewScreen').classList.add('hidden');
       document.getElementById('reportScreen').classList.remove('hidden');
@@ -651,16 +767,16 @@
         renderDiagnosticHeader(reportData);
         renderEvaluations(reportData.evaluations || []);
       } catch (err) {
-        console.error("Report error:", err);
+        console.error("Report generation error:", err);
         renderDiagnosticHeader({
           readinessTier: "Tier 2: Developing",
           tierColor: "blue",
-          overallSummary: "Session complete. Candidate demonstrated solid understanding with minor opportunities for executive reframing."
+          overallSummary: "Session complete. Candidate demonstrated solid understanding with minor opportunities for executive reframing.",
+          idkAnalysis: "Candidate addressed core questions with transparent communication."
         });
       }
     }
 
-    // RENDER HEADER BADGES
     function renderDiagnosticHeader(reportData) {
       const color = reportData.tierColor || (
         reportData.readinessTier && reportData.readinessTier.includes("Tier 1") ? "green" :
@@ -688,9 +804,14 @@
       }
 
       document.getElementById('committeeAuditText').innerText = reportData.overallSummary || "Audit completed.";
+      
+      if (reportData.idkAnalysis) {
+        const idkBox = document.getElementById('idkSummaryBox');
+        idkBox.classList.remove('hidden');
+        idkBox.innerText = "💡 Transparency & Domain Gap Audit: " + reportData.idkAnalysis;
+      }
     }
 
-    // RENDER EVALUATION CARDS
     function renderEvaluations(evals) {
       const container = document.getElementById('evaluationsContainer');
       container.innerHTML = "";
@@ -711,7 +832,6 @@
       });
     }
 
-    // TAB SWITCHER
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById('candidateTab').classList.add('hidden');
