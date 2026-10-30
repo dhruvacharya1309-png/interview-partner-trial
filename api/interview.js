@@ -1,4 +1,4 @@
-// api/interview.js - Unified AI Engine with Groq Whisper & Socratic Evaluation
+// api/interview.js - Conversational AI Engine with Groq Whisper & Socratic Evaluation
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
   const GEMINI_KEY = cleanKey(process.env.GEMINI_API_KEY || process.env.GEMINI_KEY);
 
   try {
-    // 1. GROQ WHISPER HIGH-SPEED TRANSCRIPTION ACTION (Sub-500ms, 99%+ Accuracy)
+    // 1. GROQ WHISPER HIGH-SPEED TRANSCRIPTION ACTION
     if (action === 'transcribe') {
       const GROQ_KEY = cleanKey(process.env.GROQ_API_KEY);
       if (!GROQ_KEY) {
@@ -38,7 +38,6 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'No audio data payload provided.' });
       }
 
-      // Convert base64 string back into audio binary blob
       const rawBase64 = audioBase64.includes(',') ? audioBase64.split(',')[1] : audioBase64;
       const audioBuffer = Buffer.from(rawBase64, 'base64');
       const blob = new Blob([audioBuffer], { type: mimeType || 'audio/webm' });
@@ -64,24 +63,26 @@ export default async function handler(req, res) {
       return res.status(200).json({ transcript: groqData.text || '' });
     }
 
-    // Verify Gemini Key for Socratic evaluation actions
     if (!GEMINI_KEY) {
       return res.status(500).json({ 
         error: 'GEMINI_API_KEY is missing in Vercel Environment Variables.' 
       });
     }
 
-    // 2. SOCRATIC REAL-TIME FOLLOW-UP ACTION
+    // 2. HUMAN CONVERSATIONAL SOCRATIC FOLLOW-UP ACTION
     if (action === 'followup') {
-      const systemPrompt = `You are a senior executive interviewer conducting a high-stakes campus placement interview.
-Question asked: "${questionText}"
-Model answer guidelines: "${idealAnswer}"
+      const systemPrompt = `You are a human, senior executive interviewer conducting a professional placement interview.
 
-Your Task:
-Analyze the candidate's verbatim spoken response: "${transcript}"
+Context:
+Question Asked: "${questionText}"
+Model Answer Guidelines: "${idealAnswer}"
+Candidate's Spoken Response: "${transcript}"
 
-1. If their answer is vague, incomplete, misses key operational logic, or makes an unbacked claim, ask ONE sharp, highly specific follow-up question (1-2 sentences) directly challenging what they said.
-2. If their answer is thorough, structured, and well-reasoned, reply STRICTLY with the exact string "NO_FOLLOWUP".`;
+Your Persona Rules:
+1. Speak like a natural human interviewer (use phrasing like "Got it,", "That makes sense,", "I hear your point on...", "Fair enough,").
+2. Acknowledge ONE specific detail from what the candidate said.
+3. If their answer lacks operational depth, metrics, or trade-off reasoning, ask ONE sharp, conversational follow-up question (1-2 sentences).
+4. If their answer is thorough and well-explained, respond with a short conversational bridge acknowledging their point and reply with "NO_FOLLOWUP".`;
 
       const aiReply = await callGemini(systemPrompt, transcript, GEMINI_KEY);
       
@@ -91,7 +92,7 @@ Analyze the candidate's verbatim spoken response: "${transcript}"
       return res.status(200).json({ trigger: true, prompt: aiReply.replace(/["']/g, "").trim() });
     }
 
-    // 3. DIAGNOSTIC REPORT EVALUATION ACTION (TIER 1 / 2 / 3 RUBRIC)
+    // 3. READINESS TIER & DIAGNOSTIC DOSSIER EVALUATION
     if (action === 'report') {
       const systemPrompt = `You are an Executive Hiring Committee Chair evaluating a placement candidate.
 
@@ -100,31 +101,27 @@ Categorize the candidate into EXACTLY one of these 3 Readiness Tiers based on th
 
 - "Tier 1: Placement Ready"
   • Demonstrates structured, multi-dimensional business logic (explains what, how, and why).
-  • Uses precise domain terminology and frameworks naturally without fluff.
-  • Successfully defends or expands their reasoning when faced with follow-up challenges.
+  • Uses precise domain terminology naturally without fluff.
+  • Defends reasoning clearly when challenged.
 
 - "Tier 2: Developing"
-  • Has correct basic theoretical knowledge, but responses stay generic or high-level.
-  • Relies on informal diction or occasional filler phrases.
-  • Needs follow-up questions to uncover complete operational details.
+  • Correct basic theoretical knowledge, but responses stay high-level or generic.
+  • Needs prompting to uncover operational metrics.
 
 - "Tier 3: Needs Practice"
-  • Demonstrates conceptual misunderstandings, relies entirely on surface buzzwords, or skips questions.
-  • Spoken answers are extremely brief (under 10 seconds) or lack logical structure.
-  • Fails or struggles to address Socratic follow-up challenges.
+  • Conceptual misunderstandings, extreme brevity, or surface-level buzzwords without substance.
 
-YOUR TASK:
-Analyze the provided transcript array. Return ONLY a valid, raw JSON object (no markdown code wrappers) matching this exact schema:
+Return ONLY a valid, raw JSON object (no markdown code wrappers) with this exact schema:
 {
   "readinessTier": "Tier 1: Placement Ready | Tier 2: Developing | Tier 3: Needs Practice",
   "tierColor": "green | blue | red",
-  "overallSummary": "A 2-3 sentence executive evaluation explaining why they received this tier, highlighting analytical depth, trade-off reasoning, and communication clarity.",
+  "overallSummary": "A 2-3 sentence executive evaluation summarizing overall performance.",
   "evaluations": [
     {
       "questionIndex": 1,
       "strengths": "Specific business arguments or frameworks articulated well.",
       "gaps": "Missing operational logic, unbacked assertions, or missing metrics.",
-      "executiveRewrite": "An elevated 2-sentence C-suite reframing of their exact response."
+      "executiveRewrite": "An elevated 2-sentence C-suite reframing of their response."
     }
   ]
 }`;
@@ -144,14 +141,11 @@ Analyze the provided transcript array. Return ONLY a valid, raw JSON object (no 
 }
 
 async function callGemini(systemPrompt, userPrompt, apiKey) {
-  const targetUrl = '[suspicious link removed]';
+  const targetUrl = `[suspicious link removed]{apiKey}`;
 
   const res = await fetch(targetUrl, {
     method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'x-goog-api-key': apiKey
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{
         role: 'user',
@@ -165,7 +159,7 @@ async function callGemini(systemPrompt, userPrompt, apiKey) {
     throw new Error(data.error?.message || `Gemini API Error (${res.status})`);
   }
   
-  if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+  if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
     return data.candidates[0].content.parts[0].text.trim();
   }
   return "";
