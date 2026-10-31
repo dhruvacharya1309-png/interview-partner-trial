@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Executive Placement Simulator</title>
+  <title>Executive Placement Interview Simulator</title>
   <style>
     :root {
-      --bg-main: #f8fafc;
-      --card-bg: #ffffff;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --border-color: #e2e8f0;
+      --bg-main: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent-gold: #f59e0b;
+      --accent-purple: #a855f7;
       --danger: #ef4444;
-      --warning: #f59e0b;
       --success: #10b981;
     }
 
@@ -28,9 +29,9 @@
     body {
       background-color: var(--bg-main);
       color: var(--text-main);
-      line-height: 1.5;
-      padding: 24px;
-      max-width: 1000px;
+      line-height: 1.6;
+      padding: 32px 16px;
+      max-width: 1040px;
       margin: 0 auto;
     }
 
@@ -38,132 +39,154 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 20px;
-      border-bottom: 2px solid var(--border-color);
-      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 32px;
     }
 
     header h1 {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       font-weight: 800;
       letter-spacing: -0.5px;
-      color: #0f172a;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .badge-pill {
-      background: #e0e7ff;
-      color: #3730a3;
-      padding: 4px 12px;
-      border-radius: 12px;
+    .header-badge {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      padding: 6px 14px;
+      border-radius: 20px;
       font-size: 0.8rem;
-      font-weight: 600;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .card {
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-      margin-bottom: 24px;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      margin-bottom: 28px;
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 0.9rem;
-      margin-bottom: 6px;
-      color: #334155;
+      margin-bottom: 8px;
+      color: #cbd5e1;
     }
 
-    select, button, input {
+    select, button {
       width: 100%;
-      padding: 12px 16px;
-      border-radius: 8px;
+      padding: 14px 18px;
+      border-radius: 10px;
       font-size: 0.95rem;
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--card-border);
+      background-color: #0f172a;
+      color: #f8fafc;
+      outline: none;
+      transition: all 0.2s;
     }
 
-    select {
-      background-color: #fff;
+    select:focus {
+      border-color: var(--primary);
     }
 
     button.btn-primary {
-      background-color: var(--primary);
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: #ffffff;
       border: none;
       font-weight: 700;
       cursor: pointer;
-      transition: background 0.2s;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
 
-    button.btn-primary:hover {
-      background-color: var(--primary-hover);
+    button.btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+      transform: translateY(-1px);
     }
 
     button.btn-secondary {
-      background-color: #e2e8f0;
-      color: #334155;
-      border: none;
+      background-color: #334155;
+      color: #f8fafc;
+      border: 1px solid #475569;
       font-weight: 600;
       cursor: pointer;
+    }
+
+    button.btn-secondary:hover {
+      background-color: #475569;
     }
 
     button.btn-danger {
-      background-color: #fee2e2;
-      color: #991b1b;
-      border: 1px solid #fca5a5;
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.4);
       font-weight: 600;
       cursor: pointer;
     }
 
+    button.btn-danger:hover {
+      background-color: rgba(239, 68, 68, 0.25);
+    }
+
     button:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
+      transform: none !important;
     }
 
     .question-box {
-      background: #f1f5f9;
+      background: #0f172a;
       border-left: 4px solid var(--primary);
-      padding: 16px;
-      border-radius: 0 8px 8px 0;
-      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 0 12px 12px 0;
+      margin-bottom: 24px;
+      border: 1px solid var(--card-border);
+      border-left-width: 4px;
     }
 
     .curated-tag {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #f3e8ff;
-      color: #6b21a8;
-      border: 1px solid #d8b4fe;
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-weight: 600;
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      padding: 4px 12px;
+      border-radius: 14px;
+      font-weight: 700;
       font-size: 0.78rem;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
     .timer-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #fef3c7;
-      color: #92400e;
-      border: 1px solid #f59e0b;
-      padding: 4px 12px;
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      padding: 6px 14px;
       border-radius: 16px;
       font-weight: 700;
       font-size: 0.85rem;
     }
 
     .timer-badge.warning {
-      background: #fee2e2;
-      color: #991b1b;
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
       border-color: #ef4444;
       animation: pulse 1s infinite;
     }
@@ -172,7 +195,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      color: #dc2626;
+      color: #ef4444;
       font-weight: 700;
       font-size: 0.85rem;
     }
@@ -180,7 +203,7 @@
     .pulse-dot {
       width: 10px;
       height: 10px;
-      background-color: #dc2626;
+      background-color: #ef4444;
       border-radius: 50%;
       animation: pulse 1s infinite;
     }
@@ -191,65 +214,85 @@
       100% { opacity: 1; transform: scale(1); }
     }
 
+    /* HIGH VISIBILITY TRANSCRIPT BOX */
+    .transcript-container {
+      margin-bottom: 24px;
+    }
+
+    .transcript-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .transcript-status {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #60a5fa;
+    }
+
     .transcript-box {
       width: 100%;
-      min-height: 120px;
-      padding: 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      background: #fafafa;
-      font-size: 0.95rem;
-      margin-bottom: 16px;
-      overflow-y: auto;
+      min-height: 140px;
+      padding: 16px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: #0f172a;
+      color: #f1f5f9;
+      font-size: 1rem;
+      line-height: 1.6;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
+      white-space: pre-wrap;
     }
 
     .tier-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 16px;
+      padding: 8px 18px;
       border-radius: 20px;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 0.95rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .tier-badge.green {
-      background-color: #D1FAE5;
-      color: #065F46;
-      border: 1px solid #10B981;
+      background-color: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid #10b981;
     }
 
     .tier-badge.blue {
-      background-color: #DBEAFE;
-      color: #1E40AF;
-      border: 1px solid #3B82F6;
+      background-color: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid #3b82f6;
     }
 
     .tier-badge.red {
-      background-color: #FEE2E2;
-      color: #991B1B;
-      border: 1px solid #EF4444;
+      background-color: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border: 1px solid #ef4444;
     }
 
     .tab-bar {
       display: flex;
-      gap: 8px;
-      border-bottom: 1px solid var(--border-color);
-      margin-bottom: 20px;
+      gap: 12px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 24px;
     }
 
     .tab-btn {
       width: auto;
       background: none;
       border: none;
-      padding: 10px 16px;
-      font-weight: 600;
+      padding: 12px 20px;
+      font-weight: 700;
       color: var(--text-muted);
       cursor: pointer;
       border-bottom: 2px solid transparent;
+      border-radius: 0;
     }
 
     .tab-btn.active {
@@ -258,26 +301,26 @@
     }
 
     .eval-card {
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
-      background: #fff;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background: #0f172a;
     }
 
     .eval-card h4 {
-      color: #1e293b;
-      margin-bottom: 8px;
+      color: #f8fafc;
+      margin-bottom: 10px;
     }
 
     .rewrite-box {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      padding: 12px;
-      border-radius: 6px;
-      margin-top: 10px;
-      font-size: 0.9rem;
-      color: #166534;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 14px;
+      border-radius: 8px;
+      margin-top: 12px;
+      font-size: 0.92rem;
+      color: #a7f3d0;
     }
 
     .hidden {
@@ -288,13 +331,13 @@
 <body>
 
   <header>
-    <h1>Executive Placement Simulator</h1>
-    <span class="badge-pill">Groq Whisper & Voice Verification Active</span>
+    <h1>💼 Executive Placement Simulator</h1>
+    <span class="header-badge">Groq Whisper & Voice Verification Active</span>
   </header>
 
-  <!-- SETUP SCREEN -->
+  <!-- SETUP SCREEN WITH VOICE VERIFICATION -->
   <div id="setupScreen" class="card">
-    <h2 style="margin-bottom: 16px;">Pre-Flight Setup & Voice Verification</h2>
+    <h2 style="margin-bottom: 20px; color: #ffffff;">Candidate Pre-Flight Configuration</h2>
     
     <div class="form-group">
       <label for="domainSelect">Select Domain / Specialization</label>
@@ -306,24 +349,24 @@
     </div>
 
     <div class="form-group">
-      <label for="levelSelect">Target Level</label>
+      <label for="levelSelect">Target Candidate Experience Level</label>
       <select id="levelSelect">
         <option value="fresher">Freshers</option>
         <option value="experienced">Experienced (2+ years)</option>
       </select>
     </div>
 
-    <!-- VOICE TESTER MODULE -->
-    <div class="form-group" style="background: #f1f5f9; padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
-      <label for="voiceSelect" style="color: #0f172a;">🔊 Interviewer Voice Selector & Preview</label>
-      <select id="voiceSelect" style="margin-bottom: 12px;">
-        <option value="default">System Executive Voice (Default)</option>
+    <!-- MANDATORY VOICE VERIFICATION MODULE WITH INDIAN VOICE SUPPORT -->
+    <div class="form-group" style="background: #0f172a; padding: 20px; border-radius: 12px; border: 1px solid var(--card-border);">
+      <label for="voiceSelect" style="color: #60a5fa; margin-bottom: 10px;">🔊 Interviewer Voice Selector (Indian & Global Executive Voices)</label>
+      <select id="voiceSelect" style="margin-bottom: 14px;">
+        <option value="default">Loading system voices...</option>
       </select>
       
-      <div style="display: flex; gap: 12px; align-items: center;">
-        <button type="button" class="btn-secondary" style="width: 50%;" onclick="testSelectedVoice()">🎧 Test Voice Sample</button>
-        <label style="display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; width: 50%; font-size: 0.85rem;">
-          <input type="checkbox" id="voiceVerifiedCheck" style="width: 18px; height: 18px;" onchange="toggleStartButton()" />
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: center;">
+        <button type="button" class="btn-secondary" onclick="testSelectedVoice()">🎧 Test Voice Sample</button>
+        <label style="display: flex; align-items: center; gap: 10px; margin: 0; cursor: pointer; color: #cbd5e1; font-weight: 600; font-size: 0.88rem;">
+          <input type="checkbox" id="voiceVerifiedCheck" style="width: 20px; height: 20px; accent-color: var(--primary);" onchange="toggleStartButton()" />
           I verify I understand this voice clearly
         </label>
       </div>
@@ -334,11 +377,11 @@
 
   <!-- INTERVIEW ROOM SCREEN -->
   <div id="interviewScreen" class="card hidden">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-      <span id="questionCounter" style="font-weight: 700; color: #64748b; font-size: 0.85rem;">QUESTION 1 OF 5</span>
-      <div style="display: flex; align-items: center; gap: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <span id="questionCounter" style="font-weight: 800; color: #94a3b8; font-size: 0.85rem; letter-spacing: 0.5px;">QUESTION 1 OF 5</span>
+      <div style="display: flex; align-items: center; gap: 14px;">
         <span id="timerContainer" class="timer-badge hidden">🧠 Thinking Window: <span id="timerCountdown">10</span>s</span>
-        <span id="recordingStatus" class="recording-pulse hidden"><span class="pulse-dot"></span> 🎙️ Live Listening Active</span>
+        <span id="recordingStatus" class="recording-pulse hidden"><span class="pulse-dot"></span> 🎙️ Listening Active</span>
       </div>
     </div>
 
@@ -346,14 +389,20 @@
       <div id="curatedTagContainer" class="curated-tag">
         🏛️ <span id="curatedTagText">Curated Question</span>
       </div>
-      <h3 id="questionPromptText">Loading question prompt...</h3>
+      <h3 id="questionPromptText" style="font-size: 1.15rem; color: #f8fafc; font-weight: 700;">Loading question prompt...</h3>
     </div>
 
-    <label>Live Spoken Transcript (Captured via Groq Whisper):</label>
-    <div id="transcriptBox" class="transcript-box">Preparing interviewer...</div>
+    <!-- HIGH-VISIBILITY TRANSCRIPT DISPLAY -->
+    <div class="transcript-container">
+      <div class="transcript-header">
+        <label style="margin: 0;">Live Spoken Transcript (Groq Whisper):</label>
+        <span id="transcriptStatusText" class="transcript-status">● Waiting for interviewer...</span>
+      </div>
+      <div id="transcriptBox" class="transcript-box">Interviewer speaking question...</div>
+    </div>
 
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px;">
-      <button id="submitBtn" class="btn-primary" onclick="finishAnswer()">Finish & Submit Answer</button>
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 14px;">
+      <button id="submitBtn" class="btn-primary" onclick="finishAnswer()">Finish & Submit Spoken Answer</button>
       <button id="idkBtn" class="btn-danger" onclick="handleIdkSubmit()">I Don't Know / Pass</button>
     </div>
   </div>
@@ -372,14 +421,14 @@
     </div>
 
     <div id="committeeTab" class="hidden">
-      <div style="background: #fafafa; padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
-        <h4 style="margin-bottom: 8px;">Executive Audit Trail</h4>
-        <p style="font-size: 0.9rem; color: #475569;" id="committeeAuditText">Analyzing transcript history, IDK patterns, and domain adaptability...</p>
-        <div id="idkSummaryBox" style="margin-top: 12px; font-size: 0.85rem; color: #92400e; background: #fef3c7; padding: 10px; border-radius: 6px;" class="hidden"></div>
+      <div style="background: #0f172a; padding: 20px; border-radius: 12px; border: 1px solid var(--card-border);">
+        <h4 style="margin-bottom: 10px; color: #ffffff;">Executive Audit Trail</h4>
+        <p style="font-size: 0.92rem; color: #cbd5e1;" id="committeeAuditText">Analyzing transcript history, IDK patterns, and domain adaptability...</p>
+        <div id="idkSummaryBox" style="margin-top: 14px; font-size: 0.88rem; color: #fbbf24; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); padding: 12px; border-radius: 8px;" class="hidden"></div>
       </div>
     </div>
 
-    <button class="btn-primary" style="margin-top: 24px;" onclick="location.reload()">Start New Session</button>
+    <button class="btn-primary" style="margin-top: 28px;" onclick="location.reload()">Start New Session</button>
   </div>
 
   <script>
@@ -435,7 +484,7 @@
       }
     };
 
-    // STATE MANAGEMENT
+    // STATE VARIABLES
     let currentDomain = "marketing";
     let currentLevel = "fresher";
     let questions = [];
@@ -449,19 +498,40 @@
     let timeRemaining = 0;
     let consecutiveIdkCount = 0;
 
-    // VOICE TESTER & SELECTOR
+    // POPULATE INDIAN & GLOBAL VOICES IN SELECTOR
     function populateVoices() {
       if ('speechSynthesis' in window) {
         const voiceSelect = document.getElementById('voiceSelect');
         const voices = window.speechSynthesis.getVoices();
+        
         if (voices.length > 0) {
-          voiceSelect.innerHTML = '<option value="default">System Executive Voice (Default)</option>';
-          voices.forEach((v, idx) => {
+          voiceSelect.innerHTML = '';
+          
+          // Filter Indian English / Hindi voices first
+          const indianVoices = voices.filter(v => v.lang.includes('IN') || v.name.toLowerCase().includes('india') || v.name.toLowerCase().includes('hindi'));
+          const otherVoices = voices.filter(v => !v.lang.includes('IN') && !v.name.toLowerCase().includes('india') && !v.name.toLowerCase().includes('hindi'));
+
+          if (indianVoices.length > 0) {
+            const indianGroup = document.createElement('optgroup');
+            indianGroup.label = "🇮🇳 Indian English / Regional Executive Voices";
+            indianVoices.forEach((v) => {
+              const opt = document.createElement('option');
+              opt.value = voices.indexOf(v);
+              opt.innerText = `${v.name} (${v.lang})`;
+              indianGroup.appendChild(opt);
+            });
+            voiceSelect.appendChild(indianGroup);
+          }
+
+          const globalGroup = document.createElement('optgroup');
+          globalGroup.label = "🌐 Global Executive Voices";
+          otherVoices.forEach((v) => {
             const opt = document.createElement('option');
-            opt.value = idx;
+            opt.value = voices.indexOf(v);
             opt.innerText = `${v.name} (${v.lang})`;
-            voiceSelect.appendChild(opt);
+            globalGroup.appendChild(opt);
           });
+          voiceSelect.appendChild(globalGroup);
         }
       }
     }
@@ -470,16 +540,17 @@
       window.speechSynthesis.onvoiceschanged = populateVoices;
     }
 
+    // TEST VOICE SAMPLE
     function testSelectedVoice() {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        const text = "Hello! I am your executive interviewer today. How are you feeling about our session?";
+        const text = "Hello! I am your executive interviewer today. How are you feeling about our placement session?";
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 0.95;
 
         const voiceSelect = document.getElementById('voiceSelect');
         const voices = window.speechSynthesis.getVoices();
-        if (voiceSelect && voiceSelect.value !== "default" && voices[voiceSelect.value]) {
+        if (voiceSelect && voices[voiceSelect.value]) {
           utterance.voice = voices[voiceSelect.value];
         }
 
@@ -509,7 +580,7 @@
       loadQuestion(0);
     }
 
-    // LOAD QUESTION, HANDLE THINKING WINDOW & AUTO-START RECORDING
+    // LOAD QUESTION & AUTO-TRIGGER RECORDING
     function loadQuestion(index) {
       stopThinkingTimer();
       stopRecordingSilently();
@@ -517,14 +588,15 @@
       const q = questions[index];
       document.getElementById('questionCounter').innerText = `QUESTION ${index + 1} OF ${questions.length}`;
       document.getElementById('questionPromptText').innerText = q.text;
-      document.getElementById('transcriptBox').innerText = "Interviewer speaking question...";
+      document.getElementById('transcriptBox').innerText = "Interviewer speaking question prompt aloud...";
+      document.getElementById('transcriptStatusText').innerText = "● Interviewer Speaking...";
       document.getElementById('recordingStatus').classList.add('hidden');
       currentTranscript = "";
 
       // Curated Tag
       document.getElementById('curatedTagText').innerText = q.craftedBy || "Curated Question";
 
-      // Speak Question -> Once finished, trigger Thinking Window or Auto-Start Recording
+      // Speak Question -> Trigger Thinking Window or Auto-Record
       speakText(q.text, () => {
         if (q.timer && q.timer > 0) {
           startThinkingWindow(q.timer);
@@ -542,6 +614,7 @@
       timerBadge.classList.remove('hidden', 'warning');
       countdownEl.innerText = timeRemaining;
       document.getElementById('transcriptBox').innerText = "🧠 Thinking window active... prepare your answer.";
+      document.getElementById('transcriptStatusText').innerText = "● Thinking Window Active...";
 
       thinkingTimerInterval = setInterval(() => {
         timeRemaining--;
@@ -574,7 +647,7 @@
 
         const voiceSelect = document.getElementById('voiceSelect');
         const voices = window.speechSynthesis.getVoices();
-        if (voiceSelect && voiceSelect.value !== "default" && voices[voiceSelect.value]) {
+        if (voiceSelect && voices[voiceSelect.value]) {
           utterance.voice = voices[voiceSelect.value];
         }
 
@@ -588,7 +661,7 @@
       }
     }
 
-    // AUTO-RECORDING ENGINE (NO START SPEAKING BUTTON NEEDED)
+    // AUTO-RECORDING ENGINE
     async function startAutoRecording() {
       stopThinkingTimer();
       if (isRecording) return;
@@ -615,10 +688,12 @@
         mediaRecorder.start(250);
         isRecording = true;
         document.getElementById('recordingStatus').classList.remove('hidden');
-        document.getElementById('transcriptBox').innerText = "🎙️ Live listening active... speak your answer naturally.";
+        document.getElementById('transcriptStatusText').innerText = "🎙️ Live Listening Active...";
+        document.getElementById('transcriptBox').innerText = "Speak your answer into the microphone now...";
       } catch (err) {
         console.error("Microphone Access Error:", err);
-        document.getElementById('transcriptBox').innerText = "⚠️ Microphone access error. Please grant permissions.";
+        document.getElementById('transcriptBox').innerText = "⚠️ Microphone permission denied or unavailable.";
+        document.getElementById('transcriptStatusText').innerText = "❌ Microphone Error";
       }
     }
 
@@ -637,20 +712,21 @@
       finishAnswer();
     }
 
-    // FINISH ANSWER & TRANSCRIPTION WORKFLOW
+    // FINISH ANSWER & GROQ TRANSCRIPTION WORKFLOW
     async function finishAnswer() {
       stopThinkingTimer();
       document.getElementById('recordingStatus').classList.add('hidden');
 
       if (isRecording && mediaRecorder && mediaRecorder.state !== "inactive") {
-        document.getElementById('transcriptBox').innerText = "⚡ Processing audio with Groq Whisper...";
+        document.getElementById('transcriptStatusText').innerText = "⚡ Transcribing Audio...";
+        document.getElementById('transcriptBox').innerText = "Transcribing your spoken response with Groq Whisper...";
         
         mediaRecorder.onstop = async () => {
           isRecording = false;
           const mimeType = mediaRecorder.mimeType || 'audio/webm';
           const audioBlob = new Blob(audioChunks, { type: mimeType });
           
-          if (audioBlob.size > 0 && !currentTranscript) {
+          if (audioBlob.size > 0 && (!currentTranscript || currentTranscript.includes("Speak your answer"))) {
             currentTranscript = await transcribeAudioWithGroq(audioBlob, mimeType);
           }
           proceedWithEvaluation();
@@ -683,7 +759,7 @@
             resolve(data.transcript || "");
           } catch (err) {
             console.error("Transcription Error:", err);
-            resolve("Spoken response recorded.");
+            resolve("Spoken response captured.");
           }
         };
       });
@@ -693,6 +769,7 @@
       const currentQ = questions[currentQuestionIdx];
       const spokenText = currentTranscript || "Candidate provided a brief verbal statement.";
       document.getElementById('transcriptBox').innerText = spokenText;
+      document.getElementById('transcriptStatusText').innerText = "✅ Transcript Captured";
 
       const isIdk = spokenText.toLowerCase().includes("don't know") || spokenText.toLowerCase().includes("pass");
       if (!isIdk) {
@@ -745,7 +822,7 @@
       }
     }
 
-    // GENERATE REPORT & RENDER READINESS TIER BADGES
+    // GENERATE REPORT & RENDER DIAGNOSTIC TIER DOSSIER
     async function generateFinalReport() {
       stopThinkingTimer();
       stopRecordingSilently();
@@ -784,17 +861,17 @@
       );
 
       const headerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
           <div>
-            <h2 style="margin: 0; font-size: 1.5rem; color: #111827;">Executive Assessment Dossier</h2>
-            <p style="margin: 4px 0 0 0; color: #6B7280; font-size: 0.9rem;">Hiring Committee Evaluation</p>
+            <h2 style="margin: 0; font-size: 1.6rem; color: #ffffff;">Executive Assessment Dossier</h2>
+            <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 0.9rem;">Placement Hiring Committee Evaluation</p>
           </div>
           <div class="tier-badge ${color}">
             <span>●</span> ${reportData.readinessTier || 'Tier 2: Developing'}
           </div>
         </div>
-        <div style="background: #F9FAFB; padding: 16px; border-radius: 8px; border-left: 4px solid ${color === 'green' ? '#10B981' : color === 'blue' ? '#3B82F6' : '#EF4444'}; margin-bottom: 24px;">
-          <strong>Executive Summary:</strong> ${reportData.overallSummary || 'Evaluation completed successfully.'}
+        <div style="background: #0f172a; padding: 20px; border-radius: 12px; border-left: 4px solid ${color === 'green' ? '#10b981' : color === 'blue' ? '#3b82f6' : '#ef4444'}; margin-bottom: 28px; border: 1px solid var(--card-border); border-left-width: 4px;">
+          <strong style="color: #f8fafc;">Executive Summary:</strong> <span style="color: #cbd5e1;">${reportData.overallSummary || 'Evaluation completed successfully.'}</span>
         </div>
       `;
 
@@ -808,7 +885,7 @@
       if (reportData.idkAnalysis) {
         const idkBox = document.getElementById('idkSummaryBox');
         idkBox.classList.remove('hidden');
-        idkBox.innerText = "💡 Transparency & Domain Gap Audit: " + reportData.idkAnalysis;
+        idkBox.innerText = "💡 Domain Gap & Transparency Audit: " + reportData.idkAnalysis;
       }
     }
 
@@ -821,8 +898,8 @@
         card.className = "eval-card";
         card.innerHTML = `
           <h4>Question ${idx + 1} Analysis</h4>
-          <p style="font-size: 0.9rem; color: #15803d; margin-bottom: 4px;"><strong>Key Strengths:</strong> ${item.strengths || 'Articulated core arguments clearly.'}</p>
-          <p style="font-size: 0.9rem; color: #b91c1c; margin-bottom: 8px;"><strong>Identified Gaps:</strong> ${item.gaps || 'Could incorporate deeper operational metrics.'}</p>
+          <p style="font-size: 0.92rem; color: #34d399; margin-bottom: 6px;"><strong>Key Strengths:</strong> ${item.strengths || 'Articulated core arguments clearly.'}</p>
+          <p style="font-size: 0.92rem; color: #fca5a5; margin-bottom: 10px;"><strong>Identified Gaps:</strong> ${item.gaps || 'Could incorporate deeper operational metrics.'}</p>
           <div class="rewrite-box">
             <strong>C-Suite Executive Re-frame:</strong><br/>
             "${item.executiveRewrite || 'Re-frame answer using structured revenue/metric drivers.'}"
