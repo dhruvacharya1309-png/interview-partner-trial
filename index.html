@@ -90,6 +90,21 @@
       font-family: 'Inter', sans-serif;
     }
 
+    .spontaneous-tag-inline {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #0369A1;
+      background: #E0F2FE;
+      border: 1px solid #BAE6FD;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-family: 'Inter', sans-serif;
+    }
+
     label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
     select {
       width: 100%;
@@ -149,7 +164,7 @@
       margin-bottom: 18px;
     }
 
-    /* OSCILLOSCOPE WAVEFORM VISUALIZER CONTAINER */
+    /* REAL-TIME OSCILLOSCOPE WAVEFORM VISUALIZER CONTAINER */
     .waveform-container {
       background: #0F172A;
       border: 1px solid #1E293B;
@@ -178,14 +193,47 @@
       display: block;
     }
 
+    /* ENHANCED CANDIDATE SPEECH TELEMETRY PANEL */
+    .telemetry-dashboard {
+      background: #F1F5F9;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .telemetry-pill {
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .telemetry-val {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary-navy);
+      line-height: 1.2;
+    }
+    .telemetry-lbl {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 3px;
+    }
+
     .transcript-box {
       background-color: #F8FAFC;
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border-strong);
       border-radius: 10px;
       padding: 16px;
-      min-height: 90px;
+      min-height: 95px;
       font-size: 0.95rem;
-      line-height: 1.5;
+      line-height: 1.6;
       color: var(--text-main);
       margin-bottom: 18px;
       white-space: pre-wrap;
@@ -260,7 +308,7 @@
 
     @media print {
       body { background: #FFF; padding: 0; }
-      .btn, .tab-switch, #btn-print-dossier, .waveform-container { display: none !important; }
+      .btn, .tab-switch, #btn-print-dossier, .waveform-container, .telemetry-dashboard { display: none !important; }
       .card { border: none; box-shadow: none; padding: 0; }
       #view-candidate-blueprint, #view-evaluator-briefing { display: block !important; }
     }
@@ -367,7 +415,27 @@
       <canvas id="interviewWaveformCanvas" class="waveform-canvas" width="600" height="54"></canvas>
     </div>
 
-    <label>Candidate Speech Telemetry (Live Transcription):</label>
+    <!-- ENHANCED DYNAMIC CANDIDATE SPEECH TELEMETRY PANEL -->
+    <label>Candidate Speech Telemetry (Live Tracking):</label>
+    <div class="telemetry-dashboard">
+      <div class="telemetry-pill">
+        <div class="telemetry-val" id="telemetry-time">00:00s</div>
+        <div class="telemetry-lbl">Elapsed Time</div>
+      </div>
+      <div class="telemetry-pill">
+        <div class="telemetry-val" id="telemetry-words">0</div>
+        <div class="telemetry-lbl">Spoken Words</div>
+      </div>
+      <div class="telemetry-pill">
+        <div class="telemetry-val" id="telemetry-wpm">0</div>
+        <div class="telemetry-lbl">Live Cadence</div>
+      </div>
+      <div class="telemetry-pill">
+        <div class="telemetry-val" id="telemetry-fillers" style="color: var(--warning-amber);">0</div>
+        <div class="telemetry-lbl">Verbal Fillers</div>
+      </div>
+    </div>
+
     <div id="live-transcript" class="transcript-box">
       Microphone standing by...
     </div>
@@ -385,7 +453,7 @@
           Evaluation Grounded in Spoken Audio & Real Verbatim Playback
         </p>
       </div>
-      <button class="btn btn-secondary" id="btn-print-dossier" style="width: auto; height: 38px; padding: 0 14px; font-size: 0.82rem; margin: 0;" onclick="window.print();">
+      <button class="btn btn-secondary" id="btn-print-dossier" style="width: auto; height: 36px; padding: 0 14px; font-size: 0.82rem; margin: 0;" onclick="window.print();">
         🖨 Print / Export PDF
       </button>
     </div>
@@ -850,7 +918,7 @@ const QUESTION_BANK = [
   }
 ];
 
-// SYSTEM STATE ENGINE
+// STATE ENGINE
 let sessionQuestions = [];
 let currentQIndex = 0;
 let answerStartTime = null;
@@ -859,8 +927,11 @@ let currentQuestionTranscript = "";
 let sessionResults = [];
 let selectedVoice = null;
 let countdownInterval = null;
+let telemetryTimerInterval = null;
+let ttsWatchdogTimeout = null;
+let isSpontaneousActive = false;
 
-// AUDIO & RECORDING MEDIA STREAM
+// PHYSICAL MEDIA STREAM & RECORDER
 let activeStream = null;
 let mediaRecorder = null;
 let audioChunks = [];
@@ -868,7 +939,28 @@ let audioContext = null;
 let analyserNode = null;
 let waveformAnimId = null;
 let speechRecognizer = null;
-let ttsWatchdogTimeout = null;
+
+// HUMAN CONVERSATIONAL PREAMBLES FOR EXECUTIVE SPEECH
+const HUMAN_PREAMBLES = [
+  "Thank you for that overview. Now, let's transition to our next core scenario...",
+  "Good point. Building on that, I'd like to explore how you approach strategic trade-offs...",
+  "That makes sense. Next, let's examine a scenario that tests operational decision-making under pressure...",
+  "Fair enough. Let's look at another critical area that hiring panels scrutinize closely...",
+  "Appreciate those thoughts. Moving forward, let me present this next situation for your evaluation..."
+];
+
+async function getOrInitMicrophone() {
+  if (!activeStream) {
+    activeStream = await navigator.mediaDevices.getUserMedia({ 
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
+    });
+  }
+  return activeStream;
+}
 
 // REAL-TIME OSCILLOSCOPE WAVEFORM RENDERER
 function startOscilloscope(stream, canvasId, statusId) {
@@ -932,20 +1024,46 @@ function stopOscilloscope() {
   }
 }
 
-async function getOrInitMicrophone() {
-  if (!activeStream) {
-    activeStream = await navigator.mediaDevices.getUserMedia({ 
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true
-      }
-    });
+// HUMANIZED EXECUTIVE SPEECH SYNTHESIS ENGINE
+function speakText(text, onEndCallback) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    if (ttsWatchdogTimeout) clearTimeout(ttsWatchdogTimeout);
+
+    // Bound to global window memory to prevent Chrome garbage-collection drops mid-speech
+    window.activeUtterance = new SpeechSynthesisUtterance(text);
+    window.activeUtterance.rate = 0.90; // Natural executive cadence
+    window.activeUtterance.pitch = 0.96; // Human pitch
+
+    const voiceName = document.getElementById("select-voice").value;
+    const voices = window.speechSynthesis.getVoices();
+    if (voiceName) {
+      const chosen = voices.find(v => v.name === voiceName);
+      if (chosen) window.activeUtterance.voice = chosen;
+    }
+
+    let callbackFired = false;
+    const safeCallback = () => {
+      if (callbackFired) return;
+      callbackFired = true;
+      if (ttsWatchdogTimeout) clearTimeout(ttsWatchdogTimeout);
+      if (onEndCallback) onEndCallback();
+    };
+
+    window.activeUtterance.onend = safeCallback;
+    window.activeUtterance.onerror = safeCallback;
+
+    // Hard Safety Watchdog prevents engine lockups after Q2
+    const estimatedDurationMs = Math.max(3000, (text.length * 85) + 2500);
+    ttsWatchdogTimeout = setTimeout(safeCallback, estimatedDurationMs);
+
+    window.speechSynthesis.speak(window.activeUtterance);
+  } else {
+    if (onEndCallback) onEndCallback();
   }
-  return activeStream;
 }
 
-// SETUP VOICE ENGINE
+// SETUP SCREEN INITIALIZATION
 function initVoices() {
   const voiceSelect = document.getElementById("select-voice");
   const voices = window.speechSynthesis.getVoices();
@@ -954,7 +1072,7 @@ function initVoices() {
   if (voices.length === 0) {
     const opt = document.createElement("option");
     opt.value = "";
-    opt.textContent = "Standard Voice Engine";
+    opt.textContent = "Standard Executive Voice";
     voiceSelect.appendChild(opt);
     return;
   }
@@ -980,46 +1098,8 @@ if ('speechSynthesis' in window) {
 }
 initVoices();
 
-// HUMANIZED EXECUTIVE TTS ENGINE
-function speakText(text, onEndCallback) {
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    if (ttsWatchdogTimeout) clearTimeout(ttsWatchdogTimeout);
-
-    // Global memory binding prevents Chrome garbage collection drops
-    window.activeUtterance = new SpeechSynthesisUtterance(text);
-    window.activeUtterance.rate = 0.92; // Executive cadence
-    window.activeUtterance.pitch = 0.98;
-
-    const voiceName = document.getElementById("select-voice").value;
-    const voices = window.speechSynthesis.getVoices();
-    if (voiceName) {
-      const chosen = voices.find(v => v.name === voiceName);
-      if (chosen) window.activeUtterance.voice = chosen;
-    }
-
-    let fired = false;
-    const safeCallback = () => {
-      if (fired) return;
-      fired = true;
-      if (ttsWatchdogTimeout) clearTimeout(ttsWatchdogTimeout);
-      if (onEndCallback) onEndCallback();
-    };
-
-    window.activeUtterance.onend = safeCallback;
-    window.activeUtterance.onerror = safeCallback;
-
-    const maxMs = Math.max(3000, (text.length * 85) + 2500);
-    ttsWatchdogTimeout = setTimeout(safeCallback, maxMs);
-
-    window.speechSynthesis.speak(window.activeUtterance);
-  } else {
-    if (onEndCallback) onEndCallback();
-  }
-}
-
 document.getElementById("btn-test-voice").addEventListener("click", () => {
-  speakText("Good morning! I am your senior executive interviewer today. Let us conduct your placement assessment.", null);
+  speakText("Good morning! I am your senior executive interviewer today. I will be guiding your placement assessment.", null);
 });
 
 // PROCEED TO PRE-FLIGHT CHECK
@@ -1104,11 +1184,15 @@ document.getElementById("btn-mic-ok-proceed").addEventListener("click", () => {
 });
 
 function loadCurrentQuestion() {
+  stopTelemetryTimer();
+  resetTelemetryDisplay();
+
   const qData = sessionQuestions[currentQIndex];
   currentQuestionTranscript = "";
   answerStartTime = null;
   questionActiveTimestamp = null;
   audioChunks = [];
+  isSpontaneousActive = false;
   if (countdownInterval) clearInterval(countdownInterval);
 
   document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length}`;
@@ -1124,7 +1208,14 @@ function loadCurrentQuestion() {
   transcriptBox.innerHTML = `<span style="color: var(--text-muted); font-style: italic;">Awaiting question delivery...</span>`;
   setMicStatus("Interviewer Speaking...", false);
 
-  speakText(qData.text, () => {
+  // Human conversational preamble for Question 2 onwards
+  let spokenPayload = qData.text;
+  if (currentQIndex > 0) {
+    const preamble = HUMAN_PREAMBLES[(currentQIndex - 1) % HUMAN_PREAMBLES.length];
+    spokenPayload = `${preamble} ${qData.text}`;
+  }
+
+  speakText(spokenPayload, () => {
     questionActiveTimestamp = Date.now();
     setTimeout(() => {
       if (qData.thinkingTimeSec > 0) {
@@ -1149,6 +1240,51 @@ function loadCurrentQuestion() {
   });
 }
 
+// REAL-TIME CANDIDATE SPEECH TELEMETRY ENGINE
+function startTelemetryTimer() {
+  stopTelemetryTimer();
+  const timeEl = document.getElementById("telemetry-time");
+  const wordsEl = document.getElementById("telemetry-words");
+  const wpmEl = document.getElementById("telemetry-wpm");
+  const fillersEl = document.getElementById("telemetry-fillers");
+
+  telemetryTimerInterval = setInterval(() => {
+    if (!answerStartTime) return;
+    const elapsedSec = Math.max(1, Math.floor((Date.now() - answerStartTime) / 1000));
+    
+    // Format mm:ss
+    const mins = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
+    const secs = String(elapsedSec % 60).padStart(2, '0');
+    timeEl.textContent = `${mins}:${secs}s`;
+
+    // Word count & WPM
+    const words = currentQuestionTranscript.split(/\s+/).filter(Boolean).length;
+    wordsEl.textContent = words;
+
+    const wpm = Math.round((words / elapsedSec) * 60);
+    wpmEl.textContent = wpm;
+
+    // Verbal Fillers
+    const fillerRegex = /\b(um|uh|basically|you know|actually|like)\b/gi;
+    const fillers = (currentQuestionTranscript.match(fillerRegex) || []).length;
+    fillersEl.textContent = fillers;
+  }, 300);
+}
+
+function stopTelemetryTimer() {
+  if (telemetryTimerInterval) {
+    clearInterval(telemetryTimerInterval);
+    telemetryTimerInterval = null;
+  }
+}
+
+function resetTelemetryDisplay() {
+  document.getElementById("telemetry-time").textContent = "00:00s";
+  document.getElementById("telemetry-words").textContent = "0";
+  document.getElementById("telemetry-wpm").textContent = "0";
+  document.getElementById("telemetry-fillers").textContent = "0";
+}
+
 // LIVE STREAMING & AUDIO RECORDING
 async function startVoiceRecording() {
   const stream = await getOrInitMicrophone();
@@ -1168,9 +1304,10 @@ async function startVoiceRecording() {
   }
 
   answerStartTime = Date.now();
+  startTelemetryTimer();
   setMicStatus("Recording & Transcribing", true);
   document.getElementById("live-transcript").innerHTML = `
-    <span style="color:var(--text-muted); font-style:italic;">Listening... speak naturally.</span>
+    <span style="color:var(--text-muted); font-style:italic;">Listening... speak naturally into your microphone.</span>
   `;
 
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1212,6 +1349,7 @@ async function startVoiceRecording() {
 
 function stopVoiceRecording() {
   return new Promise((resolve) => {
+    stopTelemetryTimer();
     stopOscilloscope();
     if (speechRecognizer) {
       try { speechRecognizer.stop(); } catch(e){}
@@ -1237,7 +1375,7 @@ function setMicStatus(label, isLive) {
   else dot.classList.remove("mic-live");
 }
 
-// SUBMIT ANSWER WITH ANTI-GAMING & SPONTANEOUS FOLLOW-UP AI
+// SUBMIT ANSWER WITH ANTI-GAMING & SPONTANEOUS FOLLOW-UP INTERACTION
 document.getElementById("btn-finish-answer").addEventListener("click", async () => {
   const durationSec = answerStartTime ? ((Date.now() - answerStartTime) / 1000).toFixed(1) : 0;
   const text = currentQuestionTranscript.trim();
@@ -1256,54 +1394,31 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
   const audioBlob = await stopVoiceRecording();
   if (countdownInterval) clearInterval(countdownInterval);
 
-  // OPTIONAL VERCEL GROQ & SPONTANEOUS GEMINI AI HOOKUP
-  let finalTranscript = text;
-  if (audioBlob) {
-    try {
-      const reader = new FileReader();
-      reader.readAsDataURL(audioBlob);
-      reader.onloadend = async () => {
-        const base64Audio = reader.result;
-        
-        // 1. Refine Transcript with Groq Whisper
-        const transcribeRes = await fetch('/api/interview', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'transcribe', audioBase64: base64Audio, mimeType: audioBlob.type })
-        });
-        const transcribeData = await transcribeRes.json();
-        if (transcribeData.transcript) finalTranscript = transcribeData.transcript;
+  // SPONTANEOUS FOLLOW-UP CHECK: If answer is brief (< 20 words) and spontaneous follow-up hasn't triggered yet
+  const wordCount = text.split(/\s+/).filter(Boolean).length;
+  if (!isSpontaneousActive && wordCount > 0 && wordCount < 20) {
+    isSpontaneousActive = true;
+    
+    // Spontaneous Follow-Up Interjection
+    const currentQ = sessionQuestions[currentQIndex];
+    const followUpQuestionText = `That's a good start, but walk me through the specific metrics or quantitative trade-offs you would monitor to prove execution success on this.`;
+    
+    const questionBox = document.getElementById("spoken-question-text");
+    const spontaneousTag = `<span class="spontaneous-tag-inline">💬 Spontaneous Follow-Up Probe</span>`;
+    questionBox.innerHTML = `${followUpQuestionText} ${spontaneousTag}`;
 
-        // 2. Check Spontaneous Follow-up Challenge
-        const currentQ = sessionQuestions[currentQIndex];
-        const followupRes = await fetch('/api/interview', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'followup',
-            questionText: currentQ.text,
-            idealAnswer: currentQ.idealModelAnswer,
-            transcript: finalTranscript
-          })
-        });
-        const followupData = await followupRes.json();
+    const flowStatus = document.getElementById("flow-status-text");
+    flowStatus.innerHTML = `<strong>Interviewer Follow-Up:</strong> Asking spontaneous Socratic probe...`;
+    setMicStatus("Interviewer Speaking...", false);
 
-        if (followupData.trigger && followupData.prompt) {
-          speakText(followupData.prompt, () => {
-            startVoiceRecording();
-          });
-          return;
-        }
-
-        recordAnswer(finalTranscript, audioBlob, false, "", false, durationSec);
-      };
-      return;
-    } catch (e) {
-      console.warn("Vercel AI Endpoint unreachable, using local pipeline:", e);
-    }
+    speakText(`That's a good start. But walk me through the specific metrics or quantitative trade-offs you would monitor to prove execution success on this.`, () => {
+      flowStatus.innerHTML = `<strong>Microphone Live:</strong> Answer the follow-up probe now.`;
+      startVoiceRecording();
+    });
+    return;
   }
 
-  recordAnswer(finalTranscript, audioBlob, false, "", false, durationSec);
+  recordAnswer(text, audioBlob, false, "", false, durationSec);
 });
 
 // PASS QUESTION
