@@ -1,4 +1,4 @@
-// api/interview.js - Executive Interviewer Backend with Groq Whisper & Socratic Engine
+// api/interview.js - Executive AI Engine with Groq Whisper & Socratic Feedback
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
   const GEMINI_KEY = cleanKey(process.env.GEMINI_API_KEY || process.env.GEMINI_KEY);
 
   try {
-    // 1. GROQ WHISPER HIGH-SPEED TRANSCRIPTION
+    // 1. GROQ WHISPER SUB-500MS AUDIO TRANSCRIPTION
     if (action === 'transcribe') {
       const GROQ_KEY = cleanKey(process.env.GROQ_API_KEY);
       if (!GROQ_KEY) {
@@ -38,7 +38,6 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'No audio data payload provided.' });
       }
 
-      // Convert Base64 string into audio binary buffer
       const rawBase64 = audioBase64.includes(',') ? audioBase64.split(',')[1] : audioBase64;
       const audioBuffer = Buffer.from(rawBase64, 'base64');
       const blob = new Blob([audioBuffer], { type: mimeType || 'audio/webm' });
@@ -68,7 +67,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'GEMINI_API_KEY is missing in Vercel Environment Variables.' });
     }
 
-    // 2. HUMAN CONVERSATIONAL SOCRATIC FOLLOW-UP & IDK ENGINE
+    // 2. CONVERSATIONAL SOCRATIC FOLLOW-UP ENGINE
     if (action === 'followup') {
       const isIdk = transcript.toLowerCase().includes("don't know") || 
                     transcript.toLowerCase().includes("idk") || 
@@ -78,26 +77,25 @@ export default async function handler(req, res) {
       let systemPrompt = "";
 
       if (isIdk && consecutiveIdkCount >= 2) {
-        systemPrompt = `You are an empathetic, human executive interviewer.
-The candidate has passed/said "I don't know" on two or more consecutive questions.
-Acknowledge this warmly in 1-2 natural sentences (e.g., "No problem at all—hitting a tough question is completely normal in interviews. Let me ask you a slightly different core concept to help us recalibrate...").
-Do NOT sound robotic or judgmental. Return a warm, human transition string.`;
+        systemPrompt = `You are an empathetic executive interviewer.
+The candidate passed or said "I don't know" on two consecutive questions.
+Acknowledge warmly in 1-2 sentences: "No worries at all—hitting a tough question is completely natural. Let me ask you a core concept to help us recalibrate."
+Do NOT sound robotic or punitive.`;
       } else if (isIdk) {
         systemPrompt = `You are a human executive interviewer.
-The candidate said they don't know or passed on this question.
-Acknowledge it smoothly in 1 sentence (e.g., "Fair enough, working through tough scenarios is part of the process. Let's move on to the next topic.").
-Return a smooth transition string.`;
+The candidate passed on this question.
+Acknowledge smoothly in 1 sentence: "Fair enough, working through tough operational trade-offs is part of the process. Let's move to the next topic."`;
       } else {
-        systemPrompt = `You are a human, senior executive interviewer.
+        systemPrompt = `You are a senior executive interviewer conducting a high-stakes placement interview.
 Question Asked: "${questionText}"
 Model Answer Benchmark: "${idealAnswer}"
-Candidate's Spoken Response: "${transcript}"
+Candidate's Spoken Answer: "${transcript}"
 
-Your Rules:
-1. Speak naturally like a human interviewer ("That makes sense,", "I like your point on...", "Fair enough,").
-2. Acknowledge ONE specific detail from what the candidate said.
-3. If their answer lacks operational depth or metrics, ask ONE sharp follow-up question (1-2 sentences).
-4. If their answer is thorough and solid, reply STRICTLY with "NO_FOLLOWUP".`;
+Rules:
+1. Speak naturally like a real human executive ("That makes sense,", "I hear your point on...", "Fair enough,").
+2. Acknowledge ONE specific point from what the candidate said.
+3. If their answer lacks operational depth or quantitative metrics, ask ONE sharp follow-up challenge (1-2 sentences).
+4. If their answer is thorough and solid, reply strictly with "NO_FOLLOWUP".`;
       }
 
       const aiReply = await callGemini(systemPrompt, transcript, GEMINI_KEY);
@@ -108,31 +106,22 @@ Your Rules:
       return res.status(200).json({ trigger: true, prompt: aiReply.replace(/["']/g, "").trim() });
     }
 
-    // 3. EXECUTIVE ASSESSMENT DOSSIER EVALUATION
+    // 3. READINESS TIER ASSESSMENT DOSSIER
     if (action === 'report') {
       const systemPrompt = `You are an Executive Hiring Committee Chair evaluating a placement candidate.
 
 EVALUATION RUBRIC:
-Categorize the candidate into EXACTLY one of these 3 Readiness Tiers based on their verbatim responses:
+Categorize the candidate into EXACTLY one of these 3 Readiness Tiers:
+- "Tier 1: Placement Ready" (Structured logic, domain jargon, defends reasoning)
+- "Tier 2: Developing" (Correct basic knowledge, but stays generic/high-level)
+- "Tier 3: Needs Practice" (Conceptual gaps, extreme brevity, surface buzzwords, or multiple skipped questions)
 
-- "Tier 1: Placement Ready"
-  • Demonstrates structured, multi-dimensional business logic.
-  • Uses domain terminology naturally without fluff.
-  • Defends reasoning clearly when challenged.
-
-- "Tier 2: Developing"
-  • Correct basic theoretical knowledge, but responses stay high-level or generic.
-  • Needs prompting to uncover operational metrics.
-
-- "Tier 3: Needs Practice"
-  • Conceptual misunderstandings, extreme brevity, multiple passed/IDK questions, or surface buzzwords.
-
-Return ONLY a valid raw JSON object (no markdown code wrappers) with this exact schema:
+Return ONLY a raw JSON object (no markdown code blocks):
 {
   "readinessTier": "Tier 1: Placement Ready | Tier 2: Developing | Tier 3: Needs Practice",
   "tierColor": "green | blue | red",
-  "overallSummary": "A comprehensive 3-4 sentence executive evaluation summarizing analytical depth, trade-off reasoning, and candidate poise.",
-  "idkAnalysis": "A short summary evaluating candidate transparency vs domain gaps.",
+  "overallSummary": "A comprehensive 3-4 sentence evaluation of analytical depth, trade-off reasoning, and poise.",
+  "idkAnalysis": "A short summary evaluating transparency vs domain gaps.",
   "evaluations": [
     {
       "questionIndex": 1,
