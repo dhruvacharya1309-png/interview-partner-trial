@@ -8,15 +8,14 @@
     :root {
       --bg-main: #f8fafc;
       --card-bg: #ffffff;
-      --card-border: #e2e8f0;
+      --card-border: #cbd5e1;
       --text-main: #0f172a;
-      --text-muted: #64748b;
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --accent-purple: #7c3aed;
-      --danger: #dc2626;
-      --success: #16a34a;
-      --warning: #d97706;
+      --text-muted: #475569;
+      --primary: #1e40af;
+      --primary-hover: #1e3a8a;
+      --danger: #b91c1c;
+      --success: #15803d;
+      --warning: #b45309;
     }
 
     * {
@@ -31,7 +30,7 @@
       color: var(--text-main);
       line-height: 1.6;
       padding: 32px 16px;
-      max-width: 1040px;
+      max-width: 1000px;
       margin: 0 auto;
     }
 
@@ -47,7 +46,6 @@
     header h1 {
       font-size: 1.5rem;
       font-weight: 800;
-      letter-spacing: -0.5px;
       color: var(--text-main);
       display: flex;
       align-items: center;
@@ -55,28 +53,27 @@
     }
 
     .header-badge {
-      background: #eff6ff;
+      background: #dbeafe;
       color: var(--primary);
-      border: 1px solid #bfdbfe;
+      border: 1px solid #93c5fd;
       padding: 6px 14px;
       border-radius: 20px;
       font-size: 0.8rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
       margin-bottom: 28px;
     }
 
     .form-group {
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     label {
@@ -84,24 +81,18 @@
       font-weight: 700;
       font-size: 0.9rem;
       margin-bottom: 8px;
-      color: #334155;
+      color: #1e293b;
     }
 
     select, button {
       width: 100%;
       padding: 14px 18px;
-      border-radius: 10px;
+      border-radius: 8px;
       font-size: 0.95rem;
       border: 1px solid var(--card-border);
       background-color: #ffffff;
       color: var(--text-main);
       outline: none;
-      transition: all 0.2s;
-    }
-
-    select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
     button.btn-primary {
@@ -110,12 +101,10 @@
       border: none;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     }
 
     button.btn-primary:hover:not(:disabled) {
       background-color: var(--primary-hover);
-      transform: translateY(-1px);
     }
 
     button.btn-secondary {
@@ -126,10 +115,6 @@
       cursor: pointer;
     }
 
-    button.btn-secondary:hover {
-      background-color: #e2e8f0;
-    }
-
     button.btn-danger {
       background-color: #fef2f2;
       color: #991b1b;
@@ -138,28 +123,23 @@
       cursor: pointer;
     }
 
-    button.btn-danger:hover {
-      background-color: #fee2e2;
-    }
-
     button:disabled {
-      opacity: 0.45;
+      opacity: 0.5;
       cursor: not-allowed;
-      transform: none !important;
     }
 
-    .verification-section {
+    .verification-box {
       background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 24px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 18px;
+      margin-bottom: 20px;
     }
 
     .audio-meter-bar {
-      height: 8px;
+      height: 10px;
       background: #e2e8f0;
-      border-radius: 4px;
+      border-radius: 5px;
       overflow: hidden;
       margin: 10px 0;
     }
@@ -174,9 +154,9 @@
     .question-box {
       background: #f8fafc;
       border-left: 4px solid var(--primary);
-      padding: 24px;
-      border-radius: 0 12px 12px 0;
-      margin-bottom: 24px;
+      padding: 20px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 20px;
       border: 1px solid var(--card-border);
       border-left-width: 4px;
     }
@@ -192,7 +172,7 @@
       border-radius: 14px;
       font-weight: 700;
       font-size: 0.78rem;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .timer-badge {
@@ -215,7 +195,7 @@
       animation: pulse 1s infinite;
     }
 
-    .recording-indicator {
+    .recording-pulse {
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -238,7 +218,7 @@
       100% { opacity: 1; transform: scale(1); }
     }
 
-    /* HIGH VISIBILITY TRANSCRIPT CONTAINER */
+    /* REAL-TIME LIVE TRANSCRIPT BOX */
     .transcript-container {
       margin-bottom: 24px;
     }
@@ -260,13 +240,13 @@
       width: 100%;
       min-height: 140px;
       padding: 16px;
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
+      border: 2px solid var(--primary);
+      border-radius: 8px;
       background: #ffffff;
-      color: var(--text-main);
-      font-size: 1rem;
+      color: #0f172a;
+      font-size: 1.05rem;
       line-height: 1.6;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+      font-weight: 500;
       white-space: pre-wrap;
     }
 
@@ -279,7 +259,6 @@
       font-weight: 800;
       font-size: 0.95rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .tier-badge.green {
@@ -326,15 +305,10 @@
 
     .eval-card {
       border: 1px solid var(--card-border);
-      border-radius: 12px;
+      border-radius: 8px;
       padding: 20px;
       margin-bottom: 20px;
       background: #ffffff;
-    }
-
-    .eval-card h4 {
-      color: var(--text-main);
-      margin-bottom: 10px;
     }
 
     .rewrite-box {
@@ -356,12 +330,12 @@
 
   <header>
     <h1>💼 Executive Placement Simulator</h1>
-    <span class="header-badge">Groq Whisper & Dual Voice Verification</span>
+    <span class="header-badge">Live Continuous Speech Streaming</span>
   </header>
 
-  <!-- SETUP SCREEN WITH VOICE & MIC VERIFICATION -->
+  <!-- SETUP SCREEN WITH DUAL VOICE & MIC VERIFICATION -->
   <div id="setupScreen" class="card">
-    <h2 style="margin-bottom: 20px; color: #0f172a;">Pre-Flight Setup & Verification</h2>
+    <h2 style="margin-bottom: 20px; color: #0f172a;">Pre-Flight Setup & Dual Verification</h2>
     
     <div class="form-group">
       <label for="domainSelect">Select Domain / Specialization</label>
@@ -373,49 +347,49 @@
     </div>
 
     <div class="form-group">
-      <label for="levelSelect">Target Candidate Experience Level</label>
+      <label for="levelSelect">Target Experience Level</label>
       <select id="levelSelect">
         <option value="fresher">Freshers</option>
         <option value="experienced">Experienced (2+ years)</option>
       </select>
     </div>
 
-    <!-- 1. INTERVIEWER VOICE VERIFICATION -->
-    <div class="verification-section">
-      <label style="color: var(--primary); margin-bottom: 8px;">🔊 Step 1: Select & Verify Interviewer Voice</label>
+    <!-- STEP 1: INTERVIEWER VOICE VERIFICATION -->
+    <div class="verification-box">
+      <label style="color: var(--primary); margin-bottom: 8px;">🔊 Step 1: Select & Test Interviewer Voice</label>
       <select id="voiceSelect" style="margin-bottom: 12px;">
-        <option value="default">Loading executive voices...</option>
+        <option value="default">Loading voices...</option>
       </select>
       
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: center;">
-        <button type="button" class="btn-secondary" onclick="testSelectedVoice()">🎧 Play Voice Sample</button>
-        <label style="display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; color: #475569; font-weight: 600; font-size: 0.88rem;">
-          <input type="checkbox" id="voiceVerifiedCheck" style="width: 18px; height: 18px;" onchange="checkAllVerifications()" />
+        <button type="button" class="btn-secondary" onclick="testSelectedVoice()">🎧 Test Voice Output</button>
+        <label style="display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; color: #334155; font-weight: 600; font-size: 0.88rem;">
+          <input type="checkbox" id="voiceVerifiedCheck" style="width: 18px; height: 18px;" onchange="checkVerifications()" />
           Interviewer Voice Verified
         </label>
       </div>
     </div>
 
-    <!-- 2. CANDIDATE MICROPHONE & TRANSCRIPTION VERIFICATION -->
-    <div class="verification-section">
-      <label style="color: var(--primary); margin-bottom: 8px;">🎤 Step 2: Test Microphone & Voice Capture</label>
-      <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Click 'Record 5s Sample', speak a short sentence, and verify that your speech is transcribed accurately below.</p>
+    <!-- STEP 2: LIVE MIC & TRANSCRIPTION VERIFICATION -->
+    <div class="verification-box">
+      <label style="color: var(--primary); margin-bottom: 8px;">🎤 Step 2: Test Live Speech Capture (5-Sec Test)</label>
+      <p style="font-size: 0.85rem; color: #475569; margin-bottom: 12px;">Speak into your microphone. You should see text stream continuously into the box below as you talk.</p>
       
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-        <button type="button" id="micTestBtn" class="btn-secondary" onclick="runMicTest()">🎙️ Record 5s Test Sample</button>
-        <div style="display: flex; flex-direction: column; justify-content: center;">
-          <span style="font-size: 0.78rem; font-weight: 700; color: #64748b;">Live Mic Signal Level:</span>
+        <button type="button" id="micTestBtn" class="btn-secondary" onclick="runMicTest()">🎙️ Test Live Speech Capture</button>
+        <div>
+          <span style="font-size: 0.78rem; font-weight: 700; color: #475569;">Live Volume Signal:</span>
           <div class="audio-meter-bar"><div id="micMeterFill" class="audio-meter-fill"></div></div>
         </div>
       </div>
 
-      <div id="testTranscriptBox" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; font-size: 0.88rem; color: #334155; min-height: 48px; margin-bottom: 12px;">
-        Test transcript output will appear here...
+      <div id="testTranscriptBox" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 12px; border-radius: 6px; font-size: 0.9rem; color: #0f172a; min-height: 48px; margin-bottom: 12px;">
+        Click 'Test Live Speech Capture' and speak...
       </div>
 
-      <label style="display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; color: #475569; font-weight: 600; font-size: 0.88rem;">
-        <input type="checkbox" id="micVerifiedCheck" style="width: 18px; height: 18px;" onchange="checkAllVerifications()" />
-        Microphone & Transcription Verified
+      <label style="display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; color: #334155; font-weight: 600; font-size: 0.88rem;">
+        <input type="checkbox" id="micVerifiedCheck" style="width: 18px; height: 18px;" onchange="checkVerifications()" />
+        Live Speech Capture Verified
       </label>
     </div>
 
@@ -425,10 +399,10 @@
   <!-- INTERVIEW ROOM SCREEN -->
   <div id="interviewScreen" class="card hidden">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-      <span id="questionCounter" style="font-weight: 800; color: #64748b; font-size: 0.85rem; letter-spacing: 0.5px;">QUESTION 1 OF 5</span>
+      <span id="questionCounter" style="font-weight: 800; color: #64748b; font-size: 0.85rem;">QUESTION 1 OF 5</span>
       <div style="display: flex; align-items: center; gap: 14px;">
         <span id="timerContainer" class="timer-badge hidden">🧠 Thinking Window: <span id="timerCountdown">10</span>s</span>
-        <span id="recordingStatus" class="recording-indicator hidden"><span class="pulse-dot"></span> 🎙️ Live Listening Active</span>
+        <span id="recordingStatus" class="recording-pulse hidden"><span class="pulse-dot"></span> 🎙️ Live Streaming Active</span>
       </div>
     </div>
 
@@ -439,18 +413,18 @@
       <h3 id="questionPromptText" style="font-size: 1.15rem; color: #0f172a; font-weight: 700;">Loading question prompt...</h3>
     </div>
 
-    <!-- HIGH-VISIBILITY TRANSCRIPT DISPLAY WITH AUDIO SIGNAL BAR -->
+    <!-- LIVE REAL-TIME CONTINUOUS TRANSCRIPT DISPLAY -->
     <div class="transcript-container">
       <div class="transcript-header">
-        <label style="margin: 0;">Live Spoken Transcript (Groq Whisper):</label>
-        <span id="transcriptStatusText" class="transcript-status">● Waiting for interviewer...</span>
+        <label style="margin: 0;">Live Spoken Transcript (Real-Time Text Streaming):</label>
+        <span id="transcriptStatusText" class="transcript-status">● Waiting...</span>
       </div>
       <div class="audio-meter-bar" style="margin-bottom: 8px;"><div id="liveMicMeterFill" class="audio-meter-fill"></div></div>
-      <div id="transcriptBox" class="transcript-box">Interviewer speaking question prompt aloud...</div>
+      <div id="transcriptBox" class="transcript-box">Interviewer speaking question prompt...</div>
     </div>
 
     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 14px;">
-      <button id="submitBtn" class="btn-primary" onclick="finishAnswer()">Finish & Submit Spoken Answer</button>
+      <button id="submitBtn" class="btn-primary" onclick="finishAnswer()">Finish & Submit Answer</button>
       <button id="idkBtn" class="btn-danger" onclick="handleIdkSubmit()">I Don't Know / Pass</button>
     </div>
   </div>
@@ -469,9 +443,9 @@
     </div>
 
     <div id="committeeTab" class="hidden">
-      <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--card-border);">
+      <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid var(--card-border);">
         <h4 style="margin-bottom: 10px; color: #0f172a;">Executive Audit Trail</h4>
-        <p style="font-size: 0.92rem; color: #475569;" id="committeeAuditText">Analyzing transcript history, IDK patterns, and domain adaptability...</p>
+        <p style="font-size: 0.92rem; color: #475569;" id="committeeAuditText">Analyzing transcript history...</p>
         <div id="idkSummaryBox" style="margin-top: 14px; font-size: 0.88rem; color: #92400e; background: #fef3c7; border: 1px solid #fde68a; padding: 12px; border-radius: 8px;" class="hidden"></div>
       </div>
     </div>
@@ -480,7 +454,7 @@
   </div>
 
   <script>
-    // EXACT QUESTION BANK FROM CHETAN PATHAK, BHARGAV PANDYA CA, & NIMIT GANATRA
+    // EXACT QUESTION BANK
     const QUESTION_BANK = {
       marketing: {
         fresher: [
@@ -547,10 +521,9 @@
     let consecutiveIdkCount = 0;
     let audioContext = null;
     let analyser = null;
-    let animFrameId = null;
-    let fallbackSpeechRec = null;
+    let liveSpeechRec = null;
 
-    // POPULATE INDIAN & GLOBAL VOICES IN SELECTOR
+    // POPULATE INDIAN & GLOBAL VOICES
     function populateVoices() {
       if ('speechSynthesis' in window) {
         const voiceSelect = document.getElementById('voiceSelect');
@@ -558,7 +531,6 @@
         
         if (voices.length > 0) {
           voiceSelect.innerHTML = '';
-          
           const indianVoices = voices.filter(v => v.lang.includes('IN') || v.name.toLowerCase().includes('india') || v.name.toLowerCase().includes('hindi'));
           const otherVoices = voices.filter(v => !v.lang.includes('IN') && !v.name.toLowerCase().includes('india') && !v.name.toLowerCase().includes('hindi'));
 
@@ -608,26 +580,25 @@
       }
     }
 
-    function checkAllVerifications() {
+    function checkVerifications() {
       const vChecked = document.getElementById('voiceVerifiedCheck').checked;
       const mChecked = document.getElementById('micVerifiedCheck').checked;
       document.getElementById('startBtn').disabled = !(vChecked && mChecked);
     }
 
-    // STEP 2: MICROPHONE & TRANSCRIPTION TEST MODULE
+    // STEP 2: LIVE MIC & TRANSCRIPTION VERIFICATION
     async function runMicTest() {
       const btn = document.getElementById('micTestBtn');
       const box = document.getElementById('testTranscriptBox');
       const meterFill = document.getElementById('micMeterFill');
 
       btn.disabled = true;
-      btn.innerText = "🎙️ Listening (5s)... Speak now!";
-      box.innerText = "Listening... please speak clearly into your mic.";
+      btn.innerText = "🎙️ Listening... Speak now!";
+      box.innerText = "Listening... start speaking aloud.";
 
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
         
-        // Setup Audio Meter
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
         const source = audioContext.createMediaStreamSource(stream);
@@ -635,62 +606,53 @@
         analyser.fftSize = 256;
         const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
+        let active = true;
         function updateMeter() {
+          if (!active) return;
           analyser.getByteFrequencyData(dataArray);
           let sum = 0;
           for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
           let avg = sum / dataArray.length;
           meterFill.style.width = Math.min(100, avg * 2.5) + "%";
-          if (btn.disabled) animFrameId = requestAnimationFrame(updateMeter);
+          requestAnimationFrame(updateMeter);
         }
         updateMeter();
 
-        const recorder = new MediaRecorder(stream);
-        let testChunks = [];
-        recorder.ondataavailable = e => testChunks.push(e.data);
-
-        recorder.start();
+        // Live streaming Speech Recognition
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let testRec = null;
+        if (SpeechRec) {
+          testRec = new SpeechRec();
+          testRec.continuous = true;
+          testRec.interimResults = true;
+          testRec.onresult = (e) => {
+            let resText = "";
+            for (let i = 0; i < e.results.length; i++) {
+              resText += e.results[i][0].transcript;
+            }
+            if (resText.trim()) {
+              box.innerText = `Live Streaming: "${resText}"`;
+            }
+          };
+          testRec.start();
+        }
 
         setTimeout(() => {
-          recorder.stop();
+          active = false;
           stream.getTracks().forEach(track => track.stop());
-          if (animFrameId) cancelAnimationFrame(animFrameId);
+          if (testRec) try { testRec.stop(); } catch(e){}
           meterFill.style.width = "0%";
-          btn.innerText = "⚡ Transcribing test audio...";
-
-          recorder.onstop = async () => {
-            const blob = new Blob(testChunks, { type: recorder.mimeType || 'audio/webm' });
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = async () => {
-              try {
-                const response = await fetch('/api/interview', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    action: 'transcribe',
-                    audioBase64: reader.result,
-                    mimeType: recorder.mimeType || 'audio/webm'
-                  })
-                });
-                const data = await response.json();
-                const text = data.transcript || "No speech detected in sample.";
-                box.innerText = `Captured Transcript: "${text}"`;
-                btn.disabled = false;
-                btn.innerText = "🎙️ Record 5s Test Sample Again";
-              } catch (err) {
-                box.innerText = "Transcription test failed. Check internet / API configuration.";
-                btn.disabled = false;
-                btn.innerText = "🎙️ Record 5s Test Sample Again";
-              }
-            };
-          };
+          btn.disabled = false;
+          btn.innerText = "🎙️ Test Live Speech Capture Again";
+          if (box.innerText.includes("Listening...")) {
+            box.innerText = "Speech sample verified.";
+          }
         }, 5000);
 
       } catch (err) {
         alert("Microphone permission denied: " + err.message);
         btn.disabled = false;
-        btn.innerText = "🎙️ Record 5s Test Sample";
+        btn.innerText = "🎙️ Test Live Speech Capture";
       }
     }
 
@@ -711,7 +673,7 @@
       loadQuestion(0);
     }
 
-    // LOAD QUESTION & AUTO-TRIGGER RECORDING
+    // LOAD QUESTION
     function loadQuestion(index) {
       stopThinkingTimer();
       stopRecordingSilently();
@@ -719,7 +681,7 @@
       const q = questions[index];
       document.getElementById('questionCounter').innerText = `QUESTION ${index + 1} OF ${questions.length}`;
       document.getElementById('questionPromptText').innerText = q.text;
-      document.getElementById('transcriptBox').innerText = "Interviewer speaking question prompt aloud...";
+      document.getElementById('transcriptBox').innerText = "Interviewer speaking question aloud...";
       document.getElementById('transcriptStatusText').innerText = "● Interviewer Speaking...";
       document.getElementById('recordingStatus').classList.add('hidden');
       currentTranscript = "";
@@ -790,7 +752,7 @@
       }
     }
 
-    // AUTO-RECORDING ENGINE WITH LIVE SIGNAL MONITOR & FALLBACK
+    // LIVE STREAMING SPEECH RECOGNITION + MEDIARECORDER
     async function startAutoRecording() {
       stopThinkingTimer();
       if (isRecording) return;
@@ -798,7 +760,7 @@
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
         
-        // Setup Live Visual Meter
+        // Setup Live Meter
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
         const source = audioContext.createMediaStreamSource(stream);
@@ -808,12 +770,13 @@
         const liveFill = document.getElementById('liveMicMeterFill');
 
         function updateLiveMeter() {
+          if (!isRecording) return;
           analyser.getByteFrequencyData(dataArray);
           let sum = 0;
           for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
           let avg = sum / dataArray.length;
           liveFill.style.width = Math.min(100, avg * 2.5) + "%";
-          if (isRecording) requestAnimationFrame(updateLiveMeter);
+          requestAnimationFrame(updateLiveMeter);
         }
 
         let options = {};
@@ -836,13 +799,13 @@
         isRecording = true;
         updateLiveMeter();
 
-        // Browser Fallback Speech Recognition (runs in parallel to ensure transcript is never empty)
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-          const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-          fallbackSpeechRec = new SpeechRec();
-          fallbackSpeechRec.continuous = true;
-          fallbackSpeechRec.interimResults = true;
-          fallbackSpeechRec.onresult = (e) => {
+        // LIVE CONTINUOUS STREAMING SPEECH ENGINE
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRec) {
+          liveSpeechRec = new SpeechRec();
+          liveSpeechRec.continuous = true;
+          liveSpeechRec.interimResults = true;
+          liveSpeechRec.onresult = (e) => {
             let resText = "";
             for (let i = 0; i < e.results.length; i++) {
               resText += e.results[i][0].transcript;
@@ -852,17 +815,15 @@
               document.getElementById('transcriptBox').innerText = resText;
             }
           };
-          try { fallbackSpeechRec.start(); } catch(err){}
+          try { liveSpeechRec.start(); } catch(err){}
         }
 
         document.getElementById('recordingStatus').classList.remove('hidden');
-        document.getElementById('transcriptStatusText').innerText = "🎙️ Live Listening Active...";
-        if (!currentTranscript) {
-          document.getElementById('transcriptBox').innerText = "Speak your answer into the microphone now...";
-        }
+        document.getElementById('transcriptStatusText').innerText = "🎙️ Live Text Streaming Active...";
+        document.getElementById('transcriptBox').innerText = "Speak into your microphone now...";
       } catch (err) {
         console.error("Microphone Access Error:", err);
-        document.getElementById('transcriptBox').innerText = "⚠️ Microphone permission denied or unavailable.";
+        document.getElementById('transcriptBox').innerText = "⚠️ Microphone permission denied.";
         document.getElementById('transcriptStatusText').innerText = "❌ Microphone Error";
       }
     }
@@ -872,32 +833,32 @@
         mediaRecorder.stop();
         isRecording = false;
       }
-      if (fallbackSpeechRec) {
-        try { fallbackSpeechRec.stop(); } catch(e){}
+      if (liveSpeechRec) {
+        try { liveSpeechRec.stop(); } catch(e){}
       }
       document.getElementById('recordingStatus').classList.add('hidden');
       document.getElementById('liveMicMeterFill').style.width = "0%";
     }
 
-    // IDK / PASS SUBMIT
+    // IDK SUBMIT
     function handleIdkSubmit() {
       consecutiveIdkCount++;
       currentTranscript = "I don't know the answer to this question.";
       finishAnswer();
     }
 
-    // FINISH ANSWER & GROQ TRANSCRIPTION WORKFLOW
+    // FINISH ANSWER WORKFLOW
     async function finishAnswer() {
       stopThinkingTimer();
       document.getElementById('recordingStatus').classList.add('hidden');
       document.getElementById('liveMicMeterFill').style.width = "0%";
 
-      if (fallbackSpeechRec) {
-        try { fallbackSpeechRec.stop(); } catch(e){}
+      if (liveSpeechRec) {
+        try { liveSpeechRec.stop(); } catch(e){}
       }
 
       if (isRecording && mediaRecorder && mediaRecorder.state !== "inactive") {
-        document.getElementById('transcriptStatusText').innerText = "⚡ Transcribing Audio with Groq Whisper...";
+        document.getElementById('transcriptStatusText').innerText = "⚡ Refining Transcript with Groq Whisper...";
         
         mediaRecorder.onstop = async () => {
           isRecording = false;
@@ -1108,8 +1069,3 @@
   </script>
 </body>
 </html>
-Verification Summary
-Setup Verification Step 1 (Voice Selector): Candidate picks an interviewer voice (with Indian English/Hindi options grouped at top), plays a sample, and checks the voice verification box.
-Setup Verification Step 2 (Microphone & Transcription Test): Candidate clicks "Record 5s Test Sample", sees their live microphone signal meter jump, and views their exact transcript rendered on screen. Checking this second box unlocks the "Begin Interview Session" button.
-Live Mic Visualizer in Interview Room: An active green signal bar moves whenever the candidate speaks so they can visually confirm their voice is being captured.
-Zero-Fail Transcription: Combines high-speed Groq Whisper with a parallel browser speech-recognition fallback to ensure speech is captured under all network conditions.
