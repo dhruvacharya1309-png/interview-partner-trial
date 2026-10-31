@@ -25,6 +25,7 @@
       --warning-bg: #FEF3C7;
       --badge-bg: #F1F5F9;
       --success-green: #10B981;
+      --success-bg: #ECFDF5;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -193,45 +194,12 @@
       display: block;
     }
 
-    /* ENHANCED CANDIDATE SPEECH TELEMETRY PANEL */
-    .telemetry-dashboard {
-      background: #F1F5F9;
-      border: 1px solid var(--border-strong);
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin-bottom: 10px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-    .telemetry-pill {
-      background: #FFFFFF;
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 8px 10px;
-      text-align: center;
-    }
-    .telemetry-val {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--primary-navy);
-      line-height: 1.2;
-    }
-    .telemetry-lbl {
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-top: 3px;
-    }
-
     .transcript-box {
       background-color: #F8FAFC;
       border: 1px solid var(--border-strong);
       border-radius: 10px;
       padding: 16px;
-      min-height: 95px;
+      min-height: 100px;
       font-size: 0.95rem;
       line-height: 1.6;
       color: var(--text-main);
@@ -306,9 +274,41 @@
     .kpi-val { font-size: 1.35rem; font-weight: 800; color: var(--primary-navy); }
     .kpi-lbl { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
 
+    /* AUDIT BOX STYLES */
+    .grammar-box {
+      background: #F0F9FF;
+      border: 1px solid #BAE6FD;
+      border-left: 4px solid #0284C7;
+      padding: 12px 14px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #0369A1;
+    }
+    .suggestion-box {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-left: 4px solid #D97706;
+      padding: 12px 14px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #92400E;
+    }
+    .verdict-banner {
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      border-left: 4px solid #10B981;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+      color: #065F46;
+    }
+
     @media print {
       body { background: #FFF; padding: 0; }
-      .btn, .tab-switch, #btn-print-dossier, .waveform-container, .telemetry-dashboard { display: none !important; }
+      .btn, .tab-switch, #btn-print-dossier, .waveform-container { display: none !important; }
       .card { border: none; box-shadow: none; padding: 0; }
       #view-candidate-blueprint, #view-evaluator-briefing { display: block !important; }
     }
@@ -415,27 +415,7 @@
       <canvas id="interviewWaveformCanvas" class="waveform-canvas" width="600" height="54"></canvas>
     </div>
 
-    <!-- ENHANCED DYNAMIC CANDIDATE SPEECH TELEMETRY PANEL -->
-    <label>Candidate Speech Telemetry (Live Tracking):</label>
-    <div class="telemetry-dashboard">
-      <div class="telemetry-pill">
-        <div class="telemetry-val" id="telemetry-time">00:00s</div>
-        <div class="telemetry-lbl">Elapsed Time</div>
-      </div>
-      <div class="telemetry-pill">
-        <div class="telemetry-val" id="telemetry-words">0</div>
-        <div class="telemetry-lbl">Spoken Words</div>
-      </div>
-      <div class="telemetry-pill">
-        <div class="telemetry-val" id="telemetry-wpm">0</div>
-        <div class="telemetry-lbl">Live Cadence</div>
-      </div>
-      <div class="telemetry-pill">
-        <div class="telemetry-val" id="telemetry-fillers" style="color: var(--warning-amber);">0</div>
-        <div class="telemetry-lbl">Verbal Fillers</div>
-      </div>
-    </div>
-
+    <label>Candidate Speech Telemetry (Live Transcription):</label>
     <div id="live-transcript" class="transcript-box">
       Microphone standing by...
     </div>
@@ -456,6 +436,11 @@
       <button class="btn btn-secondary" id="btn-print-dossier" style="width: auto; height: 36px; padding: 0 14px; font-size: 0.82rem; margin: 0;" onclick="window.print();">
         🖨 Print / Export PDF
       </button>
+    </div>
+
+    <!-- FINAL VERDICT BANNER WITH PROGRESS EVALUATION -->
+    <div id="verdict-banner-container" class="verdict-banner">
+      <strong>🌟 Final Candidate Verdict:</strong> Evaluating candidate progress...
     </div>
 
     <div class="kpi-grid">
@@ -491,7 +476,7 @@
         </p>
       </div>
 
-      <h3 style="margin-top: 24px; margin-bottom: 12px;">Round-by-Round Breakdown & Audio Playback</h3>
+      <h3 style="margin-top: 24px; margin-bottom: 12px;">Round-by-Round Breakdown, Grammar Audit & Audio Playback</h3>
       <div id="candidate-questions-breakdown"></div>
     </div>
 
@@ -927,7 +912,6 @@ let currentQuestionTranscript = "";
 let sessionResults = [];
 let selectedVoice = null;
 let countdownInterval = null;
-let telemetryTimerInterval = null;
 let ttsWatchdogTimeout = null;
 let isSpontaneousActive = false;
 
@@ -942,7 +926,7 @@ let speechRecognizer = null;
 
 // HUMAN CONVERSATIONAL PREAMBLES FOR EXECUTIVE SPEECH
 const HUMAN_PREAMBLES = [
-  "Thank you for that overview. Now, let's transition to our next core scenario...",
+  "Thank you for outlining that perspective. Let's transition to our next core scenario...",
   "Good point. Building on that, I'd like to explore how you approach strategic trade-offs...",
   "That makes sense. Next, let's examine a scenario that tests operational decision-making under pressure...",
   "Fair enough. Let's look at another critical area that hiring panels scrutinize closely...",
@@ -973,7 +957,7 @@ function startOscilloscope(stream, canvasId, statusId) {
   }
 
   analyserNode = audioContext.createAnalyser();
-  analyserNode.fftSize = 2048; // Smooth high-res waveform
+  analyserNode.fftSize = 2048;
   const source = audioContext.createMediaStreamSource(stream);
   source.connect(analyserNode);
 
@@ -1032,7 +1016,7 @@ function speakText(text, onEndCallback) {
 
     // Bound to global window memory to prevent Chrome garbage-collection drops mid-speech
     window.activeUtterance = new SpeechSynthesisUtterance(text);
-    window.activeUtterance.rate = 0.90; // Natural executive cadence
+    window.activeUtterance.rate = 0.90; // Executive cadence
     window.activeUtterance.pitch = 0.96; // Human pitch
 
     const voiceName = document.getElementById("select-voice").value;
@@ -1053,7 +1037,6 @@ function speakText(text, onEndCallback) {
     window.activeUtterance.onend = safeCallback;
     window.activeUtterance.onerror = safeCallback;
 
-    // Hard Safety Watchdog prevents engine lockups after Q2
     const estimatedDurationMs = Math.max(3000, (text.length * 85) + 2500);
     ttsWatchdogTimeout = setTimeout(safeCallback, estimatedDurationMs);
 
@@ -1099,7 +1082,7 @@ if ('speechSynthesis' in window) {
 initVoices();
 
 document.getElementById("btn-test-voice").addEventListener("click", () => {
-  speakText("Good morning! I am your senior executive interviewer today. I will be guiding your placement assessment.", null);
+  speakText("Good morning! I am your senior executive interviewer today. Let us conduct your placement assessment.", null);
 });
 
 // PROCEED TO PRE-FLIGHT CHECK
@@ -1184,9 +1167,6 @@ document.getElementById("btn-mic-ok-proceed").addEventListener("click", () => {
 });
 
 function loadCurrentQuestion() {
-  stopTelemetryTimer();
-  resetTelemetryDisplay();
-
   const qData = sessionQuestions[currentQIndex];
   currentQuestionTranscript = "";
   answerStartTime = null;
@@ -1240,51 +1220,6 @@ function loadCurrentQuestion() {
   });
 }
 
-// REAL-TIME CANDIDATE SPEECH TELEMETRY ENGINE
-function startTelemetryTimer() {
-  stopTelemetryTimer();
-  const timeEl = document.getElementById("telemetry-time");
-  const wordsEl = document.getElementById("telemetry-words");
-  const wpmEl = document.getElementById("telemetry-wpm");
-  const fillersEl = document.getElementById("telemetry-fillers");
-
-  telemetryTimerInterval = setInterval(() => {
-    if (!answerStartTime) return;
-    const elapsedSec = Math.max(1, Math.floor((Date.now() - answerStartTime) / 1000));
-    
-    // Format mm:ss
-    const mins = String(Math.floor(elapsedSec / 60)).padStart(2, '0');
-    const secs = String(elapsedSec % 60).padStart(2, '0');
-    timeEl.textContent = `${mins}:${secs}s`;
-
-    // Word count & WPM
-    const words = currentQuestionTranscript.split(/\s+/).filter(Boolean).length;
-    wordsEl.textContent = words;
-
-    const wpm = Math.round((words / elapsedSec) * 60);
-    wpmEl.textContent = wpm;
-
-    // Verbal Fillers
-    const fillerRegex = /\b(um|uh|basically|you know|actually|like)\b/gi;
-    const fillers = (currentQuestionTranscript.match(fillerRegex) || []).length;
-    fillersEl.textContent = fillers;
-  }, 300);
-}
-
-function stopTelemetryTimer() {
-  if (telemetryTimerInterval) {
-    clearInterval(telemetryTimerInterval);
-    telemetryTimerInterval = null;
-  }
-}
-
-function resetTelemetryDisplay() {
-  document.getElementById("telemetry-time").textContent = "00:00s";
-  document.getElementById("telemetry-words").textContent = "0";
-  document.getElementById("telemetry-wpm").textContent = "0";
-  document.getElementById("telemetry-fillers").textContent = "0";
-}
-
 // LIVE STREAMING & AUDIO RECORDING
 async function startVoiceRecording() {
   const stream = await getOrInitMicrophone();
@@ -1304,7 +1239,6 @@ async function startVoiceRecording() {
   }
 
   answerStartTime = Date.now();
-  startTelemetryTimer();
   setMicStatus("Recording & Transcribing", true);
   document.getElementById("live-transcript").innerHTML = `
     <span style="color:var(--text-muted); font-style:italic;">Listening... speak naturally into your microphone.</span>
@@ -1349,7 +1283,6 @@ async function startVoiceRecording() {
 
 function stopVoiceRecording() {
   return new Promise((resolve) => {
-    stopTelemetryTimer();
     stopOscilloscope();
     if (speechRecognizer) {
       try { speechRecognizer.stop(); } catch(e){}
@@ -1375,7 +1308,7 @@ function setMicStatus(label, isLive) {
   else dot.classList.remove("mic-live");
 }
 
-// SUBMIT ANSWER WITH ANTI-GAMING & SPONTANEOUS FOLLOW-UP INTERACTION
+// SUBMIT ANSWER WITH ANTI-GAMING & SPONTANEOUS SOCRATIC FOLLOW-UP PROBE
 document.getElementById("btn-finish-answer").addEventListener("click", async () => {
   const durationSec = answerStartTime ? ((Date.now() - answerStartTime) / 1000).toFixed(1) : 0;
   const text = currentQuestionTranscript.trim();
@@ -1394,24 +1327,23 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
   const audioBlob = await stopVoiceRecording();
   if (countdownInterval) clearInterval(countdownInterval);
 
-  // SPONTANEOUS FOLLOW-UP CHECK: If answer is brief (< 20 words) and spontaneous follow-up hasn't triggered yet
+  // SPONTANEOUS SOCRATIC FOLLOW-UP TRIGGER:
+  // If candidate answer is under 22 words and spontaneous follow-up hasn't triggered for this question
   const wordCount = text.split(/\s+/).filter(Boolean).length;
-  if (!isSpontaneousActive && wordCount > 0 && wordCount < 20) {
+  if (!isSpontaneousActive && wordCount > 0 && wordCount < 22) {
     isSpontaneousActive = true;
     
-    // Spontaneous Follow-Up Interjection
-    const currentQ = sessionQuestions[currentQIndex];
-    const followUpQuestionText = `That's a good start, but walk me through the specific metrics or quantitative trade-offs you would monitor to prove execution success on this.`;
+    const followUpText = "That's a good initial thought. But walk me through the specific quantitative metrics or operational trade-offs you would monitor to prove execution success on this.";
     
     const questionBox = document.getElementById("spoken-question-text");
     const spontaneousTag = `<span class="spontaneous-tag-inline">💬 Spontaneous Follow-Up Probe</span>`;
-    questionBox.innerHTML = `${followUpQuestionText} ${spontaneousTag}`;
+    questionBox.innerHTML = `${followUpText} ${spontaneousTag}`;
 
     const flowStatus = document.getElementById("flow-status-text");
     flowStatus.innerHTML = `<strong>Interviewer Follow-Up:</strong> Asking spontaneous Socratic probe...`;
     setMicStatus("Interviewer Speaking...", false);
 
-    speakText(`That's a good start. But walk me through the specific metrics or quantitative trade-offs you would monitor to prove execution success on this.`, () => {
+    speakText(followUpText, () => {
       flowStatus.innerHTML = `<strong>Microphone Live:</strong> Answer the follow-up probe now.`;
       startVoiceRecording();
     });
@@ -1467,7 +1399,46 @@ function recordAnswer(transcript, audioBlob, wasSkipped, skipReason, isReflexive
   }
 }
 
-// DOSSIER & REPORTING
+// GRAMMAR & STRUCTURAL CLARITY EVALUATOR
+function evaluateGrammarAndClarity(transcript, wordCount) {
+  if (!transcript || transcript.length < 5) {
+    return {
+      status: "No Response Articulated",
+      details: "No spoken text captured for grammatical analysis.",
+      suggestions: ["Structure responses using clear subject-verb-object order.", "Practice speaking aloud before submitting."]
+    };
+  }
+
+  const sentenceCount = (transcript.match(/[.!?]/g) || []).length || Math.max(1, Math.floor(wordCount / 12));
+  const avgSentenceLen = Math.round(wordCount / Math.max(1, sentenceCount));
+
+  let status = "Grammatically Coherent & Professional";
+  let details = `Good sentence structure with an average of ${avgSentenceLen} words per clause. Thought process is logical and easy to follow.`;
+  let suggestions = [
+    "Incorporate quantitative metrics (e.g., ROI, CAC, percentage gains) to back up verbal claims.",
+    "Use executive signposting phrases ('First...', 'Second...', 'In conclusion...') for sharper structure."
+  ];
+
+  if (wordCount < 15) {
+    status = "Brief Statement (Lacks Structural Elaboration)";
+    details = "Response is grammatically acceptable but too short to convey full operational depth or strategic reasoning.";
+    suggestions = [
+      "Expand your answer using the STAR framework (Situation, Task, Action, Result).",
+      "Elaborate on the 'why' behind your decision rather than just stating a definition."
+    ];
+  } else if (avgSentenceLen > 25) {
+    status = "Run-on Sentence Structure";
+    details = "Contains long, trailing spoken clauses. Pausing between distinct ideas will improve executive clarity.";
+    suggestions = [
+      "Break long explanations into short, decisive 10-15 word sentences.",
+      "Pause deliberately after key points instead of connecting clauses with filler transitions."
+    ];
+  }
+
+  return { status, details, suggestions };
+}
+
+// EXECUTIVE DIAGNOSTIC DOSSIER & FINAL VERDICT
 function renderTruthfulReport() {
   document.getElementById("screen-interview").classList.add("hidden");
   document.getElementById("screen-report").classList.remove("hidden");
@@ -1484,15 +1455,29 @@ function renderTruthfulReport() {
   document.getElementById("kpi-completed").textContent = `${answeredRounds.length}/${sessionResults.length}`;
 
   const kpiScore = document.getElementById("kpi-score");
-  if (answeredRounds.length === sessionResults.length && totalFillers <= 3) {
+  const verdictContainer = document.getElementById("verdict-banner-container");
+
+  if (answeredRounds.length === sessionResults.length && totalFillers <= 4 && avgWPM >= 100) {
     kpiScore.textContent = "Tier 1";
     kpiScore.style.color = "var(--success-green)";
+    verdictContainer.innerHTML = `
+      <strong>🌟 Final Candidate Verdict: Placement Ready (Strong Progress)</strong><br>
+      Candidate demonstrated excellent spoken articulation, strong grammatical structure, and consistent willingness across all technical prompts. High recommendation for final placement drives.
+    `;
   } else if (answeredRounds.length >= 1) {
     kpiScore.textContent = "Tier 2";
     kpiScore.style.color = "var(--primary-blue)";
+    verdictContainer.innerHTML = `
+      <strong>📈 Final Candidate Verdict: Developing Candidate (Good Progress)</strong><br>
+      Candidate completed <strong>${answeredRounds.length} of ${sessionResults.length}</strong> rounds with solid foundation. Good overall progress—focus on adding quantitative metrics and reducing verbal fillers to reach Tier 1.
+    `;
   } else {
     kpiScore.textContent = "Incomplete";
     kpiScore.style.color = "var(--danger-red)";
+    verdictContainer.innerHTML = `
+      <strong>⚠️ Final Candidate Verdict: Baseline Review Needed</strong><br>
+      Candidate passed or provided minimal spoken responses across all prompts. Review core domain benchmarks below and practice speaking out loud.
+    `;
   }
 
   const summaryBox = document.getElementById("report-summary-text");
@@ -1518,6 +1503,8 @@ function renderTruthfulReport() {
     card.className = "report-card";
 
     let answerSection = "";
+    let grammarSectionHtml = "";
+
     if (r.wasSkipped) {
       let rapidPassAlert = r.isReflexivePass ? `
         <div style="background-color: var(--warning-bg); border: 1px solid #FDE68A; border-radius: 6px; padding: 8px 12px; margin-top: 8px; font-size: 0.82rem; color: #92400E; font-weight: 600;">
@@ -1552,6 +1539,23 @@ function renderTruthfulReport() {
           ${audioPlayerHtml}
         </div>
       `;
+
+      // Grammar & Actionable Improvement Audit
+      const grammarEval = evaluateGrammarAndClarity(r.transcript, r.wordCount);
+      const suggestionsListHtml = grammarEval.suggestions.map(s => `<li>${s}</li>`).join("");
+
+      grammarSectionHtml = `
+        <div class="grammar-box">
+          <strong>📝 Grammar & Structural Clarity Audit:</strong> ${grammarEval.status}<br>
+          <span style="font-size:0.85rem; color:#0369A1;">${grammarEval.details}</span>
+        </div>
+        <div class="suggestion-box">
+          <strong>💡 Actionable Improvement Suggestions:</strong>
+          <ul style="padding-left: 18px; margin-top: 4px; font-size:0.85rem; line-height: 1.4;">
+            ${suggestionsListHtml}
+          </ul>
+        </div>
+      `;
     }
 
     const corePointsHtml = r.questionData.corePoints.map(pt => `<li>${pt}</li>`).join("");
@@ -1564,6 +1568,7 @@ function renderTruthfulReport() {
       <p style="font-size: 1rem; font-weight: 600; margin-bottom: 12px;">${r.questionData.text}</p>
       
       ${answerSection}
+      ${grammarSectionHtml}
 
       <div style="border-top: 1px solid var(--border-subtle); padding-top: 12px; margin-top: 12px;">
         <p style="font-size: 0.8rem; font-weight: 700; color: var(--primary-navy); text-transform: uppercase; margin-bottom: 6px;">
