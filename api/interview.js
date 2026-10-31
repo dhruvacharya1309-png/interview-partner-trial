@@ -1,4 +1,4 @@
-// api/interview.js - Executive AI Engine with Groq Whisper & Socratic Feedback
+// api/interview.js - Executive AI Engine with Groq Whisper & Socratic Evaluation
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,13 +21,13 @@ export default async function handler(req, res) {
 
   const cleanKey = (val) => {
     if (!val) return '';
-    return String(val).trim().replace(/^["']|["']$/g, '').replace(/[\r\n\t\s]/g, '');
+    return String(val).trim().replace(/^["']|["']\$/g, '').replace(/[\r\n\t\s]/g, '');
   };
 
   const GEMINI_KEY = cleanKey(process.env.GEMINI_API_KEY || process.env.GEMINI_KEY);
 
   try {
-    // 1. GROQ WHISPER SUB-500MS AUDIO TRANSCRIPTION
+    // 1. GROQ WHISPER HIGH-SPEED AUDIO TRANSCRIPTION
     if (action === 'transcribe') {
       const GROQ_KEY = cleanKey(process.env.GROQ_API_KEY);
       if (!GROQ_KEY) {
@@ -38,6 +38,7 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'No audio data payload provided.' });
       }
 
+      // Format clean Base64 string into binary audio buffer
       const rawBase64 = audioBase64.includes(',') ? audioBase64.split(',')[1] : audioBase64;
       const audioBuffer = Buffer.from(rawBase64, 'base64');
       const blob = new Blob([audioBuffer], { type: mimeType || 'audio/webm' });
@@ -67,7 +68,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'GEMINI_API_KEY is missing in Vercel Environment Variables.' });
     }
 
-    // 2. CONVERSATIONAL SOCRATIC FOLLOW-UP ENGINE
+    // 2. CONVERSATIONAL SOCRATIC FOLLOW-UP & IDK ENGINE
     if (action === 'followup') {
       const isIdk = transcript.toLowerCase().includes("don't know") || 
                     transcript.toLowerCase().includes("idk") || 
@@ -77,23 +78,23 @@ export default async function handler(req, res) {
       let systemPrompt = "";
 
       if (isIdk && consecutiveIdkCount >= 2) {
-        systemPrompt = `You are an empathetic executive interviewer.
+        systemPrompt = `You are an empathetic, human executive interviewer.
 The candidate passed or said "I don't know" on two consecutive questions.
-Acknowledge warmly in 1-2 sentences: "No worries at all—hitting a tough question is completely natural. Let me ask you a core concept to help us recalibrate."
-Do NOT sound robotic or punitive.`;
+Acknowledge this warmly in 1-2 natural sentences: "No worries at all—hitting a tough question is completely normal. Let's move on to a core framework to help recalibrate."
+Do NOT sound punitive.`;
       } else if (isIdk) {
         systemPrompt = `You are a human executive interviewer.
 The candidate passed on this question.
-Acknowledge smoothly in 1 sentence: "Fair enough, working through tough operational trade-offs is part of the process. Let's move to the next topic."`;
+Acknowledge smoothly in 1 sentence: "Fair enough, working through complex operational scenarios is part of the interview process. Let's move to the next question."`;
       } else {
-        systemPrompt = `You are a senior executive interviewer conducting a high-stakes placement interview.
+        systemPrompt = `You are a human senior executive interviewer conducting a high-stakes campus placement interview.
 Question Asked: "${questionText}"
 Model Answer Benchmark: "${idealAnswer}"
 Candidate's Spoken Answer: "${transcript}"
 
 Rules:
-1. Speak naturally like a real human executive ("That makes sense,", "I hear your point on...", "Fair enough,").
-2. Acknowledge ONE specific point from what the candidate said.
+1. Speak naturally like a real executive ("That makes sense,", "I hear your point on...", "Fair enough,").
+2. Acknowledge ONE specific detail from what the candidate said.
 3. If their answer lacks operational depth or quantitative metrics, ask ONE sharp follow-up challenge (1-2 sentences).
 4. If their answer is thorough and solid, reply strictly with "NO_FOLLOWUP".`;
       }
@@ -112,15 +113,15 @@ Rules:
 
 EVALUATION RUBRIC:
 Categorize the candidate into EXACTLY one of these 3 Readiness Tiers:
-- "Tier 1: Placement Ready" (Structured logic, domain jargon, defends reasoning)
+- "Tier 1: Placement Ready" (Structured multi-dimensional logic, domain terminology, defends reasoning)
 - "Tier 2: Developing" (Correct basic knowledge, but stays generic/high-level)
 - "Tier 3: Needs Practice" (Conceptual gaps, extreme brevity, surface buzzwords, or multiple skipped questions)
 
-Return ONLY a raw JSON object (no markdown code blocks):
+Return ONLY a raw JSON object (no markdown code wrappers):
 {
   "readinessTier": "Tier 1: Placement Ready | Tier 2: Developing | Tier 3: Needs Practice",
   "tierColor": "green | blue | red",
-  "overallSummary": "A comprehensive 3-4 sentence evaluation of analytical depth, trade-off reasoning, and poise.",
+  "overallSummary": "A comprehensive 3-4 sentence executive summary evaluating analytical depth, trade-off reasoning, and poise.",
   "idkAnalysis": "A short summary evaluating transparency vs domain gaps.",
   "evaluations": [
     {
