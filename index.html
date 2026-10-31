@@ -1,339 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Executive Placement Interview Simulator</title>
-  <link rel="preconnect" href="[suspicious link removed]">
-  <link rel="preconnect" href="[suspicious link removed]" crossorigin>
-  <link href="[suspicious link removed]" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Executive Placement Simulator | Diagnostic Dossier</title>
   <style>
     :root {
-      --bg-main: #f8fafc;
-      --card-bg: #ffffff;
-      --card-border: #e2e8f0;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --primary: #1e40af;
-      --primary-hover: #1e3a8a;
-      --primary-light: #eff6ff;
-      --danger: #dc2626;
-      --success: #16a34a;
-      --warning: #d97706;
+      --bg-surface: #F8FAFC;
+      --card-surface: #FFFFFF;
+      --border-subtle: #E2E8F0;
+      --border-strong: #CBD5E1;
+      --primary-navy: #0F172A;
+      --primary-blue: #1E3A8A;
+      --accent-teal: #0D9488;
+      --accent-teal-dark: #0F766E;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --danger-red: #BE123C;
+      --danger-bg: #FFF1F2;
+      --warning-amber: #D97706;
+      --warning-bg: #FEF3C7;
+      --badge-bg: #F1F5F9;
+      --success-green: #10B981;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: var(--bg-main);
+      background-color: var(--bg-surface);
       color: var(--text-main);
-      line-height: 1.6;
-      padding: 32px 16px;
-      max-width: 1040px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    #app-container {
+      width: 100%;
+      max-width: 720px;
       margin: 0 auto;
-    }
-
-    header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 24px;
-      border-bottom: 2px solid var(--card-border);
-      margin-bottom: 32px;
-    }
-
-    header h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .header-badge {
-      background: var(--primary-light);
-      color: var(--primary);
-      border: 1px solid #bfdbfe;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      flex-direction: column;
+      gap: 20px;
     }
 
     .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-      margin-bottom: 28px;
-    }
-
-    .form-group {
-      margin-bottom: 24px;
-    }
-
-    label {
-      display: block;
-      font-weight: 700;
-      font-size: 0.9rem;
-      margin-bottom: 8px;
-      color: #1e293b;
-    }
-
-    select, button {
-      width: 100%;
-      padding: 14px 18px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      border: 1px solid var(--card-border);
-      background-color: #ffffff;
-      color: var(--text-main);
-      outline: none;
-      transition: all 0.2s;
-    }
-
-    select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-    }
-
-    button.btn-primary {
-      background-color: var(--primary);
-      color: #ffffff;
-      border: none;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
-    }
-
-    button.btn-primary:hover:not(:disabled) {
-      background-color: var(--primary-hover);
-      transform: translateY(-1px);
-    }
-
-    button.btn-secondary {
-      background-color: #f1f5f9;
-      color: #334155;
-      border: 1px solid #cbd5e1;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    button.btn-danger {
-      background-color: #fef2f2;
-      color: #991b1b;
-      border: 1px solid #fca5a5;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .verification-box {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
+      background-color: var(--card-surface);
+      border: 1px solid var(--border-subtle);
       border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
+      padding: 28px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
     }
 
-    .audio-meter-bar {
-      height: 10px;
-      background: #e2e8f0;
-      border-radius: 5px;
-      overflow: hidden;
-      margin: 10px 0;
+    h1 { font-size: 1.5rem; font-weight: 700; color: var(--primary-navy); letter-spacing: -0.02em; }
+    h2 { font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); }
+    h3 { font-size: 1rem; font-weight: 600; color: var(--primary-navy); margin-bottom: 8px; }
+    .serif-text { font-family: Georgia, Cambria, serif; }
+
+    /* INLINE TAGS BESIDE QUESTION MARK */
+    .author-tag-inline {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      background: #EEF2F6;
+      border: 1px solid #DCE3EA;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    .audio-meter-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--success);
-      transition: width 0.1s ease;
+    .timer-tag-inline {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #92400E;
+      background: #FEF3C7;
+      border: 1px solid #FDE68A;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
+
+    label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
+    select {
+      width: 100%;
+      height: 48px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0 14px;
+      font-size: 0.95rem;
+      background: #FFF;
+      color: var(--text-main);
+      margin-bottom: 18px;
+      outline: none;
+    }
+    select:focus { border-color: var(--accent-teal); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 50px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .btn-primary { background-color: var(--accent-teal); color: #FFF; }
+    .btn-primary:hover { background-color: var(--accent-teal-dark); }
+    .btn-navy { background-color: var(--primary-navy); color: #FFF; }
+    .btn-navy:hover { background-color: #1e293b; }
+    .btn-secondary {
+      background-color: #FFF;
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      margin-top: 10px;
+    }
+    .btn-secondary:hover { background-color: var(--badge-bg); }
 
     .question-box {
-      background: #f8fafc;
-      border-left: 4px solid var(--primary);
-      padding: 24px;
-      border-radius: 0 12px 12px 0;
-      margin-bottom: 24px;
-      border: 1px solid var(--card-border);
-      border-left-width: 4px;
+      font-size: 1.25rem;
+      line-height: 1.6;
+      color: var(--primary-navy);
+      margin: 14px 0 20px;
     }
 
-    .curated-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #f3e8ff;
-      color: #6b21a8;
-      border: 1px solid #d8b4fe;
-      padding: 4px 12px;
-      border-radius: 14px;
-      font-weight: 700;
-      font-size: 0.78rem;
-      margin-bottom: 12px;
+    .status-banner {
+      background-color: #F8FAFC;
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--accent-teal);
+      padding: 14px 16px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      color: var(--text-main);
+      margin-bottom: 18px;
     }
 
-    .timer-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #fef3c7;
-      color: #92400e;
-      border: 1px solid #f59e0b;
-      padding: 6px 14px;
-      border-radius: 16px;
-      font-weight: 700;
-      font-size: 0.85rem;
-    }
-
-    .timer-badge.warning {
-      background: #fee2e2;
-      color: #991b1b;
-      border-color: #ef4444;
-      animation: pulse 1s infinite;
-    }
-
-    .recording-pulse {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--danger);
-      font-weight: 700;
-      font-size: 0.85rem;
-    }
-
-    .pulse-dot {
-      width: 10px;
-      height: 10px;
-      background-color: var(--danger);
-      border-radius: 50%;
-      animation: pulse 1s infinite;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.1); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    .transcript-container {
-      margin-bottom: 24px;
-    }
-
-    .transcript-header {
+    /* HARDWARE AUDIO LEVEL VISUALIZER */
+    .meter-container {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      gap: 10px;
+      background: #F1F5F9;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
     }
-
-    .transcript-status {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--primary);
+    .meter-bar {
+      flex: 1;
+      height: 10px;
+      background: #E2E8F0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .meter-level {
+      height: 100%;
+      width: 0%;
+      background: var(--success-green);
+      transition: width 0.05s ease;
     }
 
     .transcript-box {
+      background-color: #F8FAFC;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 80px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--text-main);
+      margin-bottom: 16px;
+    }
+
+    .mic-indicator-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      background-color: #94A3B8;
+      margin-right: 6px;
+    }
+    .mic-live { background-color: var(--success-green); box-shadow: 0 0 8px var(--success-green); }
+
+    audio {
       width: 100%;
-      min-height: 140px;
-      padding: 18px;
-      border: 2px solid #bfdbfe;
-      border-radius: 10px;
-      background: #ffffff;
-      color: #0f172a;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      font-weight: 500;
-      white-space: pre-wrap;
+      height: 40px;
+      margin-top: 8px;
+      border-radius: 6px;
+      outline: none;
     }
 
-    .tier-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 22px;
-      border-radius: 20px;
-      font-weight: 800;
-      font-size: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .tier-badge.green { background-color: #d1fae5; color: #065f46; border: 1.5px solid #10b981; }
-    .tier-badge.blue { background-color: #dbeafe; color: #1e40af; border: 1.5px solid #3b82f6; }
-    .tier-badge.red { background-color: #fee2e2; color: #991b1b; border: 1.5px solid #ef4444; }
-
-    .tab-bar {
+    .tab-switch {
       display: flex;
-      gap: 12px;
-      border-bottom: 2px solid var(--card-border);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      overflow: hidden;
       margin-bottom: 24px;
     }
-
     .tab-btn {
-      width: auto;
-      background: none;
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      background: #F8FAFC;
       border: none;
-      padding: 12px 20px;
-      font-weight: 700;
-      color: var(--text-muted);
       cursor: pointer;
-      border-bottom: 3px solid transparent;
-      border-radius: 0;
+      color: var(--text-muted);
     }
-
     .tab-btn.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
+      background: var(--primary-navy);
+      color: #FFF;
     }
 
-    .score-card {
-      background: #f8fafc;
-      border: 1px solid var(--card-border);
-      padding: 16px;
-      border-radius: 10px;
+    .report-card {
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+      background: #FFF;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .kpi-tile {
+      background: #F8FAFC;
+      border: 1px solid var(--border-subtle);
+      padding: 12px;
+      border-radius: 6px;
       text-align: center;
     }
+    .kpi-val { font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); }
+    .kpi-lbl { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
 
-    .score-card .val {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--primary);
-    }
-
-    .eval-card {
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 20px;
-      background: #ffffff;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    }
-
-    .rewrite-box {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      padding: 16px;
-      border-radius: 8px;
-      margin-top: 14px;
-      font-size: 0.95rem;
-      color: #166534;
+    @media print {
+      body { background: #FFF; padding: 0; }
+      .btn, .tab-switch, #btn-print-dossier, .meter-container { display: none !important; }
+      .card { border: none; box-shadow: none; padding: 0; }
+      #view-candidate-blueprint, #view-evaluator-briefing { display: block !important; }
     }
 
     .hidden { display: none !important; }
@@ -341,789 +262,1227 @@
 </head>
 <body>
 
-  <header>
-    <h1>💼 Executive Placement Simulator</h1>
-    <span class="header-badge">Dual Speech Engine & Committee Audit</span>
-  </header>
+<div id="app-container">
 
-  <!-- SETUP SCREEN -->
-  <div id="setupScreen" class="card">
-    <h2 style="margin-bottom: 20px; color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif;">Pre-Flight Setup & Dual Verification</h2>
-    
-    <div class="form-group">
-      <label for="domainSelect">Select Specialization Domain</label>
-      <select id="domainSelect">
-        <option value="marketing">Marketing & Brand Strategy</option>
-        <option value="finance">Corporate Finance & Valuation</option>
-        <option value="hr">Human Resources & Talent Management</option>
-      </select>
-    </div>
+  <!-- ================= 1. SETUP SCREEN ================= -->
+  <div id="screen-setup" class="card">
+    <h1>Executive Interview Practice</h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 6px 0 24px;">
+      Campus Placement & Corporate Readiness Diagnostic
+    </p>
 
-    <div class="form-group">
-      <label for="levelSelect">Target Candidate Experience Level</label>
-      <select id="levelSelect">
-        <option value="fresher">Freshers</option>
-        <option value="experienced">Experienced (2+ years)</option>
-      </select>
-    </div>
+    <label for="select-field">Interview Domain</label>
+    <select id="select-field">
+      <option value="Marketing">Marketing</option>
+      <option value="Finance">Finance</option>
+      <option value="HR">Human Resources</option>
+    </select>
 
-    <!-- STEP 1: INTERVIEWER VOICE VERIFICATION -->
-    <div class="verification-box">
-      <label style="color: var(--primary); margin-bottom: 8px;">🔊 Step 1: Select & Verify Executive Voice</label>
-      <select id="voiceSelect" style="margin-bottom: 12px;">
-        <option value="default">Loading voices...</option>
-      </select>
-      
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: center;">
-        <button type="button" class="btn-secondary" onclick="testSelectedVoice()">🎧 Play Sample Greeting</button>
-        <label style="display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; color: #334155; font-weight: 600; font-size: 0.88rem;">
-          <input type="checkbox" id="voiceVerifiedCheck" style="width: 18px; height: 18px;" onchange="checkVerifications()" />
-          Voice Verified Clearly
-        </label>
-      </div>
-    </div>
+    <label for="select-level">Candidate Level</label>
+    <select id="select-level">
+      <option value="Fresher">Freshers (Campus Placement)</option>
+      <option value="Experienced">Experienced (2+ Years)</option>
+    </select>
 
-    <!-- STEP 2: LIVE SPEECH VERIFICATION -->
-    <div class="verification-box">
-      <label style="color: var(--primary); margin-bottom: 8px;">🎤 Step 2: Test Live Speech Capture (5-Sec Test)</label>
-      <p style="font-size: 0.85rem; color: #475569; margin-bottom: 12px;">Click 'Test Live Capture', speak a phrase, and confirm text streams in real time.</p>
-      
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-        <button type="button" id="micTestBtn" class="btn-secondary" onclick="runMicTest()">🎙️ Test Live Capture</button>
-        <div>
-          <span style="font-size: 0.78rem; font-weight: 700; color: #475569;">Live Signal Level:</span>
-          <div class="audio-meter-bar"><div id="micMeterFill" class="audio-meter-fill"></div></div>
-        </div>
-      </div>
+    <label for="select-voice">Interviewer Voice Engine</label>
+    <select id="select-voice">
+      <option value="auto">Detecting system voice...</option>
+    </select>
+    <button class="btn btn-secondary" id="btn-test-voice" style="margin-top: -10px; margin-bottom: 20px; height: 38px; font-size: 0.85rem;">
+      🔊 Test Interviewer Audio
+    </button>
 
-      <div id="testTranscriptBox" style="background: #ffffff; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; font-size: 0.9rem; color: #0f172a; min-height: 48px; margin-bottom: 12px;">
-        Click 'Test Live Capture' and speak...
-      </div>
+    <label for="select-qcount">Questions in this Session</label>
+    <select id="select-qcount">
+      <option value="5" selected>All 5 Curated Questions</option>
+      <option value="3">3 Questions (Rapid Diagnostic)</option>
+    </select>
 
-      <label style="display: flex; align-items: center; gap: 8px; margin: 0; cursor: pointer; color: #334155; font-weight: 600; font-size: 0.88rem;">
-        <input type="checkbox" id="micVerifiedCheck" style="width: 18px; height: 18px;" onchange="checkVerifications()" />
-        Microphone Verified
-      </label>
-    </div>
-
-    <button id="startBtn" class="btn-primary" onclick="startInterviewSession()" disabled>Begin Interview Session</button>
+    <button class="btn btn-primary" id="btn-proceed-to-mic">Proceed to Audio Check &rarr;</button>
   </div>
 
-  <!-- INTERVIEW ROOM SCREEN -->
-  <div id="interviewScreen" class="card hidden">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-      <span id="questionCounter" style="font-weight: 800; color: #64748b; font-size: 0.85rem;">QUESTION 1 OF 5</span>
-      <div style="display: flex; align-items: center; gap: 14px;">
-        <span id="timerContainer" class="timer-badge hidden">🧠 Thinking Window: <span id="timerCountdown">10</span>s</span>
-        <span id="recordingStatus" class="recording-pulse hidden"><span class="pulse-dot"></span> 🎙️ Live Streaming Active</span>
+  <!-- ================= 2. MANDATORY PRE-FLIGHT CHECK ================= -->
+  <div id="screen-mic-check" class="card hidden">
+    <h2>Microphone & Transcription Verification</h2>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin: 6px 0 20px;">
+      Confirm your microphone stream and real-time speech-to-text engine.
+    </p>
+
+    <div class="meter-container">
+      <span>Hardware Signal:</span>
+      <div class="meter-bar">
+        <div id="check-meter-level" class="meter-level"></div>
       </div>
+      <span id="check-meter-pct">0%</span>
     </div>
 
-    <div class="question-box">
-      <div id="curatedTagContainer" class="curated-tag">
-        🏛️ <span id="curatedTagText">Curated Question</span>
-      </div>
-      <h3 id="questionPromptText" style="font-size: 1.15rem; color: #0f172a; font-weight: 700;">Loading question prompt...</h3>
+    <div class="status-banner" id="mic-check-instructions">
+      Click <strong>"Connect & Speak"</strong> and say: <em>"Hello, testing my microphone."</em>
     </div>
 
-    <!-- LIVE TRANSCRIPT CONTAINER WITH REAL-TIME AUDIO METER -->
-    <div class="transcript-container">
-      <div class="transcript-header">
-        <label style="margin: 0;">Live Spoken Transcript (Real-Time Text Streaming):</label>
-        <span id="transcriptStatusText" class="transcript-status">● Waiting...</span>
-      </div>
-      <div class="audio-meter-bar" style="margin-bottom: 8px;"><div id="liveMicMeterFill" class="audio-meter-fill"></div></div>
-      <div id="transcriptBox" class="transcript-box">Interviewer speaking question prompt...</div>
+    <div id="mic-test-output" class="transcript-box" style="font-style: italic; color: var(--text-muted);">
+      Microphone inactive. Click test below to activate.
     </div>
 
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 14px;">
-      <button id="submitBtn" class="btn-primary" onclick="finishAnswer()">Finish & Submit Answer</button>
-      <button id="idkBtn" class="btn-danger" onclick="handleIdkSubmit()">I Don't Know / Pass</button>
-    </div>
+    <button class="btn btn-navy" id="btn-run-mic-test">Connect & Speak</button>
+    <button class="btn btn-primary hidden" id="btn-mic-ok-proceed" style="margin-top: 12px;">
+      Verified &mdash; Enter Interview Room &rarr;
+    </button>
+    <button class="btn btn-secondary" id="btn-back-to-setup">Back</button>
   </div>
 
-  <!-- DIAGNOSTIC DOSSIER REPORT SCREEN -->
-  <div id="reportScreen" class="card hidden">
-    <div id="reportHeaderContainer"></div>
-
-    <div class="tab-bar">
-      <button class="tab-btn active" onclick="switchTab('candidateTab')">Candidate Blueprint</button>
-      <button class="tab-btn" onclick="switchTab('committeeTab')">Committee Briefing & Action Plan</button>
+  <!-- ================= 3. ACTIVE INTERVIEW ================= -->
+  <div id="screen-interview" class="card hidden">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <span id="interview-progress-label" style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Question 1 of 5</span>
+      <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;">
+        <span id="mic-dot" class="mic-indicator-dot"></span>
+        <span id="mic-status-label">Standby</span>
+      </span>
     </div>
 
-    <div id="candidateTab">
-      <div id="evaluationsContainer"></div>
+    <!-- INLINE QUESTION WITH ATTACHED CURATOR BADGE -->
+    <div id="spoken-question-text" class="question-box serif-text">
+      Loading prompt...
     </div>
 
-    <div id="committeeTab" class="hidden">
-      <div style="background: #f8fafc; padding: 24px; border-radius: 12px; border: 1px solid var(--card-border); margin-bottom: 20px;">
-        <h4 style="margin-bottom: 12px; color: #0f172a; font-size: 1.1rem;">Executive Audit Trail</h4>
-        <p style="font-size: 0.95rem; color: #334155; line-height: 1.6;" id="committeeAuditText">Analyzing interview transcript...</p>
-        <div id="idkSummaryBox" style="margin-top: 16px; font-size: 0.9rem; color: #92400e; background: #fef3c7; border: 1px solid #fde68a; padding: 14px; border-radius: 8px;" class="hidden"></div>
+    <div id="interview-flow-status" class="status-banner">
+      <span id="flow-status-text">Interviewer speaking the question...</span>
+    </div>
+
+    <div class="meter-container">
+      <span>Spoken Audio Input:</span>
+      <div class="meter-bar">
+        <div id="live-meter-level" class="meter-level"></div>
       </div>
-
-      <div style="background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid var(--card-border);">
-        <h4 style="margin-bottom: 12px; color: #0f172a; font-size: 1.1rem;">30-Day Executive Strategic Action Plan</h4>
-        <ul id="actionPlanList" style="padding-left: 20px; font-size: 0.95rem; color: #334155; display: flex; flex-direction: column; gap: 10px;"></ul>
-      </div>
+      <span id="live-meter-pct">0%</span>
     </div>
 
-    <button class="btn-primary" style="margin-top: 28px;" onclick="location.reload()">Start New Interview Session</button>
+    <!-- LIVE WRITTEN TRANSCRIPTION CONTAINER -->
+    <label>Candidate Speech Telemetry (Live Transcription):</label>
+    <div id="live-transcript" class="transcript-box">
+      Microphone standing by...
+    </div>
+
+    <!-- CANDIDATE CONTROLS -->
+    <button class="btn btn-primary" id="btn-finish-answer">Finish Answer</button>
+    <button class="btn btn-secondary" id="btn-idk-skip">I Don't Know / Pass Question</button>
   </div>
 
-  <script>
-    // QUESTION BANK CURATED BY CHETAN PATHAK, BHARGAV PANDYA CA, & NIMIT GANATRA
-    const QUESTION_BANK = {
-      marketing: {
-        fresher: [
-          { text: "What is the difference between a marketing campaign and a promotion? Give an example of each.", ideal: "Campaigns build long-term brand equity; promotions drive immediate short-term sales volume.", timer: null, craftedBy: "Curated by Placement Panel" },
-          { text: "Which metrics would you track to tell whether a social media post worked?", ideal: "Engagement rate, click-through rate (CTR), conversion rate, impressions, and reach.", timer: null, craftedBy: "Curated by Mr. Chetan Pathak" },
-          { text: "What is a target audience, and how would you describe one for a new product?", ideal: "A specific demographic and psychographic group defined by age, income, pain points, and buying behavior.", timer: null, craftedBy: "Curated by Mr. Chetan Pathak" },
-          { text: "What is the difference between organic and paid reach?", ideal: "Organic reach is unpaid audience exposure through algorithms/shares; paid reach uses advertising spend.", timer: null, craftedBy: "Curated by Placement Panel" },
-          { text: "If a brand’s Instagram followers grow but sales don’t, what would you check first?", ideal: "Audience quality, landing page conversion funnel, call-to-action alignment, and offer value.", timer: null, craftedBy: "Curated by Mr. Chetan Pathak" }
-        ],
-        experienced: [
-          { text: "Tell me about a campaign you planned. How did you decide the budget, audience, and channels, and what was the result?", ideal: "Bottom-up budgeting based on CAC targets, channel attribution testing, and ROI tracking.", timer: 10, craftedBy: "Curated by Mr. Chetan Pathak" },
-          { text: "How would you decide whether to spend more on paid ads or on content and SEO for a product that is already selling?", ideal: "Compare short-term CAC on paid channels against long-term compounding organic SEO CAC.", timer: null, craftedBy: "Curated by Mr. Chetan Pathak" },
-          { text: "How do you judge whether a brand’s messaging is working in a market that is changing quickly?", ideal: "Track brand sentiment, customer acquisition velocity, message recall tests, and conversion rates.", timer: 10, craftedBy: "Curated by Mr. Chetan Pathak" },
-          { text: "Describe how you would launch a product in a new city where the brand is unknown.", ideal: "Localized PR, influencer partnerships, targeted geo-fenced digital ads, and experiential pop-ups.", timer: null, craftedBy: "Curated by Placement Panel" },
-          { text: "A campaign’s cost per lead has doubled over three weeks. What would you do?", ideal: "Audit ad fatigue, audience saturation, landing page performance, and bidding strategy.", timer: 10, craftedBy: "Curated by Mr. Chetan Pathak" }
-        ]
-      },
-      finance: {
-        fresher: [
-          { text: "What is the difference between profit and cash flow, and why can a profitable business still run out of money?", ideal: "Profit is accrual revenue minus expenses; cash flow is actual physical cash movement. Working capital timing gaps cause cash outs.", timer: null, craftedBy: "Curated by Placement Panel" },
-          { text: "What does a balance sheet show, and what are its three main parts?", ideal: "A snapshot of financial position showing Assets, Liabilities, and Shareholders' Equity at a specific point in time.", timer: null, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
-          { text: "What is the difference between a debit and a credit?", ideal: "Debits increase assets/expenses and decrease liabilities/equity; credits do the reverse in double-entry bookkeeping.", timer: null, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
-          { text: "What is the difference between fixed costs and variable costs? Give one example of each.", ideal: "Fixed costs stay constant regardless of output (e.g. rent); variable costs scale directly with production (e.g. raw materials).", timer: 10, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
-          { text: "What is working capital, and why does it matter to a business?", ideal: "Current Assets minus Current Liabilities; measures short-term operational liquidity and ability to pay immediate obligations.", timer: null, craftedBy: "Curated by Placement Panel" }
-        ],
-        experienced: [
-          { text: "A department is 15 percent over budget halfway through the year. What steps would you take to find the cause and bring spending back on track?", ideal: "Variance analysis, line-item audit, distinguishing fixed vs discretionary expenses, and cost reallocation controls.", timer: 10, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
-          { text: "How would you build a monthly cash flow forecast for a small business, and what would you watch most closely?", ideal: "Project cash inflows from receivables and outflows for payroll/debts; closely monitor Days Sales Outstanding (DSO).", timer: null, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
-          { text: "What would you look at first if a company’s gross margin dropped five points in one quarter?", ideal: "Cost of Goods Sold (COGS) inflation, raw material price hikes, product mix shifts, and discounting trends.", timer: 10, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
-          { text: "How would you decide whether a new piece of equipment is worth buying?", ideal: "Calculate Capital Expenditure (CapEx) payback period, Net Present Value (NPV), and Internal Rate of Return (IRR).", timer: null, craftedBy: "Curated by Mr. Bhargav Pandya CA" },
-          { text: "Tell me about a time you found an error in financial figures. How did you find it and what did you do?", ideal: "Reconciliation analysis, root-cause investigation, correcting financial statements, and improving internal controls.", timer: 10, craftedBy: "Curated by Mr. Bhargav Pandya CA" }
-        ]
-      },
-      hr: {
-        fresher: [
-          { text: "What is the difference between recruitment and selection?", ideal: "Recruitment attracts a pool of candidates; Selection screens and picks the best candidate.", timer: null, craftedBy: "Curated by Placement Panel" },
-          { text: "How would you handle a new employee who is struggling to keep up with the team in the first month?", ideal: "1-on-1 check-in, identifying skill vs clarity gaps, assigning a peer mentor, and setting 30-day goals.", timer: null, craftedBy: "Curated by Mr. Nimit Ganatra" },
-          { text: "Why do companies run an onboarding programme, and what should it cover?", ideal: "Accelerates time-to-productivity, culture integration, compliance rules, role expectations, and tool access.", timer: null, craftedBy: "Curated by Mr. Nimit Ganatra" },
-          { text: "What makes an interview question fair and legal to ask?", ideal: "Job-related competency focus without discrimination on race, gender, age, religion, marital status, or disability.", timer: null, craftedBy: "Curated by Mr. Nimit Ganatra" },
-          { text: "What is the difference between an employee’s job description and their key performance indicators?", ideal: "Job description outlines ongoing duties and responsibilities; KPIs measure specific quantitative performance targets.", timer: 10, craftedBy: "Curated by Mr. Nimit Ganatra" }
-        ],
-        experienced: [
-          { text: "Describe a time you handled a conflict between two team members. What did you do, and what happened afterwards?", ideal: "Private mediation, focusing on shared objective metrics, agreeing on communication protocols, and follow-up.", timer: null, craftedBy: "Curated by Placement Panel" },
-          { text: "How would you reduce employee turnover in a team where people leave after about a year?", ideal: "Exit interview analysis, reviewing career growth pathways, compensation benchmarking, and manager effectiveness.", timer: 10, craftedBy: "Curated by Mr. Nimit Ganatra" },
-          { text: "How do you run a performance review that is fair and useful to the employee?", ideal: "Objective 360-degree feedback, continuous review documentation, transparent KPI scoring, and forward action plans.", timer: null, craftedBy: "Curated by Mr. Nimit Ganatra" },
-          { text: "How would you handle an employee who is performing well but is disruptive to the team?", ideal: "Address behavioral impact directly in private, set clear professional conduct standards, and decouple culture from performance.", timer: null, craftedBy: "Curated by Mr. Nimit Ganatra" },
-          { text: "A company is planning to cut 10 percent of its staff. How would you plan and communicate it?", ideal: "Legal compliance check, empathetic transparent communication, manager script preparation, and severance support.", timer: 10, craftedBy: "Curated by Mr. Nimit Ganatra" }
-        ]
+  <!-- ================= 4. EXECUTIVE DIAGNOSTIC DOSSIER ================= -->
+  <div id="screen-report" class="card hidden">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+      <div>
+        <h2>Executive Placement Diagnostic Dossier</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
+          Evaluation Grounded in Spoken Audio & Real Verbatim Playback
+        </p>
+      </div>
+      <button class="btn btn-secondary" id="btn-print-dossier" style="width: auto; height: 36px; padding: 0 14px; font-size: 0.82rem; margin: 0;" onclick="window.print();">
+        🖨 Print / Export PDF
+      </button>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-tile">
+        <div class="kpi-val" id="kpi-score">--</div>
+        <div class="kpi-lbl">Readiness Tier</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-val" id="kpi-wpm">0</div>
+        <div class="kpi-lbl">Spoken WPM</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-val" id="kpi-fillers">0</div>
+        <div class="kpi-lbl">Verbal Fillers</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-val" id="kpi-completed">0/0</div>
+        <div class="kpi-lbl">Attempted</div>
+      </div>
+    </div>
+
+    <div class="tab-switch">
+      <button class="tab-btn active" id="tab-btn-candidate">Candidate Blueprint</button>
+      <button class="tab-btn" id="tab-btn-evaluator">Evaluator Dossier</button>
+    </div>
+
+    <!-- TAB A: CANDIDATE BLUEPRINT -->
+    <div id="view-candidate-blueprint">
+      <div class="report-card" style="background: #F8FAFC;">
+        <h3>Session Audit & Executive Readout</h3>
+        <p id="report-summary-text" style="font-size: 0.92rem; line-height: 1.55; color: var(--text-main);">
+          Evaluating session telemetry...
+        </p>
+      </div>
+
+      <h3 style="margin-top: 24px; margin-bottom: 12px;">Round-by-Round Breakdown & Audio Playback</h3>
+      <div id="candidate-questions-breakdown"></div>
+    </div>
+
+    <!-- TAB B: EVALUATOR DOSSIER -->
+    <div id="view-evaluator-briefing" class="hidden">
+      <div class="report-card" style="background: #F8FAFC;">
+        <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Panel Readiness Classification</span>
+        <h3 id="evaluator-tier-title" style="margin: 4px 0 8px; color: var(--primary-blue);">Evaluation Baseline</h3>
+        <p id="evaluator-tier-summary" style="font-size: 0.92rem; line-height: 1.55;">
+          Reviewing candidate responses...
+        </p>
+      </div>
+
+      <h3 style="margin-top: 24px; margin-bottom: 12px;">Socratic Round-2 Panel Probes & Evasion Audits</h3>
+      <div id="evaluator-probes-breakdown"></div>
+    </div>
+
+    <button class="btn btn-navy" style="margin-top: 24px;" onclick="location.reload();">Start New Session</button>
+  </div>
+
+</div>
+
+<!-- ================= JAVASCRIPT ENGINE ================= -->
+<script>
+const QUESTION_BANK = [
+  // ================= MARKETING =================
+  // Freshers
+  {
+    field: "Marketing",
+    level: "Fresher",
+    author: "✦ Campus Placement Standard",
+    text: "What is the difference between a marketing campaign and a promotion? Give an example of each.",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Campaign: Long-term strategic goal (brand awareness, positioning, multi-channel).",
+      "Promotion: Short-term tactical incentive designed to stimulate immediate sales (discounts, BOGO).",
+      "Example: Dove Real Beauty (Campaign) vs. 20% off shampoo this weekend (Promotion)."
+    ],
+    idealModelAnswer: "A marketing campaign is a broader, long-term strategic initiative designed to achieve specific brand objectives—such as Dove's Real Beauty campaign across TV and digital. In contrast, a promotion is a short-term tactical incentive aimed at immediate conversion, such as offering a 20% weekend discount on products."
+  },
+  {
+    field: "Marketing",
+    level: "Fresher",
+    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
+    text: "Which metrics would you track to tell whether a social media post worked?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Engagement rate (saves, shares, comments) over passive vanity impressions.",
+      "Click-through rate (CTR) to landing page.",
+      "Conversion or qualified lead generation."
+    ],
+    idealModelAnswer: "I evaluate performance based on the specific post objective. For brand resonance, I prioritize saves, meaningful comments, and shares over passive impressions. For commercial conversion, I track outbound link clicks, click-through rate (CTR), and landing page conversions."
+  },
+  {
+    field: "Marketing",
+    level: "Fresher",
+    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
+    text: "What is a target audience, and how would you describe one for a new product?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Target audience: specific consumer segment most inclined to adopt the product.",
+      "Segmentation criteria: Demographics (age, income), Psychographics (lifestyle, values), Behaviors.",
+      "Direct alignment with the product's core value proposition."
+    ],
+    idealModelAnswer: "A target audience is the defined group of consumers most likely to purchase your product. For a new offering, I define them through three lenses: demographics (age, income), psychographics (lifestyle, core values), and behavioral pain points—specifically identifying the friction they experience that our product uniquely solves."
+  },
+  {
+    field: "Marketing",
+    level: "Fresher",
+    author: "✦ Campus Placement Standard",
+    text: "What is the difference between organic and paid reach?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Organic reach: Unpaid visibility achieved naturally via algorithmic relevance and audience sharing.",
+      "Paid reach: Guaranteed ad impressions funded by media spend.",
+      "Long-term equity vs. immediate targeted speed."
+    ],
+    idealModelAnswer: "Organic reach is the audience you reach naturally without ad spend, driven by content quality, search rankings, and peer sharing. Paid reach is visibility purchased through sponsored ads or pay-per-click. Organic builds long-term compounding credibility, while paid delivers immediate, targeted velocity."
+  },
+  {
+    field: "Marketing",
+    level: "Fresher",
+    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
+    text: "If a brand’s Instagram followers grow but sales don’t, what would you check first?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Audience-buyer alignment (are followers qualified buyers or vanity consumers?).",
+      "Conversion funnel friction (link-in-bio UX, landing page speed, checkout drop-off).",
+      "Call-to-action clarity (entertainment content vs. clear purchase proposition)."
+    ],
+    idealModelAnswer: "First, I audit follower quality to confirm our new followers match our target buyer profile rather than vanity engagement. Second, I inspect the conversion funnel—evaluating bio link clicks, landing page loading speeds, checkout drop-off rates, and checking whether our content actually presents a clear commercial call-to-action."
+  },
+
+  // Experienced (2+ years)
+  {
+    field: "Marketing",
+    level: "Experienced",
+    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
+    text: "Tell me about a campaign you planned. How did you decide the budget, audience, and channels, and what was the result?",
+    thinkingTimeSec: 10,
+    corePoints: [
+      "Objective-and-task budget modeling based on target CAC and customer LTV.",
+      "Audience segmentation based on purchase intent.",
+      "Channel allocation justified by audience consumption patterns.",
+      "Quantifiable commercial outcome (ROAS, CPA reduction, pipeline revenue)."
+    ],
+    idealModelAnswer: "In a previous campaign, I determined the budget using the objective-and-task method, calculating our target customer acquisition cost against customer lifetime value. We concentrated spend on Google Search and LinkedIn where commercial intent was highest. The campaign lowered our blended CAC by 22% and achieved a 3.4x return on ad spend."
+  },
+  {
+    field: "Marketing",
+    level: "Experienced",
+    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
+    text: "How would you decide whether to spend more on paid ads or on content and SEO for a product that is already selling?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Evaluate current paid CAC vs organic acquisition baseline.",
+      "Assess market saturation and margin contribution.",
+      "Deploy paid for immediate scaling while allocating 25-30% into SEO to permanently lower blended CAC."
+    ],
+    idealModelAnswer: "I evaluate our customer acquisition payback period and current organic search share. If unit economics are healthy and immediate scale is demanded, paid ads capture available market demand quickly. However, to defend gross margins against ad inflation, I allocate a consistent 25% of budget into SEO and content to permanently lower our blended CAC."
+  },
+  {
+    field: "Marketing",
+    level: "Experienced",
+    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
+    text: "How do you judge whether a brand’s messaging is working in a market that is changing quickly?",
+    thinkingTimeSec: 10,
+    corePoints: [
+      "Frontline sales feedback and customer sentiment shifts.",
+      "Conversion velocity and sales cycle duration changes.",
+      "Rapid A/B testing of messaging value propositions across agile digital channels."
+    ],
+    idealModelAnswer: "I track frontline sales feedback alongside conversion velocity. When messaging disconnects from a changing market, conversion rates stall and sales cycles lengthen. I deploy weekly A/B ad copy tests to rapidly benchmark which pain points resonate with current market realities."
+  },
+  {
+    field: "Marketing",
+    level: "Experienced",
+    author: "✦ Campus Placement Standard",
+    text: "Describe how you would launch a product in a new city where the brand is unknown.",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Hyper-local research and competitor positioning benchmarking.",
+      "High-trust local partnerships, micro-influencers, and on-ground activations.",
+      "Geo-targeted digital performance marketing with localized messaging."
+    ],
+    idealModelAnswer: "I execute a phased market-entry plan: First, partner with respected local businesses and community groups for immediate credibility. Second, activate geo-targeted digital ads offering an exclusive trial. Third, incentivize early adopters with referral bonuses to build grassroots word-of-mouth."
+  },
+  {
+    field: "Marketing",
+    level: "Experienced",
+    author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
+    text: "A campaign’s cost per lead has doubled over three weeks. What would you do?",
+    thinkingTimeSec: 10,
+    corePoints: [
+      "Diagnose ad creative fatigue (rising frequency, declining CTR).",
+      "Check audience saturation and ad-set overlap.",
+      "Audit landing page technical health and attribution tracking."
+    ],
+    idealModelAnswer: "I run a rapid diagnosis across three areas: First, check ad frequency—if frequency is climbing and CTR is falling, the audience has creative fatigue and needs fresh angles. Second, verify audience overlap across ad sets. Third, audit the landing page for tracking errors or technical glitches inflating reported CPL."
+  },
+
+  // ================= FINANCE =================
+  // Freshers
+  {
+    field: "Finance",
+    level: "Fresher",
+    author: "✦ Campus Placement Standard",
+    text: "What is the difference between profit and cash flow, and why can a profitable business still run out of money?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Profit: Accrual accounting calculation (Revenues recognized minus Expenses incurred).",
+      "Cash Flow: Actual liquid funds moving in and out of bank accounts.",
+      "Reason: Cash tied up in customer receivables, unsold inventory, or debt obligations."
+    ],
+    idealModelAnswer: "Profit is an accounting metric calculated on an accrual basis where revenue is recorded when billed, not collected. Cash flow tracks the physical money entering and leaving bank accounts. A profitable company can run out of cash if clients take 90 days to pay while bills and payroll are due immediately."
+  },
+  {
+    field: "Finance",
+    level: "Fresher",
+    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
+    text: "What does a balance sheet show, and what are its three main parts?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Financial snapshot of a company's financial condition at a specific date.",
+      "Three pillars: Assets, Liabilities, and Shareholders' Equity.",
+      "Governing identity: Assets = Liabilities + Equity."
+    ],
+    idealModelAnswer: "A balance sheet presents a financial snapshot of a business at a specific point in time. Its three core parts are: Assets (what the company owns), Liabilities (what it owes to creditors), and Equity (the residual interest belonging to shareholders), governed by the rule Assets equal Liabilities plus Equity."
+  },
+  {
+    field: "Finance",
+    level: "Fresher",
+    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
+    text: "What is the difference between a debit and a credit?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Debit: Increases asset and expense accounts; decreases liability, equity, and revenue accounts.",
+      "Credit: Increases liability, equity, and revenue accounts; decreases asset and expense accounts.",
+      "Double-entry bookkeeping convention maintaining systemic balance."
+    ],
+    idealModelAnswer: "In double-entry bookkeeping, debits and credits represent opposing financial entries. A debit increases asset and expense accounts while decreasing liabilities and equity. A credit increases liability, equity, and revenue accounts while decreasing assets. Every transaction requires equal debits and credits."
+  },
+  {
+    field: "Finance",
+    level: "Fresher",
+    author: "✦ Campus Placement Standard",
+    text: "What is the difference between fixed costs and variable costs? Give one example of each.",
+    thinkingTimeSec: 10,
+    corePoints: [
+      "Fixed costs: Remain constant regardless of output volume (e.g., rent, baseline executive salaries).",
+      "Variable costs: Change in direct proportion to production volume (e.g., raw materials, packaging).",
+      "Significance for operating leverage and breakeven volume."
+    ],
+    idealModelAnswer: "Fixed costs remain constant regardless of production volume, such as factory rent or monthly software subscriptions. Variable costs fluctuate directly with production output, such as packaging materials or raw materials needed to produce each individual unit."
+  },
+  {
+    field: "Finance",
+    level: "Fresher",
+    author: "✦ Campus Placement Standard",
+    text: "What is working capital, and why does it matter to a business?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Formula: Current Assets minus Current Liabilities.",
+      "Measures short-term operational liquidity and solvency.",
+      "Safeguards against supplier defaults and operational halts."
+    ],
+    idealModelAnswer: "Working capital is calculated as Current Assets minus Current Liabilities. It is vital because it measures a company's immediate operational health and ability to meet short-term obligations like supplier bills and payroll without needing emergency external borrowing."
+  },
+
+  // Experienced (2+ years)
+  {
+    field: "Finance",
+    level: "Experienced",
+    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
+    text: "A department is 15 percent over budget halfway through the year. What steps would you take to find the cause and bring spending back on track?",
+    thinkingTimeSec: 10,
+    corePoints: [
+      "Line-by-line budget variance analysis.",
+      "Distinguish one-off non-recurring shocks from ongoing structural cost creep.",
+      "Enforce spending controls, discretionary freezes, or revised run-rates."
+    ],
+    idealModelAnswer: "First, I conduct a detailed variance analysis across every line item to identify whether the overrun is driven by a one-time non-recurring cost or structural operational creep. Second, meet with the department head to freeze non-essential discretionary expenses and establish weekly spending checkpoints to recover the variance over the remaining quarters."
+  },
+  {
+    field: "Finance",
+    level: "Experienced",
+    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
+    text: "How would you build a monthly cash flow forecast for a small business, and what would you watch most closely?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Direct forecasting modeling: Cash collections vs. cash disbursements over 12 months.",
+      "Accounts receivable aging analysis and real collection lag.",
+      "Minimum required operational cash buffer."
+    ],
+    idealModelAnswer: "I build a direct cash forecast modeling collections based on historical aging schedules rather than billed invoices, mapped against scheduled outflows including payroll, vendor contracts, taxes, and debt. I watch the minimum operating cash threshold and receivables collection lag most closely to avoid cash flow crunches."
+  },
+  {
+    field: "Finance",
+    level: "Experienced",
+    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
+    text: "What would you look at first if a company’s gross margin dropped five points in one quarter?",
+    thinkingTimeSec: 10,
+    corePoints: [
+      "Price vs. Volume vs. Cost analysis (Cost of Goods Sold breakdown).",
+      "Raw material price inflation, direct labor cost increases, or freight shocks.",
+      "Unauthorized sales discounting or product mix shift."
+    ],
+    idealModelAnswer: "I isolate whether the drop was caused by revenue dilution or cost inflation. I review our pricing realizations to see if sales teams gave unauthorized discounts, then audit COGS line-by-line for raw material price surges, rising direct labor, or unfavorable product mix changes toward lower-margin lines."
+  },
+  {
+    field: "Finance",
+    level: "Experienced",
+    author: "💼 Curated by CA Bhargav Pandya • Financial Head",
+    text: "How would you decide whether a new piece of equipment is worth buying?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Capital budgeting: Net Present Value (NPV), Internal Rate of Return (IRR), Payback Period.",
+      "Total Cost of Ownership (maintenance, power, training, depreciation).",
+      "Impact on working capital and liquidity risk."
+    ],
+    idealModelAnswer: "I evaluate the capital investment using Net Present Value (NPV) and Internal Rate of Return (IRR) discounted at our cost of capital. In addition to financial metrics, I assess total cost of ownership—including maintenance, training, and efficiency gains—and ensure the payback period matches our cash liquidity tolerances."
+  },
+  {
+    field: "Finance",
+    level: "Experienced",
+    author: "✦ Campus Placement Standard",
+    text: "Tell me about a time you found an error in financial figures. How did you find it and what did you do?",
+    thinkingTimeSec: 10,
+    corePoints: [
+      "Detection via reconciliation, sanity check, or variance analysis.",
+      "Root cause investigation and corrective ledger posting.",
+      "Control implementation to prevent recurrence."
+    ],
+    idealModelAnswer: "During a monthly bank reconciliation, I noticed an unexpected variance between billed receivables and cash ledgers. I traced the transaction back to an inverted journal entry that misallocated a vendor refund. I corrected the entry, documented the adjustment for our auditor, and introduced a standardized verification checklist."
+  },
+
+  // ================= HUMAN RESOURCES =================
+  // Freshers
+  {
+    field: "HR",
+    level: "Fresher",
+    author: "✦ Campus Placement Standard",
+    text: "What is the difference between recruitment and selection?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Recruitment: Positive talent attraction and pool building.",
+      "Selection: Rigorous filtering, evaluation, and elimination process.",
+      "Recruitment creates candidate supply; selection chooses the final hire."
+    ],
+    idealModelAnswer: "Recruitment is the positive process of advertising, sourcing, and attracting a large pool of candidates to apply for an opening. Selection is the rigorous screening process of interviewing, testing, and filtering that pool down to choose the best-suited individual for the role."
+  },
+  {
+    field: "HR",
+    level: "Fresher",
+    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
+    text: "How would you handle a new employee who is struggling to keep up with the team in the first month?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Empathetic check-in to diagnose skill gaps vs. process ambiguity.",
+      "Peer mentor pairing and bite-sized weekly goal setting.",
+      "Constructive 30-day coaching roadmap before escalation."
+    ],
+    idealModelAnswer: "I would schedule an informal, supportive check-in to understand whether their struggle stems from training gaps, unclear expectations, or tooling friction. I would pair them with an experienced peer buddy, set bite-sized weekly milestones, and review their progress constructively at the end of each week."
+  },
+  {
+    field: "HR",
+    level: "Fresher",
+    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
+    text: "Why do companies run an onboarding programme, and what should it cover?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Reduces initial anxiety and accelerates time-to-productivity.",
+      "Covers culture, tools, compliance, and role expectations.",
+      "Direct correlation with 90-day retention rates."
+    ],
+    idealModelAnswer: "An onboarding program accelerates new hire time-to-productivity and directly drives first-year retention. It should cover company culture and values, IT and workflow systems, clear role responsibilities, compliance policies, and introduce key cross-functional team members."
+  },
+  {
+    field: "HR",
+    level: "Fresher",
+    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
+    text: "What makes an interview question fair and legal to ask?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Direct job-relatedness and bona fide occupational qualifications.",
+      "Strict avoidance of personal characteristics (religion, marital status, caste, family planning).",
+      "Standardized evaluation rubric applied uniformly to all candidates."
+    ],
+    idealModelAnswer: "A fair interview question is directly related to the candidate's ability to perform essential job duties. It strictly avoids personal inquiries into religion, marital status, gender, family planning, or caste, and is asked consistently to all applicants using a standardized evaluation rubric."
+  },
+  {
+    field: "HR",
+    level: "Fresher",
+    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
+    text: "What is the difference between an employee’s job description and their key performance indicators?",
+    thinkingTimeSec: 10,
+    corePoints: [
+      "Job Description (JD): Qualitative scope of ongoing duties, responsibilities, and qualifications.",
+      "KPIs: Quantitative, time-bound targets measuring execution success.",
+      "JD outlines what you do; KPIs measure how effectively you achieve results."
+    ],
+    idealModelAnswer: "A job description outlines the qualitative scope, duties, and responsibilities of a role—explaining what the employee is responsible for. Key Performance Indicators (KPIs) are the specific, measurable, time-bound targets that assess how successfully the employee is executing that work."
+  },
+
+  // Experienced (2+ years)
+  {
+    field: "HR",
+    level: "Experienced",
+    author: "✦ Campus Placement Standard",
+    text: "Describe a time you handled a conflict between two team members. What did you do, and what happened afterwards?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Neutrality and individual active listening.",
+      "Joint mediation focusing on workflow impact rather than personal friction.",
+      "Establishing agreed ground rules and follow-up accountability."
+    ],
+    idealModelAnswer: "When two team members reached an impasse over project deliverables, I met with each individually to hear their concerns without taking sides. I then facilitated a joint session focused exclusively on shared project milestones, established clear ownership of tasks, and conducted check-ins to ensure collaborative alignment."
+  },
+  {
+    field: "HR",
+    level: "Experienced",
+    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
+    text: "How would you reduce employee turnover in a team where people leave after about a year?",
+    thinkingTimeSec: 10,
+    corePoints: [
+      "Rigorous exit and stay interview analysis to isolate root causes.",
+      "Evaluate managerial effectiveness, career progression pathways, and compensation parity.",
+      "Establish visible internal mobility and growth milestones."
+    ],
+    idealModelAnswer: "I conduct a root-cause diagnostic by analyzing exit interview trends and conducting stay interviews with current team members. A 12-month turnover spike usually signals a lack of career progression or managerial friction. I establish clear internal growth milestones and implement regular manager feedback loops."
+  },
+  {
+    field: "HR",
+    level: "Experienced",
+    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
+    text: "How do you run a performance review that is fair and useful to the employee?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "No surprises: continuous feedback delivered throughout the appraisal cycle.",
+      "Data-backed evaluation tied to agreed KPIs, not subjective impressions.",
+      "Forward-looking career development and coaching focus."
+    ],
+    idealModelAnswer: "A fair review should hold zero surprises. It should evaluate clear, documented evidence against agreed-upon KPIs rather than personal impressions. I structure the conversation 30% on past results and 70% on forward-looking professional development and actionable career goals."
+  },
+  {
+    field: "HR",
+    level: "Experienced",
+    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
+    text: "How would you handle an employee who is performing well but is disruptive to the team?",
+    thinkingTimeSec: 0,
+    corePoints: [
+      "Never excuse toxic behavior for technical performance.",
+      "Direct private feedback citing specific behaviors and team impact.",
+      "Set measurable behavioral standards alongside performance metrics."
+    ],
+    idealModelAnswer: "High performance never excuses toxic behavior. I hold a private, direct conversation highlighting their strong work while showing specific examples of how their conduct impacts team morale and productivity. I set clear, measurable expectations for professional behavior, making it clear that culture fit is an equal requirement for success."
+  },
+  {
+    field: "HR",
+    level: "Experienced",
+    author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
+    text: "A company is planning to cut 10 percent of its staff. How would you plan and communicate it?",
+    thinkingTimeSec: 10,
+    corePoints: [
+      "Objective, role-based criteria vetted against bias.",
+      "Transparent, empathetic leadership communication delivered simultaneously.",
+      "Comprehensive transition support (severance, healthcare, outplacement)."
+    ],
+    idealModelAnswer: "I would ensure selection criteria are strictly objective, role-based, and legally vetted to eliminate bias. Communication must be transparent, empathetic, and delivered directly by senior leadership on the same day. For impacted employees, we provide clear transition packages and outplacement assistance, while immediately holding an all-hands meeting to reassure and refocus retained staff."
+  }
+];
+
+// STATE ENGINE
+let sessionQuestions = [];
+let currentQIndex = 0;
+let answerStartTime = null;
+let questionActiveTimestamp = null;
+let currentQuestionTranscript = "";
+let sessionResults = [];
+let selectedVoice = null;
+let countdownInterval = null;
+let activeUtterance = null;
+
+// PHYSICAL MEDIA STREAM & RECORDER
+let activeStream = null;
+let mediaRecorder = null;
+let audioChunks = [];
+let audioContext = null;
+let analyserNode = null;
+let volumeCheckInterval = null;
+let speechRecognizer = null;
+
+async function getOrInitMicrophone() {
+  if (!activeStream) {
+    activeStream = await navigator.mediaDevices.getUserMedia({ 
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
+    });
+  }
+  return activeStream;
+}
+
+function bindVolumeMeter(stream, barId, pctId) {
+  if (volumeCheckInterval) clearInterval(volumeCheckInterval);
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
+
+  analyserNode = audioContext.createAnalyser();
+  analyserNode.fftSize = 256;
+  const source = audioContext.createMediaStreamSource(stream);
+  source.connect(analyserNode);
+
+  const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
+  const bar = document.getElementById(barId);
+  const pct = document.getElementById(pctId);
+
+  volumeCheckInterval = setInterval(() => {
+    analyserNode.getByteFrequencyData(dataArray);
+    let sum = 0;
+    for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+    const avg = sum / dataArray.length;
+    const vol = Math.min(100, Math.round(avg * 2.5));
+
+    if (bar) bar.style.width = vol + "%";
+    if (pct) pct.textContent = vol + "%";
+  }, 60);
+}
+
+// SETUP SCREEN INITIALIZATION
+function initVoices() {
+  const voiceSelect = document.getElementById("select-voice");
+  const voices = window.speechSynthesis.getVoices();
+  voiceSelect.innerHTML = "";
+
+  if (voices.length === 0) {
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = "Standard Voice Engine";
+    voiceSelect.appendChild(opt);
+    return;
+  }
+
+  const preferred = voices.filter(v => 
+    v.lang.startsWith("en") && 
+    (v.name.includes("Natural") || v.name.includes("Google") || v.name.includes("Premium") || v.name.includes("India") || v.name.includes("United Kingdom"))
+  );
+
+  const displayList = preferred.length > 0 ? preferred : voices.filter(v => v.lang.startsWith("en"));
+  displayList.forEach((v) => {
+    const opt = document.createElement("option");
+    opt.value = v.name;
+    opt.textContent = `${v.name} (${v.lang})`;
+    voiceSelect.appendChild(opt);
+  });
+
+  selectedVoice = displayList[0] || voices[0];
+}
+
+window.speechSynthesis.onvoiceschanged = initVoices;
+initVoices();
+
+document.getElementById("btn-test-voice").addEventListener("click", () => {
+  const voiceName = document.getElementById("select-voice").value;
+  const voices = window.speechSynthesis.getVoices();
+  const chosen = voices.find(v => v.name === voiceName);
+
+  window.speechSynthesis.cancel();
+  const testUtter = new SpeechSynthesisUtterance("Good morning. I will be conducting your placement interview today.");
+  if (chosen) testUtter.voice = chosen;
+  testUtter.rate = 0.95;
+  activeUtterance = testUtter;
+  window.speechSynthesis.speak(testUtter);
+});
+
+// PROCEED TO PRE-FLIGHT CHECK
+document.getElementById("btn-proceed-to-mic").addEventListener("click", () => {
+  const chosenField = document.getElementById("select-field").value;
+  const chosenLevel = document.getElementById("select-level").value;
+  const chosenCount = parseInt(document.getElementById("select-qcount").value, 10);
+
+  const voiceName = document.getElementById("select-voice").value;
+  selectedVoice = window.speechSynthesis.getVoices().find(v => v.name === voiceName) || null;
+
+  let pool = QUESTION_BANK.filter(q => q.field === chosenField && q.level === chosenLevel);
+  sessionQuestions = pool.slice(0, chosenCount);
+
+  document.getElementById("screen-setup").classList.add("hidden");
+  document.getElementById("screen-mic-check").classList.remove("hidden");
+});
+
+document.getElementById("btn-back-to-setup").addEventListener("click", () => {
+  document.getElementById("screen-mic-check").classList.add("hidden");
+  document.getElementById("screen-setup").classList.remove("hidden");
+});
+
+// RUN PRE-FLIGHT TEST (WITH FIXED [0].transcript)
+document.getElementById("btn-run-mic-test").addEventListener("click", async () => {
+  const micOutput = document.getElementById("mic-test-output");
+  const proceedBtn = document.getElementById("btn-mic-ok-proceed");
+  const runBtn = document.getElementById("btn-run-mic-test");
+
+  try {
+    const stream = await getOrInitMicrophone();
+    bindVolumeMeter(stream, "check-meter-level", "check-meter-pct");
+
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      micOutput.innerHTML = `<span style="color:var(--danger-red);">Speech recognition engine not supported. Please use Google Chrome.</span>`;
+      return;
+    }
+
+    const testRec = new SpeechRec();
+    testRec.continuous = false;
+    testRec.interimResults = true;
+    testRec.lang = navigator.language || 'en-US';
+
+    micOutput.innerHTML = `<span style="color:var(--accent-teal);">Listening... Speak now into your microphone.</span>`;
+    runBtn.disabled = true;
+
+    testRec.onresult = (e) => {
+      let spoken = "";
+      for (let i = 0; i < e.results.length; i++) {
+        // FIXED: Access [0].transcript
+        if (e.results[i] && e.results[i][0] && e.results[i][0].transcript) {
+          spoken += e.results[i][0].transcript + " ";
+        }
+      }
+      spoken = spoken.trim();
+      micOutput.innerHTML = `<strong>Transcribed Text:</strong> "${spoken}"`;
+      if (spoken.length > 2) {
+        proceedBtn.classList.remove("hidden");
+        runBtn.textContent = "Verified ✓";
       }
     };
 
-    // GLOBAL STATE VARIABLES
-    let currentDomain = "marketing";
-    let currentLevel = "fresher";
-    let questions = [];
-    let currentQuestionIdx = 0;
-    let interviewHistory = [];
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let isRecording = false;
-    let currentTranscript = "";
-    let thinkingTimerInterval = null;
-    let timeRemaining = 0;
-    let consecutiveIdkCount = 0;
-    let audioContext = null;
-    let analyser = null;
-    let liveSpeechRec = null;
-    let activeStream = null;
-    let ttsSafetyTimeout = null;
+    testRec.onerror = (err) => {
+      micOutput.innerHTML = `<span style="color:var(--danger-red);">Error: ${err.error}. Check browser microphone permissions.</span>`;
+      runBtn.disabled = false;
+    };
 
-    // POPULATE INDIAN & GLOBAL VOICES
-    function populateVoices() {
-      if ('speechSynthesis' in window) {
-        const voiceSelect = document.getElementById('voiceSelect');
-        const voices = window.speechSynthesis.getVoices();
-        
-        if (voices.length > 0) {
-          voiceSelect.innerHTML = '';
-          const indianVoices = voices.filter(v => v.lang.includes('IN') || v.name.toLowerCase().includes('india') || v.name.toLowerCase().includes('hindi'));
-          const otherVoices = voices.filter(v => !v.lang.includes('IN') && !v.name.toLowerCase().includes('india') && !v.name.toLowerCase().includes('hindi'));
+    testRec.onend = () => {
+      runBtn.disabled = false;
+    };
 
-          if (indianVoices.length > 0) {
-            const indianGroup = document.createElement('optgroup');
-            indianGroup.label = "🇮🇳 Indian English / Regional Executive Voices";
-            indianVoices.forEach((v) => {
-              const opt = document.createElement('option');
-              opt.value = voices.indexOf(v);
-              opt.innerText = `${v.name} (${v.lang})`;
-              indianGroup.appendChild(opt);
-            });
-            voiceSelect.appendChild(indianGroup);
+    testRec.start();
+  } catch (err) {
+    micOutput.innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Hardware Error: ${err.message}. Please click the lock icon in your address bar and ALLOW microphone access.</span>`;
+  }
+});
+
+// START INTERVIEW
+document.getElementById("btn-mic-ok-proceed").addEventListener("click", () => {
+  document.getElementById("screen-mic-check").classList.add("hidden");
+  document.getElementById("screen-interview").classList.remove("hidden");
+  if (activeStream) {
+    bindVolumeMeter(activeStream, "live-meter-level", "live-meter-pct");
+  }
+  currentQIndex = 0;
+  loadCurrentQuestion();
+});
+
+function loadCurrentQuestion() {
+  const qData = sessionQuestions[currentQIndex];
+  currentQuestionTranscript = "";
+  answerStartTime = null;
+  questionActiveTimestamp = null;
+  audioChunks = [];
+  if (countdownInterval) clearInterval(countdownInterval);
+
+  document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length}`;
+  
+  // INLINE QUESTION WITH ATTACHED CURATOR BADGE & CONDITIONAL TIMER
+  const questionBox = document.getElementById("spoken-question-text");
+  const timerBadgeHtml = qData.thinkingTimeSec > 0 ? `<span class="timer-tag-inline">⏱ ${qData.thinkingTimeSec}s</span>` : '';
+  const authorBadgeHtml = `<span class="author-tag-inline">${qData.author}</span>`;
+  questionBox.innerHTML = `${qData.text} ${authorBadgeHtml} ${timerBadgeHtml}`;
+
+  const flowStatus = document.getElementById("flow-status-text");
+  const transcriptBox = document.getElementById("live-transcript");
+  flowStatus.textContent = "Interviewer speaking the question...";
+  transcriptBox.innerHTML = `<span style="color: var(--text-muted); font-style: italic;">Awaiting question delivery...</span>`;
+  setMicStatus("Interviewer Speaking...", false);
+
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(qData.text);
+  if (selectedVoice) utter.voice = selectedVoice;
+  utter.rate = 0.95;
+  activeUtterance = utter;
+
+  let hasEnded = false;
+  function triggerQuestionEnd() {
+    if (hasEnded) return;
+    hasEnded = true;
+
+    questionActiveTimestamp = Date.now();
+
+    setTimeout(() => {
+      if (qData.thinkingTimeSec > 0) {
+        let secondsLeft = qData.thinkingTimeSec;
+        flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span> (Take a moment to structure your thoughts)`;
+
+        countdownInterval = setInterval(() => {
+          secondsLeft--;
+          if (secondsLeft > 0) {
+            flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span> (Take a moment to structure your thoughts)`;
+          } else {
+            clearInterval(countdownInterval);
+            flowStatus.innerHTML = `<strong>Microphone Live:</strong> Transcribing & recording. Speak your answer now.`;
+            startVoiceRecording();
           }
-
-          const globalGroup = document.createElement('optgroup');
-          globalGroup.label = "🌐 Global Executive Voices";
-          otherVoices.forEach((v) => {
-            const opt = document.createElement('option');
-            opt.value = voices.indexOf(v);
-            opt.innerText = `${v.name} (${v.lang})`;
-            globalGroup.appendChild(opt);
-          });
-          voiceSelect.appendChild(globalGroup);
-        }
-      }
-    }
-
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.onvoiceschanged = populateVoices;
-    }
-
-    function testSelectedVoice() {
-      speakText("Hello! I am your executive interviewer today. How are you feeling about our session?", null);
-    }
-
-    function checkVerifications() {
-      const vChecked = document.getElementById('voiceVerifiedCheck').checked;
-      const mChecked = document.getElementById('micVerifiedCheck').checked;
-      document.getElementById('startBtn').disabled = !(vChecked && mChecked);
-    }
-
-    // 5-SECOND LIVE SPEECH CAPTURE VERIFICATION
-    async function runMicTest() {
-      const btn = document.getElementById('micTestBtn');
-      const box = document.getElementById('testTranscriptBox');
-      const meterFill = document.getElementById('micMeterFill');
-
-      btn.disabled = true;
-      btn.innerText = "🎙️ Listening... Speak now!";
-      box.innerText = "Listening... start speaking aloud.";
-
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
-        
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioContext.createAnalyser();
-        const source = audioContext.createMediaStreamSource(stream);
-        source.connect(analyser);
-        analyser.fftSize = 256;
-        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-        let active = true;
-        function updateMeter() {
-          if (!active) return;
-          analyser.getByteFrequencyData(dataArray);
-          let sum = 0;
-          for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-          let avg = sum / dataArray.length;
-          meterFill.style.width = Math.min(100, avg * 2.5) + "%";
-          requestAnimationFrame(updateMeter);
-        }
-        updateMeter();
-
-        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let testRec = null;
-        if (SpeechRec) {
-          testRec = new SpeechRec();
-          testRec.continuous = true;
-          testRec.interimResults = true;
-          testRec.onresult = (e) => {
-            let resText = "";
-            for (let i = 0; i < e.results.length; i++) {
-              resText += e.results[i].transcript;
-            }
-            if (resText.trim()) {
-              box.innerText = `Captured: "${resText}"`;
-            }
-          };
-          testRec.start();
-        }
-
-        setTimeout(() => {
-          active = false;
-          stream.getTracks().forEach(track => track.stop());
-          if (testRec) try { testRec.stop(); } catch(e){}
-          meterFill.style.width = "0%";
-          btn.disabled = false;
-          btn.innerText = "🎙️ Test Live Capture Again";
-          if (box.innerText.includes("Listening...")) {
-            box.innerText = "Live mic signal detected successfully.";
-          }
-        }, 5000);
-
-      } catch (err) {
-        alert("Microphone permission error: " + err.message);
-        btn.disabled = false;
-        btn.innerText = "🎙️ Test Live Capture";
-      }
-    }
-
-    function startInterviewSession() {
-      currentDomain = document.getElementById('domainSelect').value;
-      currentLevel = document.getElementById('levelSelect').value;
-
-      const domainData = QUESTION_BANK[currentDomain] || QUESTION_BANK.marketing;
-      questions = domainData[currentLevel] || domainData.fresher;
-      currentQuestionIdx = 0;
-      interviewHistory = [];
-      consecutiveIdkCount = 0;
-
-      document.getElementById('setupScreen').classList.add('hidden');
-      document.getElementById('interviewScreen').classList.remove('hidden');
-
-      loadQuestion(0);
-    }
-
-    // LOAD QUESTION WITH GARBAGE-COLLECTION-PROOF TTS & WATCHDOG
-    function loadQuestion(index) {
-      stopThinkingTimer();
-      stopRecordingSilently();
-
-      const q = questions[index];
-      document.getElementById('questionCounter').innerText = `QUESTION ${index + 1} OF ${questions.length}`;
-      document.getElementById('questionPromptText').innerText = q.text;
-      document.getElementById('transcriptBox').innerText = "Interviewer speaking question aloud...";
-      document.getElementById('transcriptStatusText').innerText = "● Interviewer Speaking...";
-      document.getElementById('recordingStatus').classList.add('hidden');
-      currentTranscript = "";
-
-      document.getElementById('curatedTagText').innerText = q.craftedBy || "Curated Question";
-
-      speakText(q.text, () => {
-        if (q.timer && q.timer > 0) {
-          startThinkingWindow(q.timer);
-        } else {
-          startAutoRecording();
-        }
-      });
-    }
-
-    function startThinkingWindow(seconds) {
-      timeRemaining = seconds;
-      const timerBadge = document.getElementById('timerContainer');
-      const countdownEl = document.getElementById('timerCountdown');
-      
-      timerBadge.classList.remove('hidden', 'warning');
-      countdownEl.innerText = timeRemaining;
-      document.getElementById('transcriptBox').innerText = "🧠 Thinking window active... prepare your answer.";
-      document.getElementById('transcriptStatusText').innerText = "● Thinking Window Active...";
-
-      thinkingTimerInterval = setInterval(() => {
-        timeRemaining--;
-        countdownEl.innerText = timeRemaining;
-
-        if (timeRemaining <= 3) {
-          timerBadge.classList.add('warning');
-        }
-
-        if (timeRemaining <= 0) {
-          stopThinkingTimer();
-          startAutoRecording();
-        }
-      }, 1000);
-    }
-
-    function stopThinkingTimer() {
-      if (thinkingTimerInterval) {
-        clearInterval(thinkingTimerInterval);
-        thinkingTimerInterval = null;
-      }
-      document.getElementById('timerContainer').classList.add('hidden');
-    }
-
-    // ROBUST SPEECH SYNTHESIS ENGINE (PREVENTS GC LOCKUP & FREEZING AFTER Q2)
-    function speakText(text, onEndCallback) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        if (ttsSafetyTimeout) clearTimeout(ttsSafetyTimeout);
-
-        // Bind utterance to global memory so Chrome garbage collection does not drop onend
-        window.currentUtterance = new SpeechSynthesisUtterance(text);
-        window.currentUtterance.rate = 0.92; // Human executive pace
-        window.currentUtterance.pitch = 1.0;
-
-        const voiceSelect = document.getElementById('voiceSelect');
-        const voices = window.speechSynthesis.getVoices();
-        if (voiceSelect && voices[voiceSelect.value]) {
-          window.currentUtterance.voice = voices[voiceSelect.value];
-        }
-
-        let callbackFired = false;
-        const safeCallback = () => {
-          if (callbackFired) return;
-          callbackFired = true;
-          if (ttsSafetyTimeout) clearTimeout(ttsSafetyTimeout);
-          if (onEndCallback) onEndCallback();
-        };
-
-        window.currentUtterance.onend = safeCallback;
-        window.currentUtterance.onerror = safeCallback;
-
-        // Hard Safety Watchdog (If browser speech engine hangs, force loop after calculated duration)
-        const estimatedDurationMs = Math.max(3000, (text.length * 80) + 2000);
-        ttsSafetyTimeout = setTimeout(safeCallback, estimatedDurationMs);
-
-        window.speechSynthesis.speak(window.currentUtterance);
+        }, 1000);
       } else {
-        if (onEndCallback) onEndCallback();
+        flowStatus.innerHTML = `<strong>Microphone Live:</strong> Transcribing & recording. Speak your answer now.`;
+        startVoiceRecording();
       }
-    }
+    }, 400);
+  }
 
-    // LIVE STREAMING SPEECH RECOGNITION + AUDIO RECORDING
-    async function startAutoRecording() {
-      stopThinkingTimer();
-      stopRecordingSilently();
+  utter.onend = triggerQuestionEnd;
+  utter.onerror = triggerQuestionEnd;
 
-      try {
-        activeStream = await navigator.mediaDevices.getUserMedia({ 
-          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } 
-        });
-        
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioContext.createAnalyser();
-        const source = audioContext.createMediaStreamSource(activeStream);
-        source.connect(analyser);
-        analyser.fftSize = 256;
-        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-        const liveFill = document.getElementById('liveMicMeterFill');
+  const wordCount = qData.text.split(" ").length;
+  const maxWaitMs = Math.max(4000, wordCount * 500);
+  setTimeout(() => {
+    if (!hasEnded) triggerQuestionEnd();
+  }, maxWaitMs);
 
-        function updateLiveMeter() {
-          if (!isRecording) return;
-          analyser.getByteFrequencyData(dataArray);
-          let sum = 0;
-          for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-          let avg = sum / dataArray.length;
-          liveFill.style.width = Math.min(100, avg * 2.5) + "%";
-          requestAnimationFrame(updateLiveMeter);
-        }
+  window.speechSynthesis.speak(utter);
+}
 
-        let options = {};
-        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-          options = { mimeType: 'audio/webm;codecs=opus' };
-        } else if (MediaRecorder.isTypeSupported('audio/webm')) {
-          options = { mimeType: 'audio/webm' };
-        } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-          options = { mimeType: 'audio/mp4' };
-        }
+// REAL-TIME TRANSCRIPTION + AUDIO RECORDING
+async function startVoiceRecording() {
+  const stream = await getOrInitMicrophone();
+  audioChunks = [];
+  currentQuestionTranscript = "";
 
-        mediaRecorder = new MediaRecorder(activeStream, options);
-        audioChunks = [];
+  try {
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+    mediaRecorder.start(250);
+  } catch (e) {
+    console.error("MediaRecorder init failed:", e);
+  }
 
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) audioChunks.push(e.data);
-        };
+  answerStartTime = Date.now();
+  setMicStatus("Recording & Transcribing", true);
+  document.getElementById("live-transcript").innerHTML = `
+    <span style="color:var(--text-muted); font-style:italic;">Listening... speak naturally.</span>
+  `;
 
-        mediaRecorder.start(250);
-        isRecording = true;
-        updateLiveMeter();
+  // LIVE TRANSCRIPTION ENGINE WITH [0].transcript
+  const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRec) {
+    try {
+      if (speechRecognizer) speechRecognizer.abort();
+      speechRecognizer = new SpeechRec();
+      speechRecognizer.continuous = true;
+      speechRecognizer.interimResults = true;
+      speechRecognizer.lang = navigator.language || 'en-US';
 
-        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRec) {
-          liveSpeechRec = new SpeechRec();
-          liveSpeechRec.continuous = true;
-          liveSpeechRec.interimResults = true;
-          liveSpeechRec.onresult = (e) => {
-            let resText = "";
-            for (let i = 0; i < e.results.length; i++) {
-              resText += e.results[i].transcript;
-            }
-            if (resText.trim()) {
-              currentTranscript = resText;
-              document.getElementById('transcriptBox').innerText = resText;
-            }
-          };
-          try { liveSpeechRec.start(); } catch(err){}
-        }
-
-        document.getElementById('recordingStatus').classList.remove('hidden');
-        document.getElementById('transcriptStatusText').innerText = "🎙️ Live Text Streaming Active...";
-        document.getElementById('transcriptBox').innerText = "Speak into your microphone now...";
-      } catch (err) {
-        console.error("Microphone Access Error:", err);
-        document.getElementById('transcriptBox').innerText = "⚠️ Microphone permission denied.";
-        document.getElementById('transcriptStatusText').innerText = "❌ Microphone Error";
-      }
-    }
-
-    function stopRecordingSilently() {
-      isRecording = false;
-      if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        try { mediaRecorder.stop(); } catch(e){}
-      }
-      if (activeStream) {
-        activeStream.getTracks().forEach(track => track.stop());
-        activeStream = null;
-      }
-      if (liveSpeechRec) {
-        try { liveSpeechRec.stop(); } catch(e){}
-      }
-      document.getElementById('recordingStatus').classList.add('hidden');
-      const liveFill = document.getElementById('liveMicMeterFill');
-      if (liveFill) liveFill.style.width = "0%";
-    }
-
-    function handleIdkSubmit() {
-      consecutiveIdkCount++;
-      currentTranscript = "I don't know the answer to this question.";
-      finishAnswer();
-    }
-
-    async function finishAnswer() {
-      stopThinkingTimer();
-      document.getElementById('recordingStatus').classList.add('hidden');
-      const liveFill = document.getElementById('liveMicMeterFill');
-      if (liveFill) liveFill.style.width = "0%";
-
-      if (liveSpeechRec) {
-        try { liveSpeechRec.stop(); } catch(e){}
-      }
-
-      if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        document.getElementById('transcriptStatusText').innerText = "⚡ Refining Transcript with Groq Whisper...";
-        
-        mediaRecorder.onstop = async () => {
-          const mimeType = mediaRecorder.mimeType || 'audio/webm';
-          const audioBlob = new Blob(audioChunks, { type: mimeType });
-          
-          if (audioBlob.size > 0) {
-            const whisperText = await transcribeAudioWithGroq(audioBlob, mimeType);
-            if (whisperText.trim()) {
-              currentTranscript = whisperText;
-            }
+      speechRecognizer.onresult = (event) => {
+        let full = "";
+        for (let i = 0; i < event.results.length; i++) {
+          // FIXED: Access [0].transcript directly
+          if (event.results[i] && event.results[i][0] && event.results[i][0].transcript) {
+            full += event.results[i][0].transcript + " ";
           }
-          proceedWithEvaluation();
-        };
-
-        mediaRecorder.stop();
-      } else {
-        proceedWithEvaluation();
-      }
-    }
-
-    async function transcribeAudioWithGroq(blob, mimeType) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = async () => {
-          try {
-            const base64Audio = reader.result;
-            const response = await fetch('/api/interview', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                action: 'transcribe',
-                audioBase64: base64Audio,
-                mimeType: mimeType
-              })
-            });
-
-            const data = await response.json();
-            resolve(data.transcript || "");
-          } catch (err) {
-            console.error("Transcription Error:", err);
-            resolve("");
-          }
-        };
-      });
-    }
-
-    async function proceedWithEvaluation() {
-      const currentQ = questions[currentQuestionIdx];
-      const spokenText = currentTranscript || "Candidate provided a brief verbal statement.";
-      document.getElementById('transcriptBox').innerText = spokenText;
-      document.getElementById('transcriptStatusText').innerText = "✅ Transcript Captured";
-
-      const isIdk = spokenText.toLowerCase().includes("don't know") || spokenText.toLowerCase().includes("pass");
-      if (!isIdk) {
-        consecutiveIdkCount = 0;
-      }
-
-      interviewHistory.push({
-        questionIndex: currentQuestionIdx + 1,
-        questionText: currentQ.text,
-        idealAnswer: currentQ.ideal,
-        transcript: spokenText,
-        wasIdk: isIdk
-      });
-
-      try {
-        const response = await fetch('/api/interview', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'followup',
-            questionText: currentQ.text,
-            idealAnswer: currentQ.ideal,
-            transcript: spokenText,
-            consecutiveIdkCount: consecutiveIdkCount
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.trigger && data.prompt) {
-          speakText(data.prompt, () => {
-            currentQuestionIdx++;
-            if (currentQuestionIdx < questions.length) {
-              loadQuestion(currentQuestionIdx);
-            } else {
-              generateFinalReport();
-            }
-          });
-          return;
         }
-      } catch (err) {
-        console.warn("Follow-up skipped:", err);
-      }
+        currentQuestionTranscript = full.trim();
+        if (currentQuestionTranscript.length > 0) {
+          document.getElementById("live-transcript").innerHTML = `
+            <strong style="color:var(--primary-blue);">Transcribed Text:</strong> "${currentQuestionTranscript}"
+          `;
+        }
+      };
 
-      currentQuestionIdx++;
-      if (currentQuestionIdx < questions.length) {
-        loadQuestion(currentQuestionIdx);
-      } else {
-        generateFinalReport();
-      }
+      speechRecognizer.onerror = (e) => {
+        console.warn("Speech recognition event notice:", e.error);
+      };
+
+      speechRecognizer.onend = () => {
+        if (answerStartTime) {
+          try { speechRecognizer.start(); } catch(err){}
+        }
+      };
+
+      speechRecognizer.start();
+    } catch (e) {
+      console.warn("SpeechRecognizer start warning:", e);
     }
+  }
+}
 
-    // GENERATE COMPREHENSIVE DOSSIER REPORT
-    async function generateFinalReport() {
-      stopThinkingTimer();
-      stopRecordingSilently();
-
-      document.getElementById('interviewScreen').classList.add('hidden');
-      document.getElementById('reportScreen').classList.remove('hidden');
-
-      try {
-        const res = await fetch('/api/interview', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'report',
-            sessionResults: interviewHistory
-          })
-        });
-
-        const reportData = await res.json();
-        renderDiagnosticHeader(reportData);
-        renderEvaluations(reportData.evaluations || []);
-        renderActionPlan(reportData.actionPlan || []);
-      } catch (err) {
-        console.error("Report generation error:", err);
-        renderDiagnosticHeader({
-          readinessTier: "Tier 2: Developing",
-          tierColor: "blue",
-          overallSummary: "Session complete. Candidate demonstrated solid fundamental knowledge with opportunities to incorporate strategic metrics.",
-          scores: { analyticalDepth: 75, domainMastery: 70, communicationPoise: 80 }
-        });
-      }
+function stopVoiceRecording() {
+  return new Promise((resolve) => {
+    if (speechRecognizer) {
+      try { speechRecognizer.stop(); } catch(e){}
     }
+    setMicStatus("Standby", false);
 
-    function renderDiagnosticHeader(reportData) {
-      const color = reportData.tierColor || (
-        reportData.readinessTier && reportData.readinessTier.includes("Tier 1") ? "green" :
-        reportData.readinessTier && reportData.readinessTier.includes("Tier 2") ? "blue" : "red"
-      );
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        resolve(audioBlob);
+      };
+      mediaRecorder.stop();
+    } else {
+      resolve(null);
+    }
+  });
+}
 
-      const scores = reportData.scores || { analyticalDepth: 80, domainMastery: 75, communicationPoise: 85 };
+function setMicStatus(label, isLive) {
+  document.getElementById("mic-status-label").textContent = label;
+  const dot = document.getElementById("mic-dot");
+  if (isLive) dot.classList.add("mic-live");
+  else dot.classList.remove("mic-live");
+}
 
-      const headerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-          <div>
-            <h2 style="margin: 0; font-size: 1.6rem; color: #0f172a; font-family: 'Plus Jakarta Sans', sans-serif;">Executive Assessment Dossier</h2>
-            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 0.9rem;">Placement Hiring Committee Official Evaluation</p>
-          </div>
-          <div class="tier-badge ${color}">
-            <span>●</span> ${reportData.readinessTier || 'Tier 2: Developing'}
-          </div>
+// ANTI-GAMING CHECK ON FINISH ANSWER
+document.getElementById("btn-finish-answer").addEventListener("click", async () => {
+  const durationSec = answerStartTime ? ((Date.now() - answerStartTime) / 1000).toFixed(1) : 0;
+  const text = currentQuestionTranscript.trim();
+
+  // Intercept empty submissions under 2 seconds with no spoken transcript
+  if (durationSec < 2.0 && text.length === 0) {
+    window.speechSynthesis.cancel();
+    const promptVoice = new SpeechSynthesisUtterance("You clicked finish without speaking an answer. In an actual placement drive, silence is penalized. Please speak your answer or choose to pass.");
+    if (selectedVoice) promptVoice.voice = selectedVoice;
+    promptVoice.rate = 1.0;
+    activeUtterance = promptVoice;
+    window.speechSynthesis.speak(promptVoice);
+
+    document.getElementById("live-transcript").innerHTML = `
+      <span style="color: var(--danger-red); font-weight: 700;">
+        ⚠️ Empty Submission Intercepted: Please speak your response, or click "I Don't Know / Pass Question" below.
+      </span>
+    `;
+    return;
+  }
+
+  const audioBlob = await stopVoiceRecording();
+  if (countdownInterval) clearInterval(countdownInterval);
+  recordAnswer(text, audioBlob, false, "", false, durationSec);
+});
+
+// RAPID PASS DETECTION ON "I DON'T KNOW"
+document.getElementById("btn-idk-skip").addEventListener("click", async () => {
+  const audioBlob = await stopVoiceRecording();
+  if (countdownInterval) clearInterval(countdownInterval);
+
+  const deliberationSeconds = questionActiveTimestamp ? ((Date.now() - questionActiveTimestamp) / 1000).toFixed(1) : 0;
+  const isReflexivePass = deliberationSeconds < 4.0;
+
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance("Understood. Let us proceed to the next question.");
+  if (selectedVoice) utter.voice = selectedVoice;
+  utter.rate = 1.0;
+  activeUtterance = utter;
+  window.speechSynthesis.speak(utter);
+
+  recordAnswer("", null, true, "Candidate elected to pass / stated 'I don't know'.", isReflexivePass, deliberationSeconds);
+});
+
+function recordAnswer(transcript, audioBlob, wasSkipped, skipReason, isReflexivePass, durationSec) {
+  let audioUrl = null;
+  if (audioBlob && audioBlob.size > 1000) {
+    audioUrl = URL.createObjectURL(audioBlob);
+  }
+
+  const wordCount = transcript.split(/\s+/).filter(Boolean).length;
+  const elapsedMin = Math.max(0.15, parseFloat(durationSec || 1) / 60);
+  const wpm = wasSkipped ? 0 : Math.round(wordCount / elapsedMin);
+
+  const fillerRegex = /\b(um|uh|basically|you know|actually|like)\b/gi;
+  const fillers = (transcript.match(fillerRegex) || []).length;
+
+  sessionResults.push({
+    questionData: sessionQuestions[currentQIndex],
+    transcript: transcript,
+    audioUrl: audioUrl,
+    wasSkipped: wasSkipped,
+    skipReason: skipReason,
+    isReflexivePass: isReflexivePass,
+    durationSec: durationSec,
+    wpm: wpm,
+    fillers: fillers,
+    wordCount: wordCount
+  });
+
+  currentQIndex++;
+  if (currentQIndex < sessionQuestions.length) {
+    loadCurrentQuestion();
+  } else {
+    renderTruthfulReport();
+  }
+}
+
+// EXECUTIVE DIAGNOSTIC DOSSIER
+function renderTruthfulReport() {
+  document.getElementById("screen-interview").classList.add("hidden");
+  document.getElementById("screen-report").classList.remove("hidden");
+
+  const answeredRounds = sessionResults.filter(r => !r.wasSkipped && (r.wordCount > 0 || r.audioUrl !== null));
+  const passedRounds = sessionResults.filter(r => r.wasSkipped);
+  const rapidPassRounds = sessionResults.filter(r => r.isReflexivePass);
+
+  const avgWPM = answeredRounds.length > 0 ? Math.round(answeredRounds.reduce((acc, r) => acc + r.wpm, 0) / answeredRounds.length) : 0;
+  const totalFillers = answeredRounds.reduce((acc, r) => acc + r.fillers, 0);
+
+  document.getElementById("kpi-wpm").textContent = avgWPM;
+  document.getElementById("kpi-fillers").textContent = totalFillers;
+  document.getElementById("kpi-completed").textContent = `${answeredRounds.length}/${sessionResults.length}`;
+
+  const kpiScore = document.getElementById("kpi-score");
+  if (answeredRounds.length === sessionResults.length && totalFillers <= 3) {
+    kpiScore.textContent = "Tier 1";
+    kpiScore.style.color = "var(--success-green)";
+  } else if (answeredRounds.length >= 1) {
+    kpiScore.textContent = "Tier 2";
+    kpiScore.style.color = "var(--primary-blue)";
+  } else {
+    kpiScore.textContent = "Incomplete";
+    kpiScore.style.color = "var(--danger-red)";
+  }
+
+  // SUMMARY AUDIT
+  const summaryBox = document.getElementById("report-summary-text");
+  if (answeredRounds.length === 0) {
+    summaryBox.innerHTML = `
+      <strong>Session Audit:</strong> Candidate passed or provided zero spoken audio across all <strong>${sessionResults.length}</strong> prompts. 
+      <br><br>Zero spoken telemetry was recorded. The interview panel should conduct a foundational baseline screening on core domain terminology. Review the <strong>Executive Benchmarks</strong> below for study.
+    `;
+  } else {
+    let rapidPassNotice = rapidPassRounds.length > 0 ? `<br><strong style="color:var(--danger-red);">Avoidance Warning:</strong> Detected ${rapidPassRounds.length} reflexive pass(es) under 4.0s.` : '';
+    summaryBox.innerHTML = `
+      <strong>Session Audit:</strong> Completed <strong>${answeredRounds.length}</strong> answered rounds and <strong>${passedRounds.length}</strong> passed rounds.
+      <br>Average Spoken Cadence: <strong>${avgWPM} WPM</strong> (Target: 120–150 WPM). Total Verbal Fillers: <strong>${totalFillers}</strong>.${rapidPassNotice}
+    `;
+  }
+
+  // CANDIDATE BLUEPRINT (WITH VERBATIM AUDIO PLAYBACK & TRANSCRIPT)
+  const candidateContainer = document.getElementById("candidate-questions-breakdown");
+  candidateContainer.innerHTML = "";
+
+  sessionResults.forEach((r, idx) => {
+    const card = document.createElement("div");
+    card.className = "report-card";
+
+    let answerSection = "";
+    if (r.wasSkipped) {
+      let rapidPassAlert = r.isReflexivePass ? `
+        <div style="background-color: var(--warning-bg); border: 1px solid #FDE68A; border-radius: 4px; padding: 6px 10px; margin-top: 6px; font-size: 0.8rem; color: #92400E; font-weight: 600;">
+          ⚠️ Rapid Pass Warning (${r.durationSec}s): You surrendered this prompt without taking time to structure a response. Interview panels view rapid surrender as severe anxiety under technical pressure.
         </div>
+      ` : '';
 
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
-          <div class="score-card">
-            <div class="val">${scores.analyticalDepth || 80}%</div>
-            <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 4px;">Analytical Depth</div>
-          </div>
-          <div class="score-card">
-            <div class="val">${scores.domainMastery || 75}%</div>
-            <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 4px;">Domain Mastery</div>
-          </div>
-          <div class="score-card">
-            <div class="val">${scores.communicationPoise || 85}%</div>
-            <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 4px;">Executive Poise</div>
-          </div>
-        </div>
-
-        <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border-left: 4px solid ${color === 'green' ? '#10b981' : color === 'blue' ? '#3b82f6' : '#ef4444'}; margin-bottom: 28px; border: 1px solid var(--card-border); border-left-width: 4px;">
-          <strong style="color: #0f172a;">Executive Summary:</strong> <span style="color: #334155;">${reportData.overallSummary || 'Evaluation completed successfully.'}</span>
+      answerSection = `
+        <div style="background-color: var(--danger-bg); border: 1px solid #FECDD3; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 0.88rem; color: #9F1239;">
+          <strong>[ NO SPOKEN AUDIO RECORDED / CANDIDATE PASSED ]</strong><br>
+          ${r.skipReason}
+          ${rapidPassAlert}
         </div>
       `;
+    } else {
+      let audioPlayerHtml = r.audioUrl ? `
+        <div style="margin-top: 8px;">
+          <label style="margin-bottom: 4px;">▶ Play Your Spoken Audio Response (${r.durationSec}s):</label>
+          <audio controls src="${r.audioUrl}"></audio>
+        </div>
+      ` : '';
 
-      const container = document.getElementById('reportHeaderContainer');
-      if (container) container.innerHTML = headerHTML;
+      let transcriptHtml = (r.transcript && r.transcript.length > 0 && r.transcript !== "undefined") ? `
+        <p style="font-size: 0.92rem; margin: 4px 0 8px; font-style: italic; color: var(--text-main);">"${r.transcript}"</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Pace: <strong>${r.wpm} WPM</strong> | Verbal Fillers: <strong>${r.fillers}</strong></p>
+      ` : `<p style="font-size: 0.88rem; color: var(--text-muted); font-style:italic;">Audio track recorded successfully.</p>`;
 
-      document.getElementById('committeeAuditText').innerText = reportData.overallSummary || "Audit completed.";
+      answerSection = `
+        <div style="background-color: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; margin-bottom: 12px;">
+          <p style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Your Verbatim Response & Telemetry:</p>
+          ${transcriptHtml}
+          ${audioPlayerHtml}
+        </div>
+      `;
+    }
+
+    const corePointsHtml = r.questionData.corePoints.map(pt => `<li>${pt}</li>`).join("");
+
+    card.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent-teal);">QUESTION ${idx + 1}</span>
+        <span style="font-size: 0.8rem; font-weight: 600; color: var(--primary-blue);">${r.questionData.author}</span>
+      </div>
+      <p style="font-size: 1rem; font-weight: 600; margin-bottom: 12px;">${r.questionData.text}</p>
       
-      if (reportData.idkAnalysis) {
-        const idkBox = document.getElementById('idkSummaryBox');
-        idkBox.classList.remove('hidden');
-        idkBox.innerText = "💡 Transparency & Domain Gap Audit: " + reportData.idkAnalysis;
-      }
+      ${answerSection}
+
+      <div style="border-top: 1px solid var(--border-subtle); padding-top: 12px; margin-top: 12px;">
+        <p style="font-size: 0.8rem; font-weight: 700; color: var(--primary-navy); text-transform: uppercase; margin-bottom: 6px;">
+          Executive Model Benchmark (What Recruiters Look For):
+        </p>
+        <ul style="padding-left: 20px; font-size: 0.88rem; line-height: 1.5; color: var(--text-main); margin-bottom: 10px;">
+          ${corePointsHtml}
+        </ul>
+        <p style="font-size: 0.8rem; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; margin-bottom: 4px;">
+          Structured Model Answer:
+        </p>
+        <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-main); background: #F0FDFA; border-left: 3px solid var(--accent-teal); padding: 8px 12px; border-radius: 4px;">
+          "${r.questionData.idealModelAnswer}"
+        </p>
+      </div>
+    `;
+    candidateContainer.appendChild(card);
+  });
+
+  // EVALUATOR DOSSIER
+  const evalContainer = document.getElementById("evaluator-probes-breakdown");
+  evalContainer.innerHTML = "";
+
+  const evalTitle = document.getElementById("evaluator-tier-title");
+  const evalSummary = document.getElementById("evaluator-tier-summary");
+
+  if (answeredRounds.length === 0) {
+    evalTitle.textContent = "Insufficient Spoken Evidence (All Passed)";
+    evalSummary.textContent = "Candidate did not produce spoken responses to the technical prompts. The interview panel should conduct a foundational baseline screening on core domain terminology before proceeding to operational case questions.";
+  } else if (rapidPassRounds.length >= 2) {
+    evalTitle.textContent = "High Evasion Tendency Detected";
+    evalSummary.textContent = `Candidate exhibited ${rapidPassRounds.length} reflexive passes in under 4 seconds. Panel is advised to address situational anxiety and test foundational knowledge under low pressure.`;
+  } else if (passedRounds.length > 0) {
+    evalTitle.textContent = "Selective Competency Demonstrated";
+    evalSummary.textContent = "Candidate demonstrated verbal willingness on selected prompts but deferred on others. Panel should probe candidate's composure and problem-solving methodology when confronted with unfamiliar scenarios.";
+  } else {
+    evalTitle.textContent = "Active Verbal Engagement (Placement Ready)";
+    evalSummary.textContent = "Candidate attempted all prompts with measurable spoken delivery. Recommended for Round 2 technical scrutiny.";
+  }
+
+  sessionResults.forEach((r, idx) => {
+    const card = document.createElement("div");
+    card.className = "report-card";
+
+    let probeHtml = "";
+    if (r.wasSkipped) {
+      let evasionWarning = r.isReflexivePass ? `
+        <div style="background-color: var(--danger-bg); border: 1px solid #FECDD3; border-radius: 4px; padding: 6px 10px; margin-bottom: 8px; font-size: 0.82rem; color: #9F1239; font-weight: 700;">
+          🚩 Reflexive Avoidance Flag: Candidate passed in ${r.durationSec}s without attempting to structure an approach.
+        </div>
+      ` : '';
+
+      probeHtml = `
+        ${evasionWarning}
+        <p style="font-size: 0.88rem; color: #9F1239;">
+          <strong>Round-2 Diagnostic Strategy:</strong> Step back to the foundational principle: <em>"Can you explain the basic definition of this concept in everyday terms?"</em>
+        </p>
+      `;
+    } else {
+      let facultyAudioPlayer = r.audioUrl ? `
+        <div style="margin: 8px 0;">
+          <label style="margin-bottom: 2px; font-size:0.75rem;">Panel Playback (${r.durationSec}s Spoken Voice):</label>
+          <audio controls src="${r.audioUrl}"></audio>
+        </div>
+      ` : '';
+
+      probeHtml = `
+        ${facultyAudioPlayer}
+        <p style="font-size: 0.88rem; color: var(--primary-navy); margin-top: 6px;">
+          <strong>Round-2 Socratic Pushback:</strong> Candidate attempted prompt (${r.wpm} WPM). Probe operational trade-offs: <em>"Walk me through the potential downside or risks associated with your proposed approach."</em>
+        </p>
+      `;
     }
 
-    function renderEvaluations(evals) {
-      const container = document.getElementById('evaluationsContainer');
-      container.innerHTML = "";
+    card.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <span style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted);">QUESTION ${idx + 1} PANEL PROBE</span>
+        <span style="font-size: 0.78rem; font-weight: 600; color: var(--primary-blue);">${r.questionData.author}</span>
+      </div>
+      <p style="font-size: 0.95rem; font-weight: 600; margin-bottom: 8px;">${r.questionData.text}</p>
+      ${probeHtml}
+    `;
+    evalContainer.appendChild(card);
+  });
+}
 
-      evals.forEach((item, idx) => {
-        const card = document.createElement('div');
-        card.className = "eval-card";
-        card.innerHTML = `
-          <h4 style="color: #0f172a; margin-bottom: 12px; font-size: 1.05rem;">Question ${idx + 1} Assessment</h4>
-          <p style="font-size: 0.95rem; color: #15803d; margin-bottom: 8px; line-height: 1.5;"><strong>Key Strengths:</strong> ${item.strengths || 'Articulated core arguments clearly.'}</p>
-          <p style="font-size: 0.95rem; color: #b91c1c; margin-bottom: 12px; line-height: 1.5;"><strong>Identified Gaps:</strong> ${item.gaps || 'Could incorporate deeper operational metrics.'}</p>
-          <div class="rewrite-box">
-            <strong style="color: #14532d;">C-Suite Executive Re-frame:</strong><br/>
-            "${item.executiveRewrite || 'Re-frame answer using structured revenue/metric drivers.'}"
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
+// TAB TOGGLING
+document.getElementById("tab-btn-candidate").addEventListener("click", () => {
+  document.getElementById("tab-btn-candidate").classList.add("active");
+  document.getElementById("tab-btn-evaluator").classList.remove("active");
+  document.getElementById("view-candidate-blueprint").classList.remove("hidden");
+  document.getElementById("view-evaluator-briefing").classList.add("hidden");
+});
 
-    function renderActionPlan(plan) {
-      const list = document.getElementById('actionPlanList');
-      list.innerHTML = "";
-      if (!plan || plan.length === 0) {
-        plan = [
-          "Structure responses using the STAR framework (Situation, Task, Action, Result) with quantitative metrics.",
-          "Incorporate core domain vocabulary naturally to demonstrate technical readiness.",
-          "Defend trade-offs proactively when addressing operational budget or strategy questions."
-        ];
-      }
-      plan.forEach(item => {
-        const li = document.createElement('li');
-        li.innerText = item;
-        list.appendChild(li);
-      });
-    }
+document.getElementById("tab-btn-evaluator").addEventListener("click", () => {
+  document.getElementById("tab-btn-evaluator").classList.add("active");
+  document.getElementById("tab-btn-candidate").classList.remove("active");
+  document.getElementById("view-evaluator-briefing").classList.remove("hidden");
+  document.getElementById("view-candidate-blueprint").classList.add("hidden");
+});
+</script>
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById('candidateTab').classList.add('hidden');
-      document.getElementById('committeeTab').classList.add('hidden');
-
-      if (tabId === 'candidateTab') {
-        document.getElementById('candidateTab').classList.remove('hidden');
-        event.target.classList.add('active');
-      } else {
-        document.getElementById('committeeTab').classList.remove('hidden');
-        event.target.classList.add('active');
-      }
-    }
-
-    window.onload = populateVoices;
-  </script>
 </body>
 </html>
