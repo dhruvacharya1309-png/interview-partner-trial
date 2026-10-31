@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Executive Placement Simulator | Diagnostic Dossier</title>
+  <link rel="preconnect" href="[suspicious link removed]">
+  <link rel="preconnect" href="[suspicious link removed]" crossorigin>
+  <link href="[suspicious link removed]" rel="stylesheet">
   <style>
     :root {
       --bg-surface: #F8FAFC;
@@ -28,7 +31,7 @@
     body {
       background-color: var(--bg-surface);
       color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -37,7 +40,7 @@
 
     #app-container {
       width: 100%;
-      max-width: 720px;
+      max-width: 760px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -47,17 +50,16 @@
     .card {
       background-color: var(--card-surface);
       border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 28px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
     }
 
-    h1 { font-size: 1.5rem; font-weight: 700; color: var(--primary-navy); letter-spacing: -0.02em; }
-    h2 { font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); }
+    h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.55rem; font-weight: 800; color: var(--primary-navy); letter-spacing: -0.02em; }
+    h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--primary-navy); }
     h3 { font-size: 1rem; font-weight: 600; color: var(--primary-navy); margin-bottom: 8px; }
     .serif-text { font-family: Georgia, Cambria, serif; }
 
-    /* INLINE TAGS BESIDE QUESTION MARK */
     .author-tag-inline {
       display: inline-flex;
       align-items: center;
@@ -66,11 +68,11 @@
       color: var(--primary-blue);
       background: #EEF2F6;
       border: 1px solid #DCE3EA;
-      padding: 2px 8px;
-      border-radius: 4px;
+      padding: 3px 9px;
+      border-radius: 6px;
       margin-left: 6px;
       vertical-align: middle;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Inter', sans-serif;
     }
 
     .timer-tag-inline {
@@ -81,27 +83,28 @@
       color: #92400E;
       background: #FEF3C7;
       border: 1px solid #FDE68A;
-      padding: 2px 7px;
-      border-radius: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
       margin-left: 6px;
       vertical-align: middle;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Inter', sans-serif;
     }
 
     label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
     select {
       width: 100%;
       height: 48px;
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
       padding: 0 14px;
       font-size: 0.95rem;
       background: #FFF;
       color: var(--text-main);
-      margin-bottom: 18px;
+      margin-bottom: 20px;
       outline: none;
+      transition: all 0.2s;
     }
-    select:focus { border-color: var(--accent-teal); }
+    select:focus { border-color: var(--accent-teal); box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15); }
 
     .btn {
       display: inline-flex;
@@ -110,26 +113,26 @@
       width: 100%;
       height: 50px;
       font-size: 0.95rem;
-      font-weight: 600;
-      border-radius: 8px;
+      font-weight: 700;
+      border-radius: 10px;
       border: none;
       cursor: pointer;
-      transition: background 0.15s ease;
+      transition: all 0.15s ease;
     }
-    .btn-primary { background-color: var(--accent-teal); color: #FFF; }
-    .btn-primary:hover { background-color: var(--accent-teal-dark); }
+    .btn-primary { background-color: var(--accent-teal); color: #FFF; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2); }
+    .btn-primary:hover:not(:disabled) { background-color: var(--accent-teal-dark); transform: translateY(-1px); }
     .btn-navy { background-color: var(--primary-navy); color: #FFF; }
-    .btn-navy:hover { background-color: #1e293b; }
+    .btn-navy:hover:not(:disabled) { background-color: #1e293b; }
     .btn-secondary {
       background-color: #FFF;
       color: var(--text-main);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border-strong);
       margin-top: 10px;
     }
-    .btn-secondary:hover { background-color: var(--badge-bg); }
+    .btn-secondary:hover:not(:disabled) { background-color: var(--badge-bg); }
 
     .question-box {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       line-height: 1.6;
       color: var(--primary-navy);
       margin: 14px 0 20px;
@@ -140,49 +143,52 @@
       border: 1px solid var(--border-subtle);
       border-left: 4px solid var(--accent-teal);
       padding: 14px 16px;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 0.92rem;
       color: var(--text-main);
       margin-bottom: 18px;
     }
 
-    /* HARDWARE AUDIO LEVEL VISUALIZER */
-    .meter-container {
+    /* OSCILLOSCOPE WAVEFORM VISUALIZER CONTAINER */
+    .waveform-container {
+      background: #0F172A;
+      border: 1px solid #1E293B;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 16px;
       display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .waveform-header {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 10px;
-      background: #F1F5F9;
-      padding: 10px 14px;
-      border-radius: 8px;
-      margin-bottom: 14px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
-    .meter-bar {
-      flex: 1;
-      height: 10px;
-      background: #E2E8F0;
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    .meter-level {
-      height: 100%;
-      width: 0%;
-      background: var(--success-green);
-      transition: width 0.05s ease;
+    canvas.waveform-canvas {
+      width: 100%;
+      height: 54px;
+      background: #0F172A;
+      border-radius: 6px;
+      display: block;
     }
 
     .transcript-box {
       background-color: #F8FAFC;
       border: 1px solid var(--border-subtle);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 16px;
-      min-height: 80px;
+      min-height: 90px;
       font-size: 0.95rem;
       line-height: 1.5;
       color: var(--text-main);
-      margin-bottom: 16px;
+      margin-bottom: 18px;
+      white-space: pre-wrap;
     }
 
     .mic-indicator-dot {
@@ -193,7 +199,7 @@
       background-color: #94A3B8;
       margin-right: 6px;
     }
-    .mic-live { background-color: var(--success-green); box-shadow: 0 0 8px var(--success-green); }
+    .mic-live { background-color: var(--success-green); box-shadow: 0 0 10px var(--success-green); }
 
     audio {
       width: 100%;
@@ -206,20 +212,21 @@
     .tab-switch {
       display: flex;
       border: 1px solid var(--border-subtle);
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
       margin-bottom: 24px;
     }
     .tab-btn {
       flex: 1;
-      padding: 12px;
+      padding: 14px;
       text-align: center;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 0.9rem;
       background: #F8FAFC;
       border: none;
       cursor: pointer;
       color: var(--text-muted);
+      transition: all 0.2s;
     }
     .tab-btn.active {
       background: var(--primary-navy);
@@ -228,31 +235,32 @@
 
     .report-card {
       border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 16px;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
       background: #FFF;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
 
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
-      margin: 16px 0;
+      margin: 20px 0;
     }
     .kpi-tile {
       background: #F8FAFC;
       border: 1px solid var(--border-subtle);
-      padding: 12px;
-      border-radius: 6px;
+      padding: 14px 10px;
+      border-radius: 10px;
       text-align: center;
     }
-    .kpi-val { font-size: 1.25rem; font-weight: 700; color: var(--primary-navy); }
-    .kpi-lbl { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
+    .kpi-val { font-size: 1.35rem; font-weight: 800; color: var(--primary-navy); }
+    .kpi-lbl { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
 
     @media print {
       body { background: #FFF; padding: 0; }
-      .btn, .tab-switch, #btn-print-dossier, .meter-container { display: none !important; }
+      .btn, .tab-switch, #btn-print-dossier, .waveform-container { display: none !important; }
       .card { border: none; box-shadow: none; padding: 0; }
       #view-candidate-blueprint, #view-evaluator-briefing { display: block !important; }
     }
@@ -273,9 +281,9 @@
 
     <label for="select-field">Interview Domain</label>
     <select id="select-field">
-      <option value="Marketing">Marketing</option>
-      <option value="Finance">Finance</option>
-      <option value="HR">Human Resources</option>
+      <option value="Marketing">Marketing & Brand Strategy</option>
+      <option value="Finance">Corporate Finance & Valuation</option>
+      <option value="HR">Human Resources & Talent Management</option>
     </select>
 
     <label for="select-level">Candidate Level</label>
@@ -286,9 +294,9 @@
 
     <label for="select-voice">Interviewer Voice Engine</label>
     <select id="select-voice">
-      <option value="auto">Detecting system voice...</option>
+      <option value="auto">Detecting system voices...</option>
     </select>
-    <button class="btn btn-secondary" id="btn-test-voice" style="margin-top: -10px; margin-bottom: 20px; height: 38px; font-size: 0.85rem;">
+    <button class="btn btn-secondary" id="btn-test-voice" style="margin-top: -10px; margin-bottom: 20px; height: 40px; font-size: 0.88rem;">
       🔊 Test Interviewer Audio
     </button>
 
@@ -303,17 +311,18 @@
 
   <!-- ================= 2. MANDATORY PRE-FLIGHT CHECK ================= -->
   <div id="screen-mic-check" class="card hidden">
-    <h2>Microphone & Transcription Verification</h2>
+    <h2>Microphone & Waveform Verification</h2>
     <p style="color: var(--text-muted); font-size: 0.9rem; margin: 6px 0 20px;">
       Confirm your microphone stream and real-time speech-to-text engine.
     </p>
 
-    <div class="meter-container">
-      <span>Hardware Signal:</span>
-      <div class="meter-bar">
-        <div id="check-meter-level" class="meter-level"></div>
+    <!-- REAL-TIME OSCILLOSCOPE WAVEFORM VISUALIZER -->
+    <div class="waveform-container">
+      <div class="waveform-header">
+        <span>Hardware Oscilloscope Signal</span>
+        <span id="check-signal-status" style="color: #10B981;">Standby</span>
       </div>
-      <span id="check-meter-pct">0%</span>
+      <canvas id="checkWaveformCanvas" class="waveform-canvas" width="600" height="54"></canvas>
     </div>
 
     <div class="status-banner" id="mic-check-instructions">
@@ -331,7 +340,7 @@
     <button class="btn btn-secondary" id="btn-back-to-setup">Back</button>
   </div>
 
-  <!-- ================= 3. ACTIVE INTERVIEW ================= -->
+  <!-- ================= 3. ACTIVE INTERVIEW ROOM ================= -->
   <div id="screen-interview" class="card hidden">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
       <span id="interview-progress-label" style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Question 1 of 5</span>
@@ -341,7 +350,6 @@
       </span>
     </div>
 
-    <!-- INLINE QUESTION WITH ATTACHED CURATOR BADGE -->
     <div id="spoken-question-text" class="question-box serif-text">
       Loading prompt...
     </div>
@@ -350,23 +358,22 @@
       <span id="flow-status-text">Interviewer speaking the question...</span>
     </div>
 
-    <div class="meter-container">
-      <span>Spoken Audio Input:</span>
-      <div class="meter-bar">
-        <div id="live-meter-level" class="meter-level"></div>
+    <!-- LIVE INTERVIEW WAVEFORM VISUALIZER -->
+    <div class="waveform-container">
+      <div class="waveform-header">
+        <span>Live Audio Input Oscilloscope</span>
+        <span id="live-signal-status" style="color: #64748B;">Listening</span>
       </div>
-      <span id="live-meter-pct">0%</span>
+      <canvas id="interviewWaveformCanvas" class="waveform-canvas" width="600" height="54"></canvas>
     </div>
 
-    <!-- LIVE WRITTEN TRANSCRIPTION CONTAINER -->
     <label>Candidate Speech Telemetry (Live Transcription):</label>
     <div id="live-transcript" class="transcript-box">
       Microphone standing by...
     </div>
 
-    <!-- CANDIDATE CONTROLS -->
-    <button class="btn btn-primary" id="btn-finish-answer">Finish Answer</button>
-    <button class="btn btn-secondary" id="btn-idk-skip">I Don't Know / Pass Question</button>
+    <button class="btn btn-primary" id="btn-finish-answer">Finish & Submit Answer</button>
+    <button class="btn btn-secondary" id="btn-idk-skip" style="margin-top: 10px;">I Don't Know / Pass Question</button>
   </div>
 
   <!-- ================= 4. EXECUTIVE DIAGNOSTIC DOSSIER ================= -->
@@ -378,7 +385,7 @@
           Evaluation Grounded in Spoken Audio & Real Verbatim Playback
         </p>
       </div>
-      <button class="btn btn-secondary" id="btn-print-dossier" style="width: auto; height: 36px; padding: 0 14px; font-size: 0.82rem; margin: 0;" onclick="window.print();">
+      <button class="btn btn-secondary" id="btn-print-dossier" style="width: auto; height: 38px; padding: 0 14px; font-size: 0.82rem; margin: 0;" onclick="window.print();">
         🖨 Print / Export PDF
       </button>
     </div>
@@ -443,7 +450,6 @@
 <script>
 const QUESTION_BANK = [
   // ================= MARKETING =================
-  // Freshers
   {
     field: "Marketing",
     level: "Fresher",
@@ -510,7 +516,6 @@ const QUESTION_BANK = [
     idealModelAnswer: "First, I audit follower quality to confirm our new followers match our target buyer profile rather than vanity engagement. Second, I inspect the conversion funnel—evaluating bio link clicks, landing page loading speeds, checkout drop-off rates, and checking whether our content actually presents a clear commercial call-to-action."
   },
 
-  // Experienced (2+ years)
   {
     field: "Marketing",
     level: "Experienced",
@@ -579,7 +584,6 @@ const QUESTION_BANK = [
   },
 
   // ================= FINANCE =================
-  // Freshers
   {
     field: "Finance",
     level: "Fresher",
@@ -646,7 +650,6 @@ const QUESTION_BANK = [
     idealModelAnswer: "Working capital is calculated as Current Assets minus Current Liabilities. It is vital because it measures a company's immediate operational health and ability to meet short-term obligations like supplier bills and payroll without needing emergency external borrowing."
   },
 
-  // Experienced (2+ years)
   {
     field: "Finance",
     level: "Experienced",
@@ -714,7 +717,6 @@ const QUESTION_BANK = [
   },
 
   // ================= HUMAN RESOURCES =================
-  // Freshers
   {
     field: "HR",
     level: "Fresher",
@@ -781,7 +783,6 @@ const QUESTION_BANK = [
     idealModelAnswer: "A job description outlines the qualitative scope, duties, and responsibilities of a role—explaining what the employee is responsible for. Key Performance Indicators (KPIs) are the specific, measurable, time-bound targets that assess how successfully the employee is executing that work."
   },
 
-  // Experienced (2+ years)
   {
     field: "HR",
     level: "Experienced",
@@ -849,7 +850,7 @@ const QUESTION_BANK = [
   }
 ];
 
-// STATE ENGINE
+// SYSTEM STATE ENGINE
 let sessionQuestions = [];
 let currentQIndex = 0;
 let answerStartTime = null;
@@ -858,16 +859,78 @@ let currentQuestionTranscript = "";
 let sessionResults = [];
 let selectedVoice = null;
 let countdownInterval = null;
-let activeUtterance = null;
 
-// PHYSICAL MEDIA STREAM & RECORDER
+// AUDIO & RECORDING MEDIA STREAM
 let activeStream = null;
 let mediaRecorder = null;
 let audioChunks = [];
 let audioContext = null;
 let analyserNode = null;
-let volumeCheckInterval = null;
+let waveformAnimId = null;
 let speechRecognizer = null;
+let ttsWatchdogTimeout = null;
+
+// REAL-TIME OSCILLOSCOPE WAVEFORM RENDERER
+function startOscilloscope(stream, canvasId, statusId) {
+  if (waveformAnimId) cancelAnimationFrame(waveformAnimId);
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioContext.state === 'suspended') {
+    audioContext.resume();
+  }
+
+  analyserNode = audioContext.createAnalyser();
+  analyserNode.fftSize = 2048; // Smooth high-res waveform
+  const source = audioContext.createMediaStreamSource(stream);
+  source.connect(analyserNode);
+
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const bufferLength = analyserNode.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  const statusEl = document.getElementById(statusId);
+
+  function draw() {
+    waveformAnimId = requestAnimationFrame(draw);
+    analyserNode.getByteTimeDomainData(dataArray);
+
+    ctx.fillStyle = "#0F172A";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#10B981"; // Vibrant teal waveform
+    ctx.beginPath();
+
+    const sliceWidth = canvas.width * 1.0 / bufferLength;
+    let x = 0;
+
+    for (let i = 0; i < bufferLength; i++) {
+      const v = dataArray[i] / 128.0;
+      const y = (v * canvas.height) / 2;
+
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+
+      x += sliceWidth;
+    }
+
+    ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx.stroke();
+
+    if (statusEl) statusEl.textContent = "🎙️ Live Stream Signal Active";
+  }
+
+  draw();
+}
+
+function stopOscilloscope() {
+  if (waveformAnimId) {
+    cancelAnimationFrame(waveformAnimId);
+    waveformAnimId = null;
+  }
+}
 
 async function getOrInitMicrophone() {
   if (!activeStream) {
@@ -882,37 +945,7 @@ async function getOrInitMicrophone() {
   return activeStream;
 }
 
-function bindVolumeMeter(stream, barId, pctId) {
-  if (volumeCheckInterval) clearInterval(volumeCheckInterval);
-  if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioContext.state === 'suspended') {
-    audioContext.resume();
-  }
-
-  analyserNode = audioContext.createAnalyser();
-  analyserNode.fftSize = 256;
-  const source = audioContext.createMediaStreamSource(stream);
-  source.connect(analyserNode);
-
-  const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
-  const bar = document.getElementById(barId);
-  const pct = document.getElementById(pctId);
-
-  volumeCheckInterval = setInterval(() => {
-    analyserNode.getByteFrequencyData(dataArray);
-    let sum = 0;
-    for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-    const avg = sum / dataArray.length;
-    const vol = Math.min(100, Math.round(avg * 2.5));
-
-    if (bar) bar.style.width = vol + "%";
-    if (pct) pct.textContent = vol + "%";
-  }, 60);
-}
-
-// SETUP SCREEN INITIALIZATION
+// SETUP VOICE ENGINE
 function initVoices() {
   const voiceSelect = document.getElementById("select-voice");
   const voices = window.speechSynthesis.getVoices();
@@ -942,20 +975,51 @@ function initVoices() {
   selectedVoice = displayList[0] || voices[0];
 }
 
-window.speechSynthesis.onvoiceschanged = initVoices;
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = initVoices;
+}
 initVoices();
 
-document.getElementById("btn-test-voice").addEventListener("click", () => {
-  const voiceName = document.getElementById("select-voice").value;
-  const voices = window.speechSynthesis.getVoices();
-  const chosen = voices.find(v => v.name === voiceName);
+// HUMANIZED EXECUTIVE TTS ENGINE
+function speakText(text, onEndCallback) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    if (ttsWatchdogTimeout) clearTimeout(ttsWatchdogTimeout);
 
-  window.speechSynthesis.cancel();
-  const testUtter = new SpeechSynthesisUtterance("Good morning. I will be conducting your placement interview today.");
-  if (chosen) testUtter.voice = chosen;
-  testUtter.rate = 0.95;
-  activeUtterance = testUtter;
-  window.speechSynthesis.speak(testUtter);
+    // Global memory binding prevents Chrome garbage collection drops
+    window.activeUtterance = new SpeechSynthesisUtterance(text);
+    window.activeUtterance.rate = 0.92; // Executive cadence
+    window.activeUtterance.pitch = 0.98;
+
+    const voiceName = document.getElementById("select-voice").value;
+    const voices = window.speechSynthesis.getVoices();
+    if (voiceName) {
+      const chosen = voices.find(v => v.name === voiceName);
+      if (chosen) window.activeUtterance.voice = chosen;
+    }
+
+    let fired = false;
+    const safeCallback = () => {
+      if (fired) return;
+      fired = true;
+      if (ttsWatchdogTimeout) clearTimeout(ttsWatchdogTimeout);
+      if (onEndCallback) onEndCallback();
+    };
+
+    window.activeUtterance.onend = safeCallback;
+    window.activeUtterance.onerror = safeCallback;
+
+    const maxMs = Math.max(3000, (text.length * 85) + 2500);
+    ttsWatchdogTimeout = setTimeout(safeCallback, maxMs);
+
+    window.speechSynthesis.speak(window.activeUtterance);
+  } else {
+    if (onEndCallback) onEndCallback();
+  }
+}
+
+document.getElementById("btn-test-voice").addEventListener("click", () => {
+  speakText("Good morning! I am your senior executive interviewer today. Let us conduct your placement assessment.", null);
 });
 
 // PROCEED TO PRE-FLIGHT CHECK
@@ -975,11 +1039,12 @@ document.getElementById("btn-proceed-to-mic").addEventListener("click", () => {
 });
 
 document.getElementById("btn-back-to-setup").addEventListener("click", () => {
+  stopOscilloscope();
   document.getElementById("screen-mic-check").classList.add("hidden");
   document.getElementById("screen-setup").classList.remove("hidden");
 });
 
-// RUN PRE-FLIGHT TEST (WITH FIXED [0].transcript)
+// RUN PRE-FLIGHT TEST
 document.getElementById("btn-run-mic-test").addEventListener("click", async () => {
   const micOutput = document.getElementById("mic-test-output");
   const proceedBtn = document.getElementById("btn-mic-ok-proceed");
@@ -987,7 +1052,7 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
 
   try {
     const stream = await getOrInitMicrophone();
-    bindVolumeMeter(stream, "check-meter-level", "check-meter-pct");
+    startOscilloscope(stream, "checkWaveformCanvas", "check-signal-status");
 
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRec) {
@@ -1006,7 +1071,6 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
     testRec.onresult = (e) => {
       let spoken = "";
       for (let i = 0; i < e.results.length; i++) {
-        // FIXED: Access [0].transcript
         if (e.results[i] && e.results[i][0] && e.results[i][0].transcript) {
           spoken += e.results[i][0].transcript + " ";
         }
@@ -1024,23 +1088,17 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
       runBtn.disabled = false;
     };
 
-    testRec.onend = () => {
-      runBtn.disabled = false;
-    };
-
+    testRec.onend = () => { runBtn.disabled = false; };
     testRec.start();
   } catch (err) {
-    micOutput.innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Hardware Error: ${err.message}. Please click the lock icon in your address bar and ALLOW microphone access.</span>`;
+    micOutput.innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Hardware Error: ${err.message}. Please ALLOW microphone access in address bar.</span>`;
   }
 });
 
-// START INTERVIEW
+// START INTERVIEW SESSION
 document.getElementById("btn-mic-ok-proceed").addEventListener("click", () => {
   document.getElementById("screen-mic-check").classList.add("hidden");
   document.getElementById("screen-interview").classList.remove("hidden");
-  if (activeStream) {
-    bindVolumeMeter(activeStream, "live-meter-level", "live-meter-pct");
-  }
   currentQIndex = 0;
   loadCurrentQuestion();
 });
@@ -1055,7 +1113,6 @@ function loadCurrentQuestion() {
 
   document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length}`;
   
-  // INLINE QUESTION WITH ATTACHED CURATOR BADGE & CONDITIONAL TIMER
   const questionBox = document.getElementById("spoken-question-text");
   const timerBadgeHtml = qData.thinkingTimeSec > 0 ? `<span class="timer-tag-inline">⏱ ${qData.thinkingTimeSec}s</span>` : '';
   const authorBadgeHtml = `<span class="author-tag-inline">${qData.author}</span>`;
@@ -1067,28 +1124,17 @@ function loadCurrentQuestion() {
   transcriptBox.innerHTML = `<span style="color: var(--text-muted); font-style: italic;">Awaiting question delivery...</span>`;
   setMicStatus("Interviewer Speaking...", false);
 
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(qData.text);
-  if (selectedVoice) utter.voice = selectedVoice;
-  utter.rate = 0.95;
-  activeUtterance = utter;
-
-  let hasEnded = false;
-  function triggerQuestionEnd() {
-    if (hasEnded) return;
-    hasEnded = true;
-
+  speakText(qData.text, () => {
     questionActiveTimestamp = Date.now();
-
     setTimeout(() => {
       if (qData.thinkingTimeSec > 0) {
         let secondsLeft = qData.thinkingTimeSec;
-        flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span> (Take a moment to structure your thoughts)`;
+        flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span>`;
 
         countdownInterval = setInterval(() => {
           secondsLeft--;
           if (secondsLeft > 0) {
-            flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span> (Take a moment to structure your thoughts)`;
+            flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span>`;
           } else {
             clearInterval(countdownInterval);
             flowStatus.innerHTML = `<strong>Microphone Live:</strong> Transcribing & recording. Speak your answer now.`;
@@ -1100,23 +1146,14 @@ function loadCurrentQuestion() {
         startVoiceRecording();
       }
     }, 400);
-  }
-
-  utter.onend = triggerQuestionEnd;
-  utter.onerror = triggerQuestionEnd;
-
-  const wordCount = qData.text.split(" ").length;
-  const maxWaitMs = Math.max(4000, wordCount * 500);
-  setTimeout(() => {
-    if (!hasEnded) triggerQuestionEnd();
-  }, maxWaitMs);
-
-  window.speechSynthesis.speak(utter);
+  });
 }
 
-// REAL-TIME TRANSCRIPTION + AUDIO RECORDING
+// LIVE STREAMING & AUDIO RECORDING
 async function startVoiceRecording() {
   const stream = await getOrInitMicrophone();
+  startOscilloscope(stream, "interviewWaveformCanvas", "live-signal-status");
+
   audioChunks = [];
   currentQuestionTranscript = "";
 
@@ -1136,7 +1173,6 @@ async function startVoiceRecording() {
     <span style="color:var(--text-muted); font-style:italic;">Listening... speak naturally.</span>
   `;
 
-  // LIVE TRANSCRIPTION ENGINE WITH [0].transcript
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRec) {
     try {
@@ -1149,7 +1185,6 @@ async function startVoiceRecording() {
       speechRecognizer.onresult = (event) => {
         let full = "";
         for (let i = 0; i < event.results.length; i++) {
-          // FIXED: Access [0].transcript directly
           if (event.results[i] && event.results[i][0] && event.results[i][0].transcript) {
             full += event.results[i][0].transcript + " ";
           }
@@ -1160,10 +1195,6 @@ async function startVoiceRecording() {
             <strong style="color:var(--primary-blue);">Transcribed Text:</strong> "${currentQuestionTranscript}"
           `;
         }
-      };
-
-      speechRecognizer.onerror = (e) => {
-        console.warn("Speech recognition event notice:", e.error);
       };
 
       speechRecognizer.onend = () => {
@@ -1181,6 +1212,7 @@ async function startVoiceRecording() {
 
 function stopVoiceRecording() {
   return new Promise((resolve) => {
+    stopOscilloscope();
     if (speechRecognizer) {
       try { speechRecognizer.stop(); } catch(e){}
     }
@@ -1205,20 +1237,14 @@ function setMicStatus(label, isLive) {
   else dot.classList.remove("mic-live");
 }
 
-// ANTI-GAMING CHECK ON FINISH ANSWER
+// SUBMIT ANSWER WITH ANTI-GAMING & SPONTANEOUS FOLLOW-UP AI
 document.getElementById("btn-finish-answer").addEventListener("click", async () => {
   const durationSec = answerStartTime ? ((Date.now() - answerStartTime) / 1000).toFixed(1) : 0;
   const text = currentQuestionTranscript.trim();
 
-  // Intercept empty submissions under 2 seconds with no spoken transcript
+  // ANTI-GAMING: Intercept empty submissions under 2 seconds
   if (durationSec < 2.0 && text.length === 0) {
-    window.speechSynthesis.cancel();
-    const promptVoice = new SpeechSynthesisUtterance("You clicked finish without speaking an answer. In an actual placement drive, silence is penalized. Please speak your answer or choose to pass.");
-    if (selectedVoice) promptVoice.voice = selectedVoice;
-    promptVoice.rate = 1.0;
-    activeUtterance = promptVoice;
-    window.speechSynthesis.speak(promptVoice);
-
+    speakText("You clicked finish without speaking an answer. In an actual placement drive, silence is penalized. Please speak your answer or choose to pass.", null);
     document.getElementById("live-transcript").innerHTML = `
       <span style="color: var(--danger-red); font-weight: 700;">
         ⚠️ Empty Submission Intercepted: Please speak your response, or click "I Don't Know / Pass Question" below.
@@ -1229,10 +1255,58 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
 
   const audioBlob = await stopVoiceRecording();
   if (countdownInterval) clearInterval(countdownInterval);
-  recordAnswer(text, audioBlob, false, "", false, durationSec);
+
+  // OPTIONAL VERCEL GROQ & SPONTANEOUS GEMINI AI HOOKUP
+  let finalTranscript = text;
+  if (audioBlob) {
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = async () => {
+        const base64Audio = reader.result;
+        
+        // 1. Refine Transcript with Groq Whisper
+        const transcribeRes = await fetch('/api/interview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'transcribe', audioBase64: base64Audio, mimeType: audioBlob.type })
+        });
+        const transcribeData = await transcribeRes.json();
+        if (transcribeData.transcript) finalTranscript = transcribeData.transcript;
+
+        // 2. Check Spontaneous Follow-up Challenge
+        const currentQ = sessionQuestions[currentQIndex];
+        const followupRes = await fetch('/api/interview', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'followup',
+            questionText: currentQ.text,
+            idealAnswer: currentQ.idealModelAnswer,
+            transcript: finalTranscript
+          })
+        });
+        const followupData = await followupRes.json();
+
+        if (followupData.trigger && followupData.prompt) {
+          speakText(followupData.prompt, () => {
+            startVoiceRecording();
+          });
+          return;
+        }
+
+        recordAnswer(finalTranscript, audioBlob, false, "", false, durationSec);
+      };
+      return;
+    } catch (e) {
+      console.warn("Vercel AI Endpoint unreachable, using local pipeline:", e);
+    }
+  }
+
+  recordAnswer(finalTranscript, audioBlob, false, "", false, durationSec);
 });
 
-// RAPID PASS DETECTION ON "I DON'T KNOW"
+// PASS QUESTION
 document.getElementById("btn-idk-skip").addEventListener("click", async () => {
   const audioBlob = await stopVoiceRecording();
   if (countdownInterval) clearInterval(countdownInterval);
@@ -1240,13 +1314,7 @@ document.getElementById("btn-idk-skip").addEventListener("click", async () => {
   const deliberationSeconds = questionActiveTimestamp ? ((Date.now() - questionActiveTimestamp) / 1000).toFixed(1) : 0;
   const isReflexivePass = deliberationSeconds < 4.0;
 
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance("Understood. Let us proceed to the next question.");
-  if (selectedVoice) utter.voice = selectedVoice;
-  utter.rate = 1.0;
-  activeUtterance = utter;
-  window.speechSynthesis.speak(utter);
-
+  speakText("Understood. Let us proceed to the next question.", null);
   recordAnswer("", null, true, "Candidate elected to pass / stated 'I don't know'.", isReflexivePass, deliberationSeconds);
 });
 
@@ -1284,7 +1352,7 @@ function recordAnswer(transcript, audioBlob, wasSkipped, skipReason, isReflexive
   }
 }
 
-// EXECUTIVE DIAGNOSTIC DOSSIER
+// DOSSIER & REPORTING
 function renderTruthfulReport() {
   document.getElementById("screen-interview").classList.add("hidden");
   document.getElementById("screen-report").classList.remove("hidden");
@@ -1312,7 +1380,6 @@ function renderTruthfulReport() {
     kpiScore.style.color = "var(--danger-red)";
   }
 
-  // SUMMARY AUDIT
   const summaryBox = document.getElementById("report-summary-text");
   if (answeredRounds.length === 0) {
     summaryBox.innerHTML = `
@@ -1327,7 +1394,7 @@ function renderTruthfulReport() {
     `;
   }
 
-  // CANDIDATE BLUEPRINT (WITH VERBATIM AUDIO PLAYBACK & TRANSCRIPT)
+  // CANDIDATE BLUEPRINT
   const candidateContainer = document.getElementById("candidate-questions-breakdown");
   candidateContainer.innerHTML = "";
 
@@ -1338,13 +1405,13 @@ function renderTruthfulReport() {
     let answerSection = "";
     if (r.wasSkipped) {
       let rapidPassAlert = r.isReflexivePass ? `
-        <div style="background-color: var(--warning-bg); border: 1px solid #FDE68A; border-radius: 4px; padding: 6px 10px; margin-top: 6px; font-size: 0.8rem; color: #92400E; font-weight: 600;">
+        <div style="background-color: var(--warning-bg); border: 1px solid #FDE68A; border-radius: 6px; padding: 8px 12px; margin-top: 8px; font-size: 0.82rem; color: #92400E; font-weight: 600;">
           ⚠️ Rapid Pass Warning (${r.durationSec}s): You surrendered this prompt without taking time to structure a response. Interview panels view rapid surrender as severe anxiety under technical pressure.
         </div>
       ` : '';
 
       answerSection = `
-        <div style="background-color: var(--danger-bg); border: 1px solid #FECDD3; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 0.88rem; color: #9F1239;">
+        <div style="background-color: var(--danger-bg); border: 1px solid #FECDD3; border-radius: 8px; padding: 14px; margin-bottom: 12px; font-size: 0.88rem; color: #9F1239;">
           <strong>[ NO SPOKEN AUDIO RECORDED / CANDIDATE PASSED ]</strong><br>
           ${r.skipReason}
           ${rapidPassAlert}
@@ -1352,19 +1419,19 @@ function renderTruthfulReport() {
       `;
     } else {
       let audioPlayerHtml = r.audioUrl ? `
-        <div style="margin-top: 8px;">
+        <div style="margin-top: 10px;">
           <label style="margin-bottom: 4px;">▶ Play Your Spoken Audio Response (${r.durationSec}s):</label>
           <audio controls src="${r.audioUrl}"></audio>
         </div>
       ` : '';
 
       let transcriptHtml = (r.transcript && r.transcript.length > 0 && r.transcript !== "undefined") ? `
-        <p style="font-size: 0.92rem; margin: 4px 0 8px; font-style: italic; color: var(--text-main);">"${r.transcript}"</p>
+        <p style="font-size: 0.95rem; margin: 4px 0 8px; font-style: italic; color: var(--text-main);">"${r.transcript}"</p>
         <p style="font-size: 0.8rem; color: var(--text-muted);">Pace: <strong>${r.wpm} WPM</strong> | Verbal Fillers: <strong>${r.fillers}</strong></p>
       ` : `<p style="font-size: 0.88rem; color: var(--text-muted); font-style:italic;">Audio track recorded successfully.</p>`;
 
       answerSection = `
-        <div style="background-color: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; margin-bottom: 12px;">
+        <div style="background-color: #F8FAFC; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px; margin-bottom: 12px;">
           <p style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Your Verbatim Response & Telemetry:</p>
           ${transcriptHtml}
           ${audioPlayerHtml}
@@ -1393,7 +1460,7 @@ function renderTruthfulReport() {
         <p style="font-size: 0.8rem; font-weight: 700; color: var(--accent-teal); text-transform: uppercase; margin-bottom: 4px;">
           Structured Model Answer:
         </p>
-        <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-main); background: #F0FDFA; border-left: 3px solid var(--accent-teal); padding: 8px 12px; border-radius: 4px;">
+        <p style="font-size: 0.88rem; line-height: 1.5; color: var(--text-main); background: #F0FDFA; border-left: 3px solid var(--accent-teal); padding: 10px 14px; border-radius: 6px;">
           "${r.questionData.idealModelAnswer}"
         </p>
       </div>
@@ -1429,7 +1496,7 @@ function renderTruthfulReport() {
     let probeHtml = "";
     if (r.wasSkipped) {
       let evasionWarning = r.isReflexivePass ? `
-        <div style="background-color: var(--danger-bg); border: 1px solid #FECDD3; border-radius: 4px; padding: 6px 10px; margin-bottom: 8px; font-size: 0.82rem; color: #9F1239; font-weight: 700;">
+        <div style="background-color: var(--danger-bg); border: 1px solid #FECDD3; border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-size: 0.82rem; color: #9F1239; font-weight: 700;">
           🚩 Reflexive Avoidance Flag: Candidate passed in ${r.durationSec}s without attempting to structure an approach.
         </div>
       ` : '';
@@ -1468,7 +1535,7 @@ function renderTruthfulReport() {
   });
 }
 
-// TAB TOGGLING
+// TAB SWITCHING
 document.getElementById("tab-btn-candidate").addEventListener("click", () => {
   document.getElementById("tab-btn-candidate").classList.add("active");
   document.getElementById("tab-btn-evaluator").classList.remove("active");
