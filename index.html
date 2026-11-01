@@ -186,7 +186,6 @@
       margin-bottom: 18px;
     }
 
-    /* REAL-TIME OSCILLOSCOPE WAVEFORM VISUALIZER CONTAINER */
     .waveform-container {
       background: #0F172A;
       border: 1px solid #1E293B;
@@ -295,7 +294,6 @@
     .kpi-val { font-size: 1.35rem; font-weight: 800; color: var(--primary-navy); }
     .kpi-lbl { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
 
-    /* AUDIT BOX STYLES */
     .subject-audit-box {
       background: #F0FDF4;
       border: 1px solid #BBF7D0;
@@ -305,6 +303,16 @@
       margin-top: 12px;
       font-size: 0.88rem;
       color: #065F46;
+    }
+    .coach-box {
+      background: #FAF5FF;
+      border: 1px solid #E9D5FF;
+      border-left: 4px solid #9333EA;
+      padding: 12px 14px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: #6B21A8;
     }
     .grammar-box {
       background: #F0F9FF;
@@ -416,7 +424,6 @@
       Confirm your microphone stream and real-time speech-to-text engine.
     </p>
 
-    <!-- REAL-TIME OSCILLOSCOPE WAVEFORM VISUALIZER -->
     <div class="waveform-container">
       <div class="waveform-header">
         <span>Hardware Oscilloscope Signal</span>
@@ -458,7 +465,6 @@
       <span id="flow-status-text">Interviewer speaking the question...</span>
     </div>
 
-    <!-- LIVE INTERVIEW WAVEFORM VISUALIZER -->
     <div class="waveform-container">
       <div class="waveform-header">
         <span>Live Audio Input Oscilloscope</span>
@@ -491,7 +497,6 @@
       </button>
     </div>
 
-    <!-- FINAL VERDICT BANNER WITH PROGRESS EVALUATION -->
     <div id="verdict-banner-container" class="verdict-banner">
       <strong>🌟 Final Candidate Verdict:</strong> Evaluating candidate progress...
     </div>
@@ -1027,7 +1032,7 @@ let selectedVoice = null;
 let countdownInterval = null;
 let ttsWatchdogTimeout = null;
 let isSpontaneousActive = false;
-let simplifyCount = 0; // Tracks simplification attempts for current question (max 2)
+let simplifyCount = 0;
 
 // PHYSICAL MEDIA STREAM & RECORDER
 let activeStream = null;
@@ -1038,14 +1043,29 @@ let analyserNode = null;
 let waveformAnimId = null;
 let speechRecognizer = null;
 
-// HUMAN CONVERSATIONAL PREAMBLES FOR EXECUTIVE SPEECH
-const HUMAN_PREAMBLES = [
-  "Thank you for outlining that perspective. Let's transition to our next core scenario...",
-  "Good point. Building on that, I'd like to explore how you approach strategic trade-offs...",
-  "That makes sense. Next, let's examine a scenario that tests operational decision-making under pressure...",
-  "Fair enough. Let's look at another critical area that hiring panels scrutinize closely...",
-  "Appreciate those thoughts. Moving forward, let me present this next situation for your evaluation..."
-];
+// 60% FAMILIAR SUPPORTIVE COACH: DYNAMIC ANSWER-AWARE HUMAN PREAMBLES (HCP)
+const PREAMBLE_TIERS = {
+  Tier_A_Strong: [
+    "That was a really sharp breakdown! You hit the core operational trade-offs cleanly. Let's take us into our next scenario...",
+    "Excellent articulation there! You clearly understand how to align technical strategy with business outcomes. Moving on to our next prompt...",
+    "Impressive clarity! I like how you backed up your reasoning with clear domain fundamentals. Let me present this next challenge for you..."
+  ],
+  Tier_B_Moderate: [
+    "I appreciate how clearly you explained that concept! To make it even stronger in a real drive, try adding specific numbers. Let me take us to our next scenario...",
+    "Good, solid answer! You covered the foundational principle cleanly. Building on that momentum, let's examine this next operational prompt...",
+    "That makes total sense! You have the core idea down well. Let's transition to our next core scenario to see how you handle this..."
+  ],
+  Tier_C_Surface: [
+    "Good effort getting your thoughts out on that! It touches the surface, so let me give you another scenario to showcase your deeper execution strategy...",
+    "Fair attempt! You caught the general idea, though pushing into specific metrics will make you stand out. Let me present our next situation...",
+    "Thanks for sharing that perspective! Let me pivot to another critical area that hiring panels scrutinize closely..."
+  ],
+  Tier_D_Pass: [
+    "No worries at all! Passing when unsure is much better than guessing in a live drive. Let me give you a fresh topic to showcase your strengths...",
+    "Completely understandable! Let's reset cleanly and look at a different operational scenario...",
+    "Appreciate your honesty! Let's move right along to the next prompt and keep your session momentum high..."
+  ]
+};
 
 async function getOrInitMicrophone() {
   if (!activeStream) {
@@ -1186,7 +1206,7 @@ function initVoices() {
     voiceSelect.appendChild(opt);
   });
 
-  selectedVoice = displayList[0] || voices[0];
+  selectedVoice = displayList || voices;
 }
 
 if ('speechSynthesis' in window) {
@@ -1247,8 +1267,8 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
     testRec.onresult = (e) => {
       let spoken = "";
       for (let i = 0; i < e.results.length; i++) {
-        if (e.results[i] && e.results[i][0] && e.results[i][0].transcript) {
-          spoken += e.results[i][0].transcript + " ";
+        if (e.results[i] && e.results[i] && e.results[i].transcript) {
+          spoken += e.results[i].transcript + " ";
         }
       }
       spoken = spoken.trim();
@@ -1286,7 +1306,7 @@ function loadCurrentQuestion() {
   questionActiveTimestamp = null;
   audioChunks = [];
   isSpontaneousActive = false;
-  simplifyCount = 0; // Reset simplification attempts for new question
+  simplifyCount = 0;
   if (countdownInterval) clearInterval(countdownInterval);
 
   updateSimplifyButtonUI();
@@ -1304,17 +1324,19 @@ function loadCurrentQuestion() {
   transcriptBox.innerHTML = `<span style="color: var(--text-muted); font-style: italic;">Awaiting question delivery...</span>`;
   setMicStatus("Interviewer Speaking...", false);
 
-  // Human conversational preamble for Question 2 onwards
+  // 60% SUPPORTIVE COACH: Spoken Preamble based on prior question performance
   let spokenPayload = qData.text;
-  if (currentQIndex > 0) {
-    const preamble = HUMAN_PREAMBLES[(currentQIndex - 1) % HUMAN_PREAMBLES.length];
+  if (currentQIndex > 0 && sessionResults.length > 0) {
+    const lastResult = sessionResults[currentQIndex - 1];
+    const coachEval = evaluateDualBrain(lastResult.transcript, lastResult.questionData);
+    const preambleList = PREAMBLE_TIERS[coachEval.supportiveCoach.toneTier];
+    const preamble = preambleList[(currentQIndex - 1) % preambleList.length];
     spokenPayload = `${preamble} ${qData.text}`;
   }
 
   speakText(spokenPayload, () => {
     questionActiveTimestamp = Date.now();
     
-    // ENHANCED THINKING WINDOW TIMER (10s for questions with thinkingTimeSec > 0)
     if (qData.thinkingTimeSec > 0) {
       let secondsLeft = qData.thinkingTimeSec;
       flowStatus.innerHTML = `<strong>⏱ Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:800; font-size:1.05rem;">${secondsLeft}s remaining</span> &mdash; Take a moment to structure your thoughts...`;
@@ -1353,7 +1375,6 @@ function updateSimplifyButtonUI() {
 // SIMPLIFY / CLARIFY QUESTION FUNCTION (Max 2 Attempts)
 function handleQuestionSimplification() {
   if (simplifyCount >= 2) {
-    // 3rd attempt: Move to next question with courtesy notice
     speakText("Let's move on to the next prompt, you can prepare this topic later.", () => {
       recordAnswer("", null, true, "Maximum simplifications (2/2) reached. Candidate requested further clarification.", false, 0);
     });
@@ -1423,8 +1444,8 @@ async function startVoiceRecording() {
       speechRecognizer.onresult = (event) => {
         let full = "";
         for (let i = 0; i < event.results.length; i++) {
-          if (event.results[i] && event.results[i][0] && event.results[i][0].transcript) {
-            full += event.results[i][0].transcript + " ";
+          if (event.results[i] && event.results[i] && event.results[i].transcript) {
+            full += event.results[i].transcript + " ";
           }
         }
         currentQuestionTranscript = full.trim();
@@ -1433,7 +1454,6 @@ async function startVoiceRecording() {
             <strong style="color:var(--primary-blue);">Transcribed Text:</strong> "${currentQuestionTranscript}"
           `;
 
-          // Check if candidate verbally asked for clarification
           const textLower = currentQuestionTranscript.toLowerCase();
           if (textLower.includes("don't understand") || textLower.includes("dont understand") || textLower.includes("can you simplify") || textLower.includes("please explain again")) {
             handleQuestionSimplification();
@@ -1481,7 +1501,92 @@ function setMicStatus(label, isLive) {
   else dot.classList.remove("mic-live");
 }
 
-// SUBMIT ANSWER WITH ANTI-GAMING & SPONTANEOUS SOCRATIC FOLLOW-UP PROBE
+// 40% STRICT RECRUITER & 60% SUPPORTIVE COACH DUAL-BRAIN EVALUATOR ENGINE
+function evaluateDualBrain(transcript, questionData) {
+  if (!transcript || transcript.trim().length === 0) {
+    return {
+      strictRecruiter: {
+        wordCount: 0,
+        coveredKeywords: [],
+        missingKeywords: questionData.corePoints,
+        hasQuantitativeMetrics: false,
+        isVagueFluff: false,
+        socraticTriggerNeeded: false,
+        socraticProbeType: null,
+        socraticProbeText: ""
+      },
+      supportiveCoach: {
+        toneTier: 'Tier_D_Pass',
+        humanPreamble: "No worries at all! Let's move cleanly to our next prompt."
+      }
+    };
+  }
+
+  const textLower = transcript.toLowerCase();
+  const wordCount = transcript.split(/\s+/).filter(Boolean).length;
+  
+  let coveredKeywords = [];
+  let missingKeywords = [];
+
+  questionData.corePoints.forEach(pt => {
+    const words = pt.toLowerCase().match(/\b[a-z]{4,}\b/g) || [];
+    const stopWords = new Set(['with', 'from', 'that', 'this', 'have', 'than', 'were', 'been', 'their', 'which', 'about', 'would', 'could', 'should', 'other', 'first', 'second', 'third']);
+    const keyTerms = words.filter(w => !stopWords.has(w));
+    const isMatch = keyTerms.some(term => textLower.includes(term));
+    if (isMatch) coveredKeywords.push(pt);
+    else missingKeywords.push(pt);
+  });
+
+  const hasQuantitativeMetrics = /\b(\d+|percent|%|dollar|\$|roi|cac|ltv|margin|cpa|roas|npv|irr)\b/i.test(transcript);
+
+  // Determine Socratic Probe Trigger from 40% Strict Recruiter
+  let socraticTriggerNeeded = false;
+  let socraticProbeType = null;
+  let socraticProbeText = "";
+
+  if (wordCount > 0 && wordCount < 22) {
+    socraticTriggerNeeded = true;
+    socraticProbeType = 'brevity';
+    socraticProbeText = "That's a good initial thought, but walk me through the specific quantitative steps or operational details you would execute to prove that in practice.";
+  } else if (wordCount >= 22 && !hasQuantitativeMetrics && missingKeywords.length > 1) {
+    socraticTriggerNeeded = true;
+    socraticProbeType = 'missing_metrics';
+    socraticProbeText = "You explained the concept cleanly, but what specific quantitative metrics, KPIs, or percentages would you track to prove this execution succeeded?";
+  } else if (coveredKeywords.length === 0 && wordCount >= 15) {
+    socraticTriggerNeeded = true;
+    socraticProbeType = 'concept_confusion';
+    socraticProbeText = "Let's double-check that technical baseline—how would you distinguish your proposed approach from the alternative industry standard?";
+  }
+
+  // Determine Tone Tier from 60% Familiar Supportive Coach
+  let toneTier = 'Tier_B_Moderate';
+  if (coveredKeywords.length >= 2 && (hasQuantitativeMetrics || wordCount > 35)) {
+    toneTier = 'Tier_A_Strong';
+  } else if (wordCount >= 18) {
+    toneTier = 'Tier_B_Moderate';
+  } else if (wordCount > 0) {
+    toneTier = 'Tier_C_Surface';
+  } else {
+    toneTier = 'Tier_D_Pass';
+  }
+
+  return {
+    strictRecruiter: {
+      wordCount,
+      coveredKeywords,
+      missingKeywords,
+      hasQuantitativeMetrics,
+      socraticTriggerNeeded,
+      socraticProbeType,
+      socraticProbeText
+    },
+    supportiveCoach: {
+      toneTier
+    }
+  };
+}
+
+// SUBMIT ANSWER WITH DUAL-BRAIN INTERCEPTION
 document.getElementById("btn-finish-answer").addEventListener("click", async () => {
   const durationSec = answerStartTime ? ((Date.now() - answerStartTime) / 1000).toFixed(1) : 0;
   const text = currentQuestionTranscript.trim();
@@ -1500,24 +1605,25 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
   const audioBlob = await stopVoiceRecording();
   if (countdownInterval) clearInterval(countdownInterval);
 
-  // SPONTANEOUS SOCRATIC FOLLOW-UP TRIGGER:
-  // If candidate answer is under 22 words and spontaneous follow-up hasn't triggered for this question
-  const wordCount = text.split(/\s+/).filter(Boolean).length;
-  if (!isSpontaneousActive && wordCount > 0 && wordCount < 22) {
+  // 40% STRICT RECRUITER SOCRATIC TRIGGER
+  const qData = sessionQuestions[currentQIndex];
+  const dualBrainEval = evaluateDualBrain(text, qData);
+
+  if (!isSpontaneousActive && dualBrainEval.strictRecruiter.socraticTriggerNeeded) {
     isSpontaneousActive = true;
     
-    const followUpText = "That's a good initial thought. But walk me through the specific quantitative metrics or operational trade-offs you would monitor to prove execution success on this.";
+    const followUpText = dualBrainEval.strictRecruiter.socraticProbeText;
     
     const questionBox = document.getElementById("spoken-question-text");
-    const spontaneousTag = `<span class="spontaneous-tag-inline">💬 Spontaneous Follow-Up Probe</span>`;
+    const spontaneousTag = `<span class="spontaneous-tag-inline">💬 Socratic Pushback Probe</span>`;
     questionBox.innerHTML = `${followUpText} ${spontaneousTag}`;
 
     const flowStatus = document.getElementById("flow-status-text");
-    flowStatus.innerHTML = `<strong>Interviewer Follow-Up:</strong> Asking spontaneous Socratic probe...`;
+    flowStatus.innerHTML = `<strong>40% Strict Recruiter Pushback:</strong> Asking targeted Socratic probe...`;
     setMicStatus("Interviewer Speaking...", false);
 
     speakText(followUpText, () => {
-      flowStatus.innerHTML = `<strong>Microphone Live:</strong> Answer the follow-up probe now.`;
+      flowStatus.innerHTML = `<strong>Microphone Live:</strong> Answer the Socratic probe now.`;
       startVoiceRecording();
     });
     return;
@@ -1573,59 +1679,6 @@ function recordAnswer(transcript, audioBlob, wasSkipped, skipReason, isReflexive
   }
 }
 
-// ADVANCED SEMANTIC SUBJECT MATTER EVALUATOR
-function evaluateSubjectClarityAndSense(transcript, corePoints, idealAnswer) {
-  if (!transcript || transcript.trim().length < 5) {
-    return {
-      score: 0,
-      coveredConcepts: [],
-      missingConcepts: corePoints,
-      clarityRating: "No Technical Evidence Spoken",
-      logicSenseText: "No transcript was provided to evaluate semantic sense."
-    };
-  }
-
-  const textLower = transcript.toLowerCase();
-  let coveredConcepts = [];
-  let missingConcepts = [];
-
-  corePoints.forEach(pt => {
-    const words = pt.toLowerCase().match(/\b[a-z]{4,}\b/g) || [];
-    const stopWords = new Set(['with', 'from', 'that', 'this', 'have', 'than', 'were', 'been', 'their', 'which', 'about', 'would', 'could', 'should', 'other', 'first', 'second', 'third']);
-    const keyTerms = words.filter(w => !stopWords.has(w));
-
-    const isMatch = keyTerms.some(term => textLower.includes(term));
-    if (isMatch) {
-      coveredConcepts.push(pt);
-    } else {
-      missingConcepts.push(pt);
-    }
-  });
-
-  const rawScore = corePoints.length > 0 ? Math.round((coveredConcepts.length / corePoints.length) * 100) : 50;
-  const wordCount = transcript.split(/\s+/).filter(Boolean).length;
-  const score = Math.min(100, Math.max(rawScore, wordCount > 35 ? 70 : rawScore));
-
-  let clarityRating = "High Subject Clarity (Strong Domain Alignment)";
-  let logicSenseText = "Response demonstrates clear subject understanding, logical structure, and aligns well with model benchmarks.";
-
-  if (score < 40) {
-    clarityRating = "Low Technical Coverage (Key Benchmark Missed)";
-    logicSenseText = "Spoken answer addressed the question generally, but missed core domain terminology and quantitative frameworks.";
-  } else if (score < 75) {
-    clarityRating = "Moderate Subject Clarity (Partial Alignment)";
-    logicSenseText = "Demonstrated decent logical sense and touched on key principles, but could be enhanced with specific metrics and definitions.";
-  }
-
-  return {
-    score,
-    coveredConcepts,
-    missingConcepts,
-    clarityRating,
-    logicSenseText
-  };
-}
-
 // GRAMMAR & STRUCTURAL CLARITY EVALUATOR
 function evaluateGrammarAndClarity(transcript, wordCount) {
   if (!transcript || transcript.length < 5) {
@@ -1677,12 +1730,15 @@ function renderTruthfulReport() {
   const avgWPM = answeredRounds.length > 0 ? Math.round(answeredRounds.reduce((acc, r) => acc + r.wpm, 0) / answeredRounds.length) : 0;
   const totalFillers = answeredRounds.reduce((acc, r) => acc + r.fillers, 0);
 
-  // Subject Matter Scores
+  // 40% Strict Recruiter Subject Matter Scores
   let totalSubjectScore = 0;
   sessionResults.forEach(r => {
     if (!r.wasSkipped) {
-      const subj = evaluateSubjectClarityAndSense(r.transcript, r.questionData.corePoints, r.questionData.idealModelAnswer);
-      totalSubjectScore += subj.score;
+      const evalData = evaluateDualBrain(r.transcript, r.questionData);
+      const coveredCount = evalData.strictRecruiter.coveredKeywords.length;
+      const totalCount = r.questionData.corePoints.length;
+      const qScore = totalCount > 0 ? Math.round((coveredCount / totalCount) * 100) : 50;
+      totalSubjectScore += Math.min(100, Math.max(qScore, r.wordCount > 35 ? 70 : qScore));
     }
   });
   const avgSubjectClarity = answeredRounds.length > 0 ? Math.round(totalSubjectScore / answeredRounds.length) : 0;
@@ -1777,25 +1833,33 @@ function renderTruthfulReport() {
         </div>
       `;
 
-      // Subject Matter & Semantic Evaluation
-      const subjEval = evaluateSubjectClarityAndSense(r.transcript, r.questionData.corePoints, r.questionData.idealModelAnswer);
+      // 40% STRICT RECRUITER & 60% SUPPORTIVE COACH AUDIT READOUTS
+      const dualBrainEval = evaluateDualBrain(r.transcript, r.questionData);
       const grammarEval = evaluateGrammarAndClarity(r.transcript, r.wordCount);
 
-      const coveredBadges = subjEval.coveredConcepts.map(c => `<span class="concept-tag-green">✓ ${c.split(':')[0]}</span>`).join("");
-      const missingBadges = subjEval.missingConcepts.map(c => `<span class="concept-tag-red">✕ ${c.split(':')[0]}</span>`).join("");
+      const coveredBadges = dualBrainEval.strictRecruiter.coveredKeywords.map(c => `<span class="concept-tag-green">✓ ${c.split(':')[0]}</span>`).join("");
+      const missingBadges = dualBrainEval.strictRecruiter.missingKeywords.map(c => `<span class="concept-tag-red">✕ ${c.split(':')[0]}</span>`).join("");
       const suggestionsListHtml = grammarEval.suggestions.map(s => `<li>${s}</li>`).join("");
+
+      let metricsBadge = dualBrainEval.strictRecruiter.hasQuantitativeMetrics ? 
+        `<span style="color:#059669; font-weight:700;">✓ Quantitative Metrics Detected</span>` : 
+        `<span style="color:#D97706; font-weight:700;">⚠️ Missing Quantitative Metrics / Numbers</span>`;
 
       auditSectionHtml = `
         <div class="subject-audit-box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <strong>🧠 Subject Matter & Domain Alignment:</strong>
-            <span style="font-weight:800; font-size:1rem; color:#059669;">${subjEval.score}% Clarity</span>
+            <strong>🎯 40% Strict Recruiter Technical Scrutiny:</strong>
+            <span>${metricsBadge}</span>
           </div>
-          <p style="font-size:0.85rem; margin-bottom:8px;">${subjEval.logicSenseText}</p>
-          <div>
+          <div style="margin-top:6px;">
             ${coveredBadges}
             ${missingBadges}
           </div>
+        </div>
+
+        <div class="coach-box">
+          <strong>🤗 60% Supportive Coach Readout:</strong> Tone Tier: <em>${dualBrainEval.supportiveCoach.toneTier.replace('_', ' ')}</em><br>
+          <span style="font-size:0.85rem; color:#6B21A8;">"Encouraged candidate with natural human preamble while guiding smoothly to next question."</span>
         </div>
 
         <div class="grammar-box">
