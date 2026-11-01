@@ -28,7 +28,12 @@
       --success-bg: #ECFDF5;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       background-color: var(--bg-surface);
       color: var(--text-main);
@@ -56,10 +61,31 @@
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
     }
 
-    h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.55rem; font-weight: 800; color: var(--primary-navy); letter-spacing: -0.02em; }
-    h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--primary-navy); }
-    h3 { font-size: 1rem; font-weight: 600; color: var(--primary-navy); margin-bottom: 8px; }
-    .serif-text { font-family: Georgia, Cambria, serif; }
+    h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--primary-navy);
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+    }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--primary-navy);
+      margin-bottom: 8px;
+    }
+
+    .serif-text {
+      font-family: Georgia, Cambria, serif;
+    }
 
     .author-tag-inline {
       display: inline-flex;
@@ -121,7 +147,16 @@
       font-family: 'Inter', sans-serif;
     }
 
-    label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
+    label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: block;
+    }
+
     select {
       width: 100%;
       height: 48px;
@@ -135,7 +170,11 @@
       outline: none;
       transition: all 0.2s;
     }
-    select:focus { border-color: var(--accent-teal); box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15); }
+
+    select:focus {
+      border-color: var(--accent-teal);
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+    }
 
     .btn {
       display: inline-flex;
@@ -150,23 +189,47 @@
       cursor: pointer;
       transition: all 0.15s ease;
     }
-    .btn-primary { background-color: var(--accent-teal); color: #FFF; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2); }
-    .btn-primary:hover:not(:disabled) { background-color: var(--accent-teal-dark); transform: translateY(-1px); }
-    .btn-navy { background-color: var(--primary-navy); color: #FFF; }
-    .btn-navy:hover:not(:disabled) { background-color: #1e293b; }
+
+    .btn-primary {
+      background-color: var(--accent-teal);
+      color: #FFF;
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--accent-teal-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-navy {
+      background-color: var(--primary-navy);
+      color: #FFF;
+    }
+
+    .btn-navy:hover:not(:disabled) {
+      background-color: #1e293b;
+    }
+
     .btn-secondary {
       background-color: #FFF;
       color: var(--text-main);
       border: 1px solid var(--border-strong);
       margin-top: 10px;
     }
-    .btn-secondary:hover:not(:disabled) { background-color: var(--badge-bg); }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: var(--badge-bg);
+    }
+
     .btn-purple {
       background-color: #7C3AED;
       color: #FFF;
       margin-top: 10px;
     }
-    .btn-purple:hover:not(:disabled) { background-color: #6D28D9; }
+
+    .btn-purple:hover:not(:disabled) {
+      background-color: #6D28D9;
+    }
 
     .question-box {
       font-size: 1.2rem;
@@ -196,6 +259,7 @@
       flex-direction: column;
       gap: 6px;
     }
+
     .waveform-header {
       display: flex;
       justify-content: space-between;
@@ -206,6 +270,7 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+
     canvas.waveform-canvas {
       width: 100%;
       height: 54px;
@@ -235,7 +300,11 @@
       background-color: #94A3B8;
       margin-right: 6px;
     }
-    .mic-live { background-color: var(--success-green); box-shadow: 0 0 10px var(--success-green); }
+
+    .mic-live {
+      background-color: var(--success-green);
+      box-shadow: 0 0 10px var(--success-green);
+    }
 
     audio {
       width: 100%;
@@ -252,6 +321,7 @@
       overflow: hidden;
       margin-bottom: 24px;
     }
+
     .tab-btn {
       flex: 1;
       padding: 14px;
@@ -264,6 +334,7 @@
       color: var(--text-muted);
       transition: all 0.2s;
     }
+
     .tab-btn.active {
       background: var(--primary-navy);
       color: #FFF;
@@ -284,6 +355,7 @@
       gap: 12px;
       margin: 20px 0;
     }
+
     .kpi-tile {
       background: #F8FAFC;
       border: 1px solid var(--border-subtle);
@@ -291,8 +363,20 @@
       border-radius: 10px;
       text-align: center;
     }
-    .kpi-val { font-size: 1.35rem; font-weight: 800; color: var(--primary-navy); }
-    .kpi-lbl { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
+
+    .kpi-val {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary-navy);
+    }
+
+    .kpi-lbl {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
 
     .subject-audit-box {
       background: #F0FDF4;
@@ -304,6 +388,7 @@
       font-size: 0.88rem;
       color: #065F46;
     }
+
     .coach-box {
       background: #FAF5FF;
       border: 1px solid #E9D5FF;
@@ -314,6 +399,7 @@
       font-size: 0.88rem;
       color: #6B21A8;
     }
+
     .grammar-box {
       background: #F0F9FF;
       border: 1px solid #BAE6FD;
@@ -324,6 +410,7 @@
       font-size: 0.88rem;
       color: #0369A1;
     }
+
     .suggestion-box {
       background: #FFFBEB;
       border: 1px solid #FDE68A;
@@ -334,6 +421,7 @@
       font-size: 0.88rem;
       color: #92400E;
     }
+
     .verdict-banner {
       background: #ECFDF5;
       border: 1px solid #A7F3D0;
@@ -355,6 +443,7 @@
       border-radius: 4px;
       margin: 2px 4px 2px 0;
     }
+
     .concept-tag-red {
       display: inline-block;
       background: #FEE2E2;
@@ -367,13 +456,33 @@
     }
 
     @media print {
-      body { background: #FFF; padding: 0; }
-      .btn, .tab-switch, #btn-print-dossier, .waveform-container { display: none !important; }
-      .card { border: none; box-shadow: none; padding: 0; }
-      #view-candidate-blueprint, #view-evaluator-briefing { display: block !important; }
+      body {
+        background: #FFF;
+        padding: 0;
+      }
+
+      .btn,
+      .tab-switch,
+      #btn-print-dossier,
+      .waveform-container {
+        display: none !important;
+      }
+
+      .card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+      }
+
+      #view-candidate-blueprint,
+      #view-evaluator-briefing {
+        display: block !important;
+      }
     }
 
-    .hidden { display: none !important; }
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
@@ -888,7 +997,7 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
     text: "How would you handle a new employee who is struggling to keep up with the team in the first month?",
-    simplifiedText: "Simply put: If a new hire is falling behind in their first 30 days, what steps would you take to help them?",
+    simplifiedText: "In simple terms: If a new hire is falling behind in their first 30 days, what steps would you take to help them?",
     ultraSimplifiedText: "In basic terms: How do you coach a new employee who finds the work difficult in month one?",
     thinkingTimeSec: 0,
     corePoints: [
@@ -1082,7 +1191,9 @@ async function getOrInitMicrophone() {
 
 // REAL-TIME OSCILLOSCOPE WAVEFORM RENDERER
 function startOscilloscope(stream, canvasId, statusId) {
-  if (waveformAnimId) cancelAnimationFrame(waveformAnimId);
+  if (waveformAnimId) {
+    cancelAnimationFrame(waveformAnimId);
+  }
   if (!audioContext) {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
   }
@@ -1120,8 +1231,11 @@ function startOscilloscope(stream, canvasId, statusId) {
       const v = dataArray[i] / 128.0;
       const y = (v * canvas.height) / 2;
 
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
 
       x += sliceWidth;
     }
@@ -1129,7 +1243,9 @@ function startOscilloscope(stream, canvasId, statusId) {
     ctx.lineTo(canvas.width, canvas.height / 2);
     ctx.stroke();
 
-    if (statusEl) statusEl.textContent = "🎙️ Live Stream Signal Active";
+    if (statusEl) {
+      statusEl.textContent = "🎙️ Live Stream Signal Active";
+    }
   }
 
   draw();
@@ -1146,7 +1262,9 @@ function stopOscilloscope() {
 function speakText(text, onEndCallback) {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
-    if (ttsWatchdogTimeout) clearTimeout(ttsWatchdogTimeout);
+    if (ttsWatchdogTimeout) {
+      clearTimeout(ttsWatchdogTimeout);
+    }
 
     window.activeUtterance = new SpeechSynthesisUtterance(text);
     window.activeUtterance.rate = 0.90;
@@ -1156,15 +1274,21 @@ function speakText(text, onEndCallback) {
     const voices = window.speechSynthesis.getVoices();
     if (voiceName) {
       const chosen = voices.find(v => v.name === voiceName);
-      if (chosen) window.activeUtterance.voice = chosen;
+      if (chosen) {
+        window.activeUtterance.voice = chosen;
+      }
     }
 
     let callbackFired = false;
     const safeCallback = () => {
       if (callbackFired) return;
       callbackFired = true;
-      if (ttsWatchdogTimeout) clearTimeout(ttsWatchdogTimeout);
-      if (onEndCallback) onEndCallback();
+      if (ttsWatchdogTimeout) {
+        clearTimeout(ttsWatchdogTimeout);
+      }
+      if (onEndCallback) {
+        onEndCallback();
+      }
     };
 
     window.activeUtterance.onend = safeCallback;
@@ -1175,7 +1299,9 @@ function speakText(text, onEndCallback) {
 
     window.speechSynthesis.speak(window.activeUtterance);
   } else {
-    if (onEndCallback) onEndCallback();
+    if (onEndCallback) {
+      onEndCallback();
+    }
   }
 }
 
@@ -1284,7 +1410,9 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
       runBtn.disabled = false;
     };
 
-    testRec.onend = () => { runBtn.disabled = false; };
+    testRec.onend = () => {
+      runBtn.disabled = false;
+    };
     testRec.start();
   } catch (err) {
     micOutput.innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Hardware Error: ${err.message}. Please ALLOW microphone access in address bar.</span>`;
@@ -1307,7 +1435,9 @@ function loadCurrentQuestion() {
   audioChunks = [];
   isSpontaneousActive = false;
   simplifyCount = 0;
-  if (countdownInterval) clearInterval(countdownInterval);
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
 
   updateSimplifyButtonUI();
 
@@ -1408,7 +1538,7 @@ document.getElementById("btn-clarify-q").addEventListener("click", () => {
   handleQuestionSimplification();
 });
 
-// LIVE STREAMING & AUDIO RECORDING
+// LIVE STREAMING & AUDIO RECORDING WITH ROBUST SPEECH-TO-TEXT ENGINE
 async function startVoiceRecording() {
   const stream = await getOrInitMicrophone();
   startOscilloscope(stream, "interviewWaveformCanvas", "live-signal-status");
@@ -1419,7 +1549,9 @@ async function startVoiceRecording() {
   try {
     mediaRecorder = new MediaRecorder(stream);
     mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) audioChunks.push(e.data);
+      if (e.data.size > 0) {
+        audioChunks.push(e.data);
+      }
     };
     mediaRecorder.start(250);
   } catch (e) {
@@ -1435,7 +1567,9 @@ async function startVoiceRecording() {
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRec) {
     try {
-      if (speechRecognizer) speechRecognizer.abort();
+      if (speechRecognizer) {
+        speechRecognizer.abort();
+      }
       speechRecognizer = new SpeechRec();
       speechRecognizer.continuous = true;
       speechRecognizer.interimResults = true;
@@ -1463,7 +1597,9 @@ async function startVoiceRecording() {
 
       speechRecognizer.onend = () => {
         if (answerStartTime) {
-          try { speechRecognizer.start(); } catch(err){}
+          try {
+            speechRecognizer.start();
+          } catch(err){}
         }
       };
 
@@ -1478,7 +1614,9 @@ function stopVoiceRecording() {
   return new Promise((resolve) => {
     stopOscilloscope();
     if (speechRecognizer) {
-      try { speechRecognizer.stop(); } catch(e){}
+      try {
+        speechRecognizer.stop();
+      } catch(e){}
     }
     setMicStatus("Standby", false);
 
@@ -1497,8 +1635,11 @@ function stopVoiceRecording() {
 function setMicStatus(label, isLive) {
   document.getElementById("mic-status-label").textContent = label;
   const dot = document.getElementById("mic-dot");
-  if (isLive) dot.classList.add("mic-live");
-  else dot.classList.remove("mic-live");
+  if (isLive) {
+    dot.classList.add("mic-live");
+  } else {
+    dot.classList.remove("mic-live");
+  }
 }
 
 // 40% STRICT RECRUITER & 60% SUPPORTIVE COACH DUAL-BRAIN EVALUATOR ENGINE
@@ -1533,13 +1674,15 @@ function evaluateDualBrain(transcript, questionData) {
     const stopWords = new Set(['with', 'from', 'that', 'this', 'have', 'than', 'were', 'been', 'their', 'which', 'about', 'would', 'could', 'should', 'other', 'first', 'second', 'third']);
     const keyTerms = words.filter(w => !stopWords.has(w));
     const isMatch = keyTerms.some(term => textLower.includes(term));
-    if (isMatch) coveredKeywords.push(pt);
-    else missingKeywords.push(pt);
+    if (isMatch) {
+      coveredKeywords.push(pt);
+    } else {
+      missingKeywords.push(pt);
+    }
   });
 
   const hasQuantitativeMetrics = /\b(\d+|percent|%|dollar|\$|roi|cac|ltv|margin|cpa|roas|npv|irr)\b/i.test(transcript);
 
-  // Determine Socratic Probe Trigger from 40% Strict Recruiter
   let socraticTriggerNeeded = false;
   let socraticProbeType = null;
   let socraticProbeText = "";
@@ -1558,7 +1701,6 @@ function evaluateDualBrain(transcript, questionData) {
     socraticProbeText = "Let's double-check that technical baseline—how would you distinguish your proposed approach from the alternative industry standard?";
   }
 
-  // Determine Tone Tier from 60% Familiar Supportive Coach
   let toneTier = 'Tier_B_Moderate';
   if (coveredKeywords.length >= 2 && (hasQuantitativeMetrics || wordCount > 35)) {
     toneTier = 'Tier_A_Strong';
@@ -1591,7 +1733,6 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
   const durationSec = answerStartTime ? ((Date.now() - answerStartTime) / 1000).toFixed(1) : 0;
   const text = currentQuestionTranscript.trim();
 
-  // ANTI-GAMING: Intercept empty submissions under 2 seconds
   if (durationSec < 2.0 && text.length === 0) {
     speakText("You clicked finish without speaking an answer. In an actual placement drive, silence is penalized. Please speak your answer or choose to pass.", null);
     document.getElementById("live-transcript").innerHTML = `
@@ -1603,9 +1744,10 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
   }
 
   const audioBlob = await stopVoiceRecording();
-  if (countdownInterval) clearInterval(countdownInterval);
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
 
-  // 40% STRICT RECRUITER SOCRATIC TRIGGER
   const qData = sessionQuestions[currentQIndex];
   const dualBrainEval = evaluateDualBrain(text, qData);
 
@@ -1635,7 +1777,9 @@ document.getElementById("btn-finish-answer").addEventListener("click", async () 
 // PASS QUESTION
 document.getElementById("btn-idk-skip").addEventListener("click", async () => {
   const audioBlob = await stopVoiceRecording();
-  if (countdownInterval) clearInterval(countdownInterval);
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
 
   const deliberationSeconds = questionActiveTimestamp ? ((Date.now() - questionActiveTimestamp) / 1000).toFixed(1) : 0;
   const isReflexivePass = deliberationSeconds < 4.0;
@@ -1730,7 +1874,6 @@ function renderTruthfulReport() {
   const avgWPM = answeredRounds.length > 0 ? Math.round(answeredRounds.reduce((acc, r) => acc + r.wpm, 0) / answeredRounds.length) : 0;
   const totalFillers = answeredRounds.reduce((acc, r) => acc + r.fillers, 0);
 
-  // 40% Strict Recruiter Subject Matter Scores
   let totalSubjectScore = 0;
   sessionResults.forEach(r => {
     if (!r.wasSkipped) {
@@ -1833,12 +1976,11 @@ function renderTruthfulReport() {
         </div>
       `;
 
-      // 40% STRICT RECRUITER & 60% SUPPORTIVE COACH AUDIT READOUTS
       const dualBrainEval = evaluateDualBrain(r.transcript, r.questionData);
       const grammarEval = evaluateGrammarAndClarity(r.transcript, r.wordCount);
 
-      const coveredBadges = dualBrainEval.strictRecruiter.coveredKeywords.map(c => `<span class="concept-tag-green">✓ ${c.split(':')[0]}</span>`).join("");
-      const missingBadges = dualBrainEval.strictRecruiter.missingKeywords.map(c => `<span class="concept-tag-red">✕ ${c.split(':')[0]}</span>`).join("");
+      const coveredBadges = dualBrainEval.strictRecruiter.coveredKeywords.map(c => `<span class="concept-tag-green">✓ ${c.split(':')}</span>`).join("");
+      const missingBadges = dualBrainEval.strictRecruiter.missingKeywords.map(c => `<span class="concept-tag-red">✕ ${c.split(':')}</span>`).join("");
       const suggestionsListHtml = grammarEval.suggestions.map(s => `<li>${s}</li>`).join("");
 
       let metricsBadge = dualBrainEval.strictRecruiter.hasQuantitativeMetrics ? 
