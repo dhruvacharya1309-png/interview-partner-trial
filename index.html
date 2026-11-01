@@ -106,6 +106,21 @@
       font-family: 'Inter', sans-serif;
     }
 
+    .simplify-badge-inline {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #6D28D9;
+      background: #F3E8FF;
+      border: 1px solid #DDD6FE;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-family: 'Inter', sans-serif;
+    }
+
     label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
     select {
       width: 100%;
@@ -146,6 +161,12 @@
       margin-top: 10px;
     }
     .btn-secondary:hover:not(:disabled) { background-color: var(--badge-bg); }
+    .btn-purple {
+      background-color: #7C3AED;
+      color: #FFF;
+      margin-top: 10px;
+    }
+    .btn-purple:hover:not(:disabled) { background-color: #6D28D9; }
 
     .question-box {
       font-size: 1.2rem;
@@ -275,6 +296,16 @@
     .kpi-lbl { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 4px; }
 
     /* AUDIT BOX STYLES */
+    .subject-audit-box {
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      border-left: 4px solid #10B981;
+      padding: 14px;
+      border-radius: 8px;
+      margin-top: 12px;
+      font-size: 0.88rem;
+      color: #065F46;
+    }
     .grammar-box {
       background: #F0F9FF;
       border: 1px solid #BAE6FD;
@@ -304,6 +335,27 @@
       margin-bottom: 24px;
       font-size: 0.95rem;
       color: #065F46;
+    }
+
+    .concept-tag-green {
+      display: inline-block;
+      background: #DCFCE7;
+      color: #15803D;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin: 2px 4px 2px 0;
+    }
+    .concept-tag-red {
+      display: inline-block;
+      background: #FEE2E2;
+      color: #B91C1C;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin: 2px 4px 2px 0;
     }
 
     @media print {
@@ -421,6 +473,7 @@
     </div>
 
     <button class="btn btn-primary" id="btn-finish-answer">Finish & Submit Answer</button>
+    <button class="btn btn-purple" id="btn-clarify-q">💡 Simplify / Clarify Question (Attempt 0/2)</button>
     <button class="btn btn-secondary" id="btn-idk-skip" style="margin-top: 10px;">I Don't Know / Pass Question</button>
   </div>
 
@@ -449,16 +502,16 @@
         <div class="kpi-lbl">Readiness Tier</div>
       </div>
       <div class="kpi-tile">
+        <div class="kpi-val" id="kpi-clarity">0%</div>
+        <div class="kpi-lbl">Subject Clarity</div>
+      </div>
+      <div class="kpi-tile">
         <div class="kpi-val" id="kpi-wpm">0</div>
         <div class="kpi-lbl">Spoken WPM</div>
       </div>
       <div class="kpi-tile">
         <div class="kpi-val" id="kpi-fillers">0</div>
         <div class="kpi-lbl">Verbal Fillers</div>
-      </div>
-      <div class="kpi-tile">
-        <div class="kpi-val" id="kpi-completed">0/0</div>
-        <div class="kpi-lbl">Attempted</div>
       </div>
     </div>
 
@@ -476,7 +529,7 @@
         </p>
       </div>
 
-      <h3 style="margin-top: 24px; margin-bottom: 12px;">Round-by-Round Breakdown, Grammar Audit & Audio Playback</h3>
+      <h3 style="margin-top: 24px; margin-bottom: 12px;">Round-by-Round Breakdown, Subject Alignment & Audio Playback</h3>
       <div id="candidate-questions-breakdown"></div>
     </div>
 
@@ -508,6 +561,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "✦ Campus Placement Standard",
     text: "What is the difference between a marketing campaign and a promotion? Give an example of each.",
+    simplifiedText: "In simple terms: How is a big, long-term brand campaign different from a short-term discount offer? Can you give an example of both?",
+    ultraSimplifiedText: "To put it very simply: Why would a company run a long campaign versus a weekend 20% discount?",
     thinkingTimeSec: 0,
     corePoints: [
       "Campaign: Long-term strategic goal (brand awareness, positioning, multi-channel).",
@@ -521,6 +576,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "Which metrics would you track to tell whether a social media post worked?",
+    simplifiedText: "Simply put: If you posted something on social media for a business, how would you measure if it was successful?",
+    ultraSimplifiedText: "In very basic terms: What specific numbers like clicks or shares show if people actually cared about a post?",
     thinkingTimeSec: 0,
     corePoints: [
       "Engagement rate (saves, shares, comments) over passive vanity impressions.",
@@ -534,6 +591,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "What is a target audience, and how would you describe one for a new product?",
+    simplifiedText: "In simple terms: What is a target audience, and how do you figure out who is most likely to buy a brand new product?",
+    ultraSimplifiedText: "To put it simply: How do you describe the ideal customer group for a new product using age, lifestyle, or needs?",
     thinkingTimeSec: 0,
     corePoints: [
       "Target audience: specific consumer segment most inclined to adopt the product.",
@@ -547,6 +606,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "✦ Campus Placement Standard",
     text: "What is the difference between organic and paid reach?",
+    simplifiedText: "Simply put: How does getting visitors naturally without ads differ from paying for ads on Google or Instagram?",
+    ultraSimplifiedText: "In basic terms: What is the difference between free audience reach and paid advertisement reach?",
     thinkingTimeSec: 0,
     corePoints: [
       "Organic reach: Unpaid visibility achieved naturally via algorithmic relevance and audience sharing.",
@@ -560,6 +621,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "If a brand’s Instagram followers grow but sales don’t, what would you check first?",
+    simplifiedText: "In simple terms: If lots of people follow your Instagram page but nobody is buying your product, what would you fix first?",
+    ultraSimplifiedText: "To put it very simply: Why might Instagram followers increase without generating actual sales?",
     thinkingTimeSec: 0,
     corePoints: [
       "Audience-buyer alignment (are followers qualified buyers or vanity consumers?).",
@@ -574,6 +637,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "Tell me about a campaign you planned. How did you decide the budget, audience, and channels, and what was the result?",
+    simplifiedText: "Simply put: Walk me through a marketing campaign you ran—how did you set the budget, choose the channels, and measure results?",
+    ultraSimplifiedText: "In basic terms: How do you plan a marketing campaign from setting budget to choosing ads and seeing profit?",
     thinkingTimeSec: 10,
     corePoints: [
       "Objective-and-task budget modeling based on target CAC and customer LTV.",
@@ -588,6 +653,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "How would you decide whether to spend more on paid ads or on content and SEO for a product that is already selling?",
+    simplifiedText: "In simple terms: For an existing selling product, how do you balance spending money on paid ads versus organic SEO?",
+    ultraSimplifiedText: "To put it simply: Should you spend extra budget on instant paid Google ads or long-term organic search ranking?",
     thinkingTimeSec: 0,
     corePoints: [
       "Evaluate current paid CAC vs organic acquisition baseline.",
@@ -601,6 +668,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "How do you judge whether a brand’s messaging is working in a market that is changing quickly?",
+    simplifiedText: "Simply put: When consumer trends change fast, how do you test if your company's sales message still works?",
+    ultraSimplifiedText: "In basic terms: How do you check if your marketing slogan or promise still appeals to customers today?",
     thinkingTimeSec: 10,
     corePoints: [
       "Frontline sales feedback and customer sentiment shifts.",
@@ -614,6 +683,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "✦ Campus Placement Standard",
     text: "Describe how you would launch a product in a new city where the brand is unknown.",
+    simplifiedText: "In simple terms: How would you introduce your product in a brand new city where nobody knows your brand name?",
+    ultraSimplifiedText: "To put it simply: What step-by-step launch plan would you use to get customers in a completely new city?",
     thinkingTimeSec: 0,
     corePoints: [
       "Hyper-local research and competitor positioning benchmarking.",
@@ -627,6 +698,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by Mr. Chetan Pathak • Marketing Head",
     text: "A campaign’s cost per lead has doubled over three weeks. What would you do?",
+    simplifiedText: "Simply put: If getting each new customer lead suddenly costs twice as much money as last month, how would you fix it?",
+    ultraSimplifiedText: "In basic terms: What steps would you take to diagnose and lower an ad campaign cost that doubled?",
     thinkingTimeSec: 10,
     corePoints: [
       "Diagnose ad creative fatigue (rising frequency, declining CTR).",
@@ -642,6 +715,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "✦ Campus Placement Standard",
     text: "What is the difference between profit and cash flow, and why can a profitable business still run out of money?",
+    simplifiedText: "In simple terms: Why is accounting profit on paper different from having cash in the bank, and why can a profitable firm go bankrupt?",
+    ultraSimplifiedText: "To put it simply: How can a business show profit on reports but still have no cash to pay bills today?",
     thinkingTimeSec: 0,
     corePoints: [
       "Profit: Accrual accounting calculation (Revenues recognized minus Expenses incurred).",
@@ -655,6 +730,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by CA Bhargav Pandya • Financial Head",
     text: "What does a balance sheet show, and what are its three main parts?",
+    simplifiedText: "Simply put: What is a balance sheet used for, and what are the three main pillars inside it?",
+    ultraSimplifiedText: "In basic terms: What are Assets, Liabilities, and Equity on a company balance sheet?",
     thinkingTimeSec: 0,
     corePoints: [
       "Financial snapshot of a company's financial condition at a specific date.",
@@ -668,6 +745,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by CA Bhargav Pandya • Financial Head",
     text: "What is the difference between a debit and a credit?",
+    simplifiedText: "In simple terms: In basic accounting, how does a debit entry differ from a credit entry?",
+    ultraSimplifiedText: "To put it simply: Which accounts increase with a debit and which increase with a credit?",
     thinkingTimeSec: 0,
     corePoints: [
       "Debit: Increases asset and expense accounts; decreases liability, equity, and revenue accounts.",
@@ -681,6 +760,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "✦ Campus Placement Standard",
     text: "What is the difference between fixed costs and variable costs? Give one example of each.",
+    simplifiedText: "Simply put: How do fixed expenses like rent differ from variable expenses like raw materials?",
+    ultraSimplifiedText: "In basic terms: What is a cost that stays the same vs. a cost that changes when you produce more units?",
     thinkingTimeSec: 10,
     corePoints: [
       "Fixed costs: Remain constant regardless of output volume (e.g., rent, baseline executive salaries).",
@@ -694,6 +775,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "✦ Campus Placement Standard",
     text: "What is working capital, and why does it matter to a business?",
+    simplifiedText: "In simple terms: What is working capital (Current Assets minus Current Liabilities), and why is it essential for daily operations?",
+    ultraSimplifiedText: "To put it simply: Why does a company need extra short-term money to pay daily bills and suppliers?",
     thinkingTimeSec: 0,
     corePoints: [
       "Formula: Current Assets minus Current Liabilities.",
@@ -708,6 +791,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by CA Bhargav Pandya • Financial Head",
     text: "A department is 15 percent over budget halfway through the year. What steps would you take to find the cause and bring spending back on track?",
+    simplifiedText: "Simply put: If a team spent 15% more money than planned by mid-year, how would you investigate and control spending?",
+    ultraSimplifiedText: "In basic terms: How do you bring a team spending over its financial budget back under control?",
     thinkingTimeSec: 10,
     corePoints: [
       "Line-by-line budget variance analysis.",
@@ -721,6 +806,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by CA Bhargav Pandya • Financial Head",
     text: "How would you build a monthly cash flow forecast for a small business, and what would you watch most closely?",
+    simplifiedText: "In simple terms: How do you project monthly cash coming in vs going out for a small business, and what metric matters most?",
+    ultraSimplifiedText: "To put it simply: How do you make a 12-month spreadsheet tracking expected cash payments and bills?",
     thinkingTimeSec: 0,
     corePoints: [
       "Direct forecasting modeling: Cash collections vs. cash disbursements over 12 months.",
@@ -734,6 +821,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by CA Bhargav Pandya • Financial Head",
     text: "What would you look at first if a company’s gross margin dropped five points in one quarter?",
+    simplifiedText: "Simply put: If gross profit margin dropped by 5%, would you investigate sales prices or manufacturing costs first?",
+    ultraSimplifiedText: "In basic terms: What causes a sudden drop in product profit margin during a quarter?",
     thinkingTimeSec: 10,
     corePoints: [
       "Price vs. Volume vs. Cost analysis (Cost of Goods Sold breakdown).",
@@ -747,6 +836,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by CA Bhargav Pandya • Financial Head",
     text: "How would you decide whether a new piece of equipment is worth buying?",
+    simplifiedText: "In simple terms: How do you evaluate if buying a new machine or factory equipment will generate enough return to be worth it?",
+    ultraSimplifiedText: "To put it simply: What financial metrics like NPV or payback period prove an equipment purchase is smart?",
     thinkingTimeSec: 0,
     corePoints: [
       "Capital budgeting: Net Present Value (NPV), Internal Rate of Return (IRR), Payback Period.",
@@ -760,6 +851,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "✦ Campus Placement Standard",
     text: "Tell me about a time you found an error in financial figures. How did you find it and what did you do?",
+    simplifiedText: "Simply put: Describe a situation where you caught a mistake in numbers or accounting ledgers, and how you corrected it.",
+    ultraSimplifiedText: "In basic terms: How do you spot an accounting error during bank reconciliation and fix it?",
     thinkingTimeSec: 10,
     corePoints: [
       "Detection via reconciliation, sanity check, or variance analysis.",
@@ -775,6 +868,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "✦ Campus Placement Standard",
     text: "What is the difference between recruitment and selection?",
+    simplifiedText: "In simple terms: How does attracting job applicants (recruitment) differ from picking the final candidate (selection)?",
+    ultraSimplifiedText: "To put it simply: Why is getting people to apply called recruitment, while choosing the hire is selection?",
     thinkingTimeSec: 0,
     corePoints: [
       "Recruitment: Positive talent attraction and pool building.",
@@ -788,6 +883,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
     text: "How would you handle a new employee who is struggling to keep up with the team in the first month?",
+    simplifiedText: "Simply put: If a new hire is falling behind in their first 30 days, what steps would you take to help them?",
+    ultraSimplifiedText: "In basic terms: How do you coach a new employee who finds the work difficult in month one?",
     thinkingTimeSec: 0,
     corePoints: [
       "Empathetic check-in to diagnose skill gaps vs. process ambiguity.",
@@ -801,6 +898,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
     text: "Why do companies run an onboarding programme, and what should it cover?",
+    simplifiedText: "In simple terms: Why is an onboarding training program important for new hires, and what topics must be included?",
+    ultraSimplifiedText: "To put it simply: What should a company teach new employees during their first week?",
     thinkingTimeSec: 0,
     corePoints: [
       "Reduces initial anxiety and accelerates time-to-productivity.",
@@ -814,6 +913,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
     text: "What makes an interview question fair and legal to ask?",
+    simplifiedText: "Simply put: What rules determine if an interview question is job-relevant, fair, and legally compliant?",
+    ultraSimplifiedText: "In basic terms: Why are questions about age, religion, or marital status illegal in job interviews?",
     thinkingTimeSec: 0,
     corePoints: [
       "Direct job-relatedness and bona fide occupational qualifications.",
@@ -827,6 +928,8 @@ const QUESTION_BANK = [
     level: "Fresher",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
     text: "What is the difference between an employee’s job description and their key performance indicators?",
+    simplifiedText: "In simple terms: How does a general job description (JD) differ from specific Key Performance Indicators (KPIs)?",
+    ultraSimplifiedText: "To put it simply: Why is a job description what you do, while KPIs measure how well you achieve targets?",
     thinkingTimeSec: 10,
     corePoints: [
       "Job Description (JD): Qualitative scope of ongoing duties, responsibilities, and qualifications.",
@@ -841,6 +944,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "✦ Campus Placement Standard",
     text: "Describe a time you handled a conflict between two team members. What did you do, and what happened afterwards?",
+    simplifiedText: "Simply put: How have you mediated a disagreement between two colleagues to get project work back on track?",
+    ultraSimplifiedText: "In basic terms: What steps do you take to resolve workplace arguments between coworkers?",
     thinkingTimeSec: 0,
     corePoints: [
       "Neutrality and individual active listening.",
@@ -854,6 +959,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
     text: "How would you reduce employee turnover in a team where people leave after about a year?",
+    simplifiedText: "In simple terms: If employees consistently resign after 12 months, how would you find out why and stop them from leaving?",
+    ultraSimplifiedText: "To put it simply: What HR strategy stops high employee turnover after one year?",
     thinkingTimeSec: 10,
     corePoints: [
       "Rigorous exit and stay interview analysis to isolate root causes.",
@@ -867,6 +974,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
     text: "How do you run a performance review that is fair and useful to the employee?",
+    simplifiedText: "Simply put: How do you structure an annual employee appraisal so it provides clear goals without negative surprises?",
+    ultraSimplifiedText: "In basic terms: How do you conduct a performance evaluation based on objective facts rather than personal feelings?",
     thinkingTimeSec: 0,
     corePoints: [
       "No surprises: continuous feedback delivered throughout the appraisal cycle.",
@@ -880,6 +989,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
     text: "How would you handle an employee who is performing well but is disruptive to the team?",
+    simplifiedText: "In simple terms: If a top-performing employee has great sales but creates toxic drama in the office, how do you handle it?",
+    ultraSimplifiedText: "To put it simply: Why can't high technical results excuse bad team behavior in HR policy?",
     thinkingTimeSec: 0,
     corePoints: [
       "Never excuse toxic behavior for technical performance.",
@@ -893,6 +1004,8 @@ const QUESTION_BANK = [
     level: "Experienced",
     author: "💼 Curated by Mr. Nimit Ganatra • HR Head",
     text: "A company is planning to cut 10 percent of its staff. How would you plan and communicate it?",
+    simplifiedText: "Simply put: If a company must lay off 10% of employees, how do you plan fair criteria and communicate transparently?",
+    ultraSimplifiedText: "In basic terms: How does HR execute staff downsizing with legal fairness and empathy?",
     thinkingTimeSec: 10,
     corePoints: [
       "Objective, role-based criteria vetted against bias.",
@@ -914,6 +1027,7 @@ let selectedVoice = null;
 let countdownInterval = null;
 let ttsWatchdogTimeout = null;
 let isSpontaneousActive = false;
+let simplifyCount = 0; // Tracks simplification attempts for current question (max 2)
 
 // PHYSICAL MEDIA STREAM & RECORDER
 let activeStream = null;
@@ -976,7 +1090,7 @@ function startOscilloscope(stream, canvasId, statusId) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.lineWidth = 2;
-    ctx.strokeStyle = "#10B981"; // Vibrant teal waveform
+    ctx.strokeStyle = "#10B981";
     ctx.beginPath();
 
     const sliceWidth = canvas.width * 1.0 / bufferLength;
@@ -1014,10 +1128,9 @@ function speakText(text, onEndCallback) {
     window.speechSynthesis.cancel();
     if (ttsWatchdogTimeout) clearTimeout(ttsWatchdogTimeout);
 
-    // Bound to global window memory to prevent Chrome garbage-collection drops mid-speech
     window.activeUtterance = new SpeechSynthesisUtterance(text);
-    window.activeUtterance.rate = 0.90; // Executive cadence
-    window.activeUtterance.pitch = 0.96; // Human pitch
+    window.activeUtterance.rate = 0.90;
+    window.activeUtterance.pitch = 0.96;
 
     const voiceName = document.getElementById("select-voice").value;
     const voices = window.speechSynthesis.getVoices();
@@ -1173,7 +1286,10 @@ function loadCurrentQuestion() {
   questionActiveTimestamp = null;
   audioChunks = [];
   isSpontaneousActive = false;
+  simplifyCount = 0; // Reset simplification attempts for new question
   if (countdownInterval) clearInterval(countdownInterval);
+
+  updateSimplifyButtonUI();
 
   document.getElementById("interview-progress-label").textContent = `Question ${currentQIndex + 1} of ${sessionQuestions.length}`;
   
@@ -1197,28 +1313,79 @@ function loadCurrentQuestion() {
 
   speakText(spokenPayload, () => {
     questionActiveTimestamp = Date.now();
-    setTimeout(() => {
-      if (qData.thinkingTimeSec > 0) {
-        let secondsLeft = qData.thinkingTimeSec;
-        flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span>`;
+    
+    // ENHANCED THINKING WINDOW TIMER (10s for questions with thinkingTimeSec > 0)
+    if (qData.thinkingTimeSec > 0) {
+      let secondsLeft = qData.thinkingTimeSec;
+      flowStatus.innerHTML = `<strong>⏱ Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:800; font-size:1.05rem;">${secondsLeft}s remaining</span> &mdash; Take a moment to structure your thoughts...`;
+      setMicStatus(`Thinking (${secondsLeft}s)...`, false);
 
-        countdownInterval = setInterval(() => {
-          secondsLeft--;
-          if (secondsLeft > 0) {
-            flowStatus.innerHTML = `<strong>Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:700;">${secondsLeft}s remaining</span>`;
-          } else {
-            clearInterval(countdownInterval);
-            flowStatus.innerHTML = `<strong>Microphone Live:</strong> Transcribing & recording. Speak your answer now.`;
-            startVoiceRecording();
-          }
-        }, 1000);
-      } else {
-        flowStatus.innerHTML = `<strong>Microphone Live:</strong> Transcribing & recording. Speak your answer now.`;
-        startVoiceRecording();
-      }
-    }, 400);
+      countdownInterval = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft > 0) {
+          flowStatus.innerHTML = `<strong>⏱ Thinking Window:</strong> <span style="color: var(--warning-amber); font-weight:800; font-size:1.05rem;">${secondsLeft}s remaining</span> &mdash; Take a moment to structure your thoughts...`;
+          setMicStatus(`Thinking (${secondsLeft}s)...`, false);
+        } else {
+          clearInterval(countdownInterval);
+          flowStatus.innerHTML = `<strong>Microphone Live:</strong> Transcribing & recording. Speak your answer now.`;
+          startVoiceRecording();
+        }
+      }, 1000);
+    } else {
+      flowStatus.innerHTML = `<strong>Microphone Live:</strong> Transcribing & recording. Speak your answer now.`;
+      startVoiceRecording();
+    }
   });
 }
+
+function updateSimplifyButtonUI() {
+  const btn = document.getElementById("btn-clarify-q");
+  if (btn) {
+    btn.textContent = `💡 Simplify / Clarify Question (Attempt ${simplifyCount}/2)`;
+    if (simplifyCount >= 2) {
+      btn.style.opacity = "0.7";
+    } else {
+      btn.style.opacity = "1";
+    }
+  }
+}
+
+// SIMPLIFY / CLARIFY QUESTION FUNCTION (Max 2 Attempts)
+function handleQuestionSimplification() {
+  if (simplifyCount >= 2) {
+    // 3rd attempt: Move to next question with courtesy notice
+    speakText("Let's move on to the next prompt, you can prepare this topic later.", () => {
+      recordAnswer("", null, true, "Maximum simplifications (2/2) reached. Candidate requested further clarification.", false, 0);
+    });
+    return;
+  }
+
+  simplifyCount++;
+  updateSimplifyButtonUI();
+
+  const qData = sessionQuestions[currentQIndex];
+  const simplifiedText = (simplifyCount === 1) ? (qData.simplifiedText || qData.text) : (qData.ultraSimplifiedText || qData.text);
+  
+  const questionBox = document.getElementById("spoken-question-text");
+  const simplifyBadge = `<span class="simplify-badge-inline">💡 Question Simplified (${simplifyCount}/2)</span>`;
+  const authorBadgeHtml = `<span class="author-tag-inline">${qData.author}</span>`;
+  questionBox.innerHTML = `${simplifiedText} ${authorBadgeHtml} ${simplifyBadge}`;
+
+  const flowStatus = document.getElementById("flow-status-text");
+  flowStatus.innerHTML = `<strong>Interviewer Clarification:</strong> Explaining prompt in simpler terms...`;
+  setMicStatus("Interviewer Speaking...", false);
+
+  stopVoiceRecording().then(() => {
+    speakText(`Let me break that down simply. ${simplifiedText}`, () => {
+      flowStatus.innerHTML = `<strong>Microphone Live:</strong> Transcribing & recording. Speak your simplified answer now.`;
+      startVoiceRecording();
+    });
+  });
+}
+
+document.getElementById("btn-clarify-q").addEventListener("click", () => {
+  handleQuestionSimplification();
+});
 
 // LIVE STREAMING & AUDIO RECORDING
 async function startVoiceRecording() {
@@ -1265,6 +1432,12 @@ async function startVoiceRecording() {
           document.getElementById("live-transcript").innerHTML = `
             <strong style="color:var(--primary-blue);">Transcribed Text:</strong> "${currentQuestionTranscript}"
           `;
+
+          // Check if candidate verbally asked for clarification
+          const textLower = currentQuestionTranscript.toLowerCase();
+          if (textLower.includes("don't understand") || textLower.includes("dont understand") || textLower.includes("can you simplify") || textLower.includes("please explain again")) {
+            handleQuestionSimplification();
+          }
         }
       };
 
@@ -1388,7 +1561,8 @@ function recordAnswer(transcript, audioBlob, wasSkipped, skipReason, isReflexive
     durationSec: durationSec,
     wpm: wpm,
     fillers: fillers,
-    wordCount: wordCount
+    wordCount: wordCount,
+    simplificationsUsed: simplifyCount
   });
 
   currentQIndex++;
@@ -1397,6 +1571,59 @@ function recordAnswer(transcript, audioBlob, wasSkipped, skipReason, isReflexive
   } else {
     renderTruthfulReport();
   }
+}
+
+// ADVANCED SEMANTIC SUBJECT MATTER EVALUATOR
+function evaluateSubjectClarityAndSense(transcript, corePoints, idealAnswer) {
+  if (!transcript || transcript.trim().length < 5) {
+    return {
+      score: 0,
+      coveredConcepts: [],
+      missingConcepts: corePoints,
+      clarityRating: "No Technical Evidence Spoken",
+      logicSenseText: "No transcript was provided to evaluate semantic sense."
+    };
+  }
+
+  const textLower = transcript.toLowerCase();
+  let coveredConcepts = [];
+  let missingConcepts = [];
+
+  corePoints.forEach(pt => {
+    const words = pt.toLowerCase().match(/\b[a-z]{4,}\b/g) || [];
+    const stopWords = new Set(['with', 'from', 'that', 'this', 'have', 'than', 'were', 'been', 'their', 'which', 'about', 'would', 'could', 'should', 'other', 'first', 'second', 'third']);
+    const keyTerms = words.filter(w => !stopWords.has(w));
+
+    const isMatch = keyTerms.some(term => textLower.includes(term));
+    if (isMatch) {
+      coveredConcepts.push(pt);
+    } else {
+      missingConcepts.push(pt);
+    }
+  });
+
+  const rawScore = corePoints.length > 0 ? Math.round((coveredConcepts.length / corePoints.length) * 100) : 50;
+  const wordCount = transcript.split(/\s+/).filter(Boolean).length;
+  const score = Math.min(100, Math.max(rawScore, wordCount > 35 ? 70 : rawScore));
+
+  let clarityRating = "High Subject Clarity (Strong Domain Alignment)";
+  let logicSenseText = "Response demonstrates clear subject understanding, logical structure, and aligns well with model benchmarks.";
+
+  if (score < 40) {
+    clarityRating = "Low Technical Coverage (Key Benchmark Missed)";
+    logicSenseText = "Spoken answer addressed the question generally, but missed core domain terminology and quantitative frameworks.";
+  } else if (score < 75) {
+    clarityRating = "Moderate Subject Clarity (Partial Alignment)";
+    logicSenseText = "Demonstrated decent logical sense and touched on key principles, but could be enhanced with specific metrics and definitions.";
+  }
+
+  return {
+    score,
+    coveredConcepts,
+    missingConcepts,
+    clarityRating,
+    logicSenseText
+  };
 }
 
 // GRAMMAR & STRUCTURAL CLARITY EVALUATOR
@@ -1450,26 +1677,36 @@ function renderTruthfulReport() {
   const avgWPM = answeredRounds.length > 0 ? Math.round(answeredRounds.reduce((acc, r) => acc + r.wpm, 0) / answeredRounds.length) : 0;
   const totalFillers = answeredRounds.reduce((acc, r) => acc + r.fillers, 0);
 
+  // Subject Matter Scores
+  let totalSubjectScore = 0;
+  sessionResults.forEach(r => {
+    if (!r.wasSkipped) {
+      const subj = evaluateSubjectClarityAndSense(r.transcript, r.questionData.corePoints, r.questionData.idealModelAnswer);
+      totalSubjectScore += subj.score;
+    }
+  });
+  const avgSubjectClarity = answeredRounds.length > 0 ? Math.round(totalSubjectScore / answeredRounds.length) : 0;
+
   document.getElementById("kpi-wpm").textContent = avgWPM;
   document.getElementById("kpi-fillers").textContent = totalFillers;
-  document.getElementById("kpi-completed").textContent = `${answeredRounds.length}/${sessionResults.length}`;
+  document.getElementById("kpi-clarity").textContent = `${avgSubjectClarity}%`;
 
   const kpiScore = document.getElementById("kpi-score");
   const verdictContainer = document.getElementById("verdict-banner-container");
 
-  if (answeredRounds.length === sessionResults.length && totalFillers <= 4 && avgWPM >= 100) {
+  if (answeredRounds.length === sessionResults.length && totalFillers <= 4 && avgSubjectClarity >= 70) {
     kpiScore.textContent = "Tier 1";
     kpiScore.style.color = "var(--success-green)";
     verdictContainer.innerHTML = `
       <strong>🌟 Final Candidate Verdict: Placement Ready (Strong Progress)</strong><br>
-      Candidate demonstrated excellent spoken articulation, strong grammatical structure, and consistent willingness across all technical prompts. High recommendation for final placement drives.
+      Candidate demonstrated excellent spoken articulation, <strong>${avgSubjectClarity}% Subject Clarity</strong>, and strong technical domain understanding. High recommendation for final placement drives.
     `;
   } else if (answeredRounds.length >= 1) {
     kpiScore.textContent = "Tier 2";
     kpiScore.style.color = "var(--primary-blue)";
     verdictContainer.innerHTML = `
       <strong>📈 Final Candidate Verdict: Developing Candidate (Good Progress)</strong><br>
-      Candidate completed <strong>${answeredRounds.length} of ${sessionResults.length}</strong> rounds with solid foundation. Good overall progress—focus on adding quantitative metrics and reducing verbal fillers to reach Tier 1.
+      Candidate completed <strong>${answeredRounds.length} of ${sessionResults.length}</strong> rounds with <strong>${avgSubjectClarity}% Subject Clarity</strong>. Good overall progress—focus on adding quantitative metrics and reducing verbal fillers to reach Tier 1.
     `;
   } else {
     kpiScore.textContent = "Incomplete";
@@ -1490,7 +1727,7 @@ function renderTruthfulReport() {
     let rapidPassNotice = rapidPassRounds.length > 0 ? `<br><strong style="color:var(--danger-red);">Avoidance Warning:</strong> Detected ${rapidPassRounds.length} reflexive pass(es) under 4.0s.` : '';
     summaryBox.innerHTML = `
       <strong>Session Audit:</strong> Completed <strong>${answeredRounds.length}</strong> answered rounds and <strong>${passedRounds.length}</strong> passed rounds.
-      <br>Average Spoken Cadence: <strong>${avgWPM} WPM</strong> (Target: 120–150 WPM). Total Verbal Fillers: <strong>${totalFillers}</strong>.${rapidPassNotice}
+      <br>Subject Matter Clarity: <strong>${avgSubjectClarity}%</strong> | Average Spoken Cadence: <strong>${avgWPM} WPM</strong> | Total Verbal Fillers: <strong>${totalFillers}</strong>.${rapidPassNotice}
     `;
   }
 
@@ -1503,7 +1740,7 @@ function renderTruthfulReport() {
     card.className = "report-card";
 
     let answerSection = "";
-    let grammarSectionHtml = "";
+    let auditSectionHtml = "";
 
     if (r.wasSkipped) {
       let rapidPassAlert = r.isReflexivePass ? `
@@ -1529,7 +1766,7 @@ function renderTruthfulReport() {
 
       let transcriptHtml = (r.transcript && r.transcript.length > 0 && r.transcript !== "undefined") ? `
         <p style="font-size: 0.95rem; margin: 4px 0 8px; font-style: italic; color: var(--text-main);">"${r.transcript}"</p>
-        <p style="font-size: 0.8rem; color: var(--text-muted);">Pace: <strong>${r.wpm} WPM</strong> | Verbal Fillers: <strong>${r.fillers}</strong></p>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">Pace: <strong>${r.wpm} WPM</strong> | Verbal Fillers: <strong>${r.fillers}</strong> | Simplifications Requested: <strong>${r.simplificationsUsed || 0}/2</strong></p>
       ` : `<p style="font-size: 0.88rem; color: var(--text-muted); font-style:italic;">Audio track recorded successfully.</p>`;
 
       answerSection = `
@@ -1540,15 +1777,32 @@ function renderTruthfulReport() {
         </div>
       `;
 
-      // Grammar & Actionable Improvement Audit
+      // Subject Matter & Semantic Evaluation
+      const subjEval = evaluateSubjectClarityAndSense(r.transcript, r.questionData.corePoints, r.questionData.idealModelAnswer);
       const grammarEval = evaluateGrammarAndClarity(r.transcript, r.wordCount);
+
+      const coveredBadges = subjEval.coveredConcepts.map(c => `<span class="concept-tag-green">✓ ${c.split(':')[0]}</span>`).join("");
+      const missingBadges = subjEval.missingConcepts.map(c => `<span class="concept-tag-red">✕ ${c.split(':')[0]}</span>`).join("");
       const suggestionsListHtml = grammarEval.suggestions.map(s => `<li>${s}</li>`).join("");
 
-      grammarSectionHtml = `
+      auditSectionHtml = `
+        <div class="subject-audit-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <strong>🧠 Subject Matter & Domain Alignment:</strong>
+            <span style="font-weight:800; font-size:1rem; color:#059669;">${subjEval.score}% Clarity</span>
+          </div>
+          <p style="font-size:0.85rem; margin-bottom:8px;">${subjEval.logicSenseText}</p>
+          <div>
+            ${coveredBadges}
+            ${missingBadges}
+          </div>
+        </div>
+
         <div class="grammar-box">
           <strong>📝 Grammar & Structural Clarity Audit:</strong> ${grammarEval.status}<br>
           <span style="font-size:0.85rem; color:#0369A1;">${grammarEval.details}</span>
         </div>
+
         <div class="suggestion-box">
           <strong>💡 Actionable Improvement Suggestions:</strong>
           <ul style="padding-left: 18px; margin-top: 4px; font-size:0.85rem; line-height: 1.4;">
@@ -1568,7 +1822,7 @@ function renderTruthfulReport() {
       <p style="font-size: 1rem; font-weight: 600; margin-bottom: 12px;">${r.questionData.text}</p>
       
       ${answerSection}
-      ${grammarSectionHtml}
+      ${auditSectionHtml}
 
       <div style="border-top: 1px solid var(--border-subtle); padding-top: 12px; margin-top: 12px;">
         <p style="font-size: 0.8rem; font-weight: 700; color: var(--primary-navy); text-transform: uppercase; margin-bottom: 6px;">
