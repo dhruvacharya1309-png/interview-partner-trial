@@ -1366,7 +1366,7 @@ document.getElementById("btn-back-to-setup").addEventListener("click", () => {
   document.getElementById("screen-setup").classList.remove("hidden");
 });
 
-// RUN PRE-FLIGHT TEST
+// RUN PRE-FLIGHT TEST (WITH FIXED [0].transcript)
 document.getElementById("btn-run-mic-test").addEventListener("click", async () => {
   const micOutput = document.getElementById("mic-test-output");
   const proceedBtn = document.getElementById("btn-mic-ok-proceed");
@@ -1393,8 +1393,9 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
     testRec.onresult = (e) => {
       let spoken = "";
       for (let i = 0; i < e.results.length; i++) {
-        if (e.results[i] && e.results[i] && e.results[i].transcript) {
-          spoken += e.results[i].transcript + " ";
+        // FIXED: Access [0].transcript
+        if (e.results[i] && e.results[i][0] && e.results[i][0].transcript) {
+          spoken += e.results[i][0].transcript + " ";
         }
       }
       spoken = spoken.trim();
@@ -1413,6 +1414,7 @@ document.getElementById("btn-run-mic-test").addEventListener("click", async () =
     testRec.onend = () => {
       runBtn.disabled = false;
     };
+
     testRec.start();
   } catch (err) {
     micOutput.innerHTML = `<span style="color:var(--danger-red); font-weight:700;">Hardware Error: ${err.message}. Please ALLOW microphone access in address bar.</span>`;
@@ -1538,7 +1540,7 @@ document.getElementById("btn-clarify-q").addEventListener("click", () => {
   handleQuestionSimplification();
 });
 
-// LIVE STREAMING & AUDIO RECORDING WITH ROBUST SPEECH-TO-TEXT ENGINE
+// LIVE TRANSCRIPTION ENGINE WITH [0].transcript
 async function startVoiceRecording() {
   const stream = await getOrInitMicrophone();
   startOscilloscope(stream, "interviewWaveformCanvas", "live-signal-status");
@@ -1578,8 +1580,9 @@ async function startVoiceRecording() {
       speechRecognizer.onresult = (event) => {
         let full = "";
         for (let i = 0; i < event.results.length; i++) {
-          if (event.results[i] && event.results[i] && event.results[i].transcript) {
-            full += event.results[i].transcript + " ";
+          // FIXED: Access [0].transcript directly
+          if (event.results[i] && event.results[i][0] && event.results[i][0].transcript) {
+            full += event.results[i][0].transcript + " ";
           }
         }
         currentQuestionTranscript = full.trim();
